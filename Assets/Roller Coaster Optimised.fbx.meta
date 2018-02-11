@@ -75,6 +75,8 @@ ModelImporter:
     100134: right_circle
     100136: Roller_coaster
     100138: support_beams
+    100140: rails_1
+    100142: support_beams_1
     400000: //RootNode
     400002: 3_Point_Lighting
     400004: body
@@ -145,6 +147,8 @@ ModelImporter:
     400134: right_circle
     400136: Roller_coaster
     400138: support_beams
+    400140: rails_1
+    400142: support_beams_1
     2100000: support beams
     2100002: No Name
     2100004: bottum rail
@@ -203,6 +207,8 @@ ModelImporter:
     2300100: Loft_NURBS_1_2
     2300102: Loft_NURBS_2
     2300104: right_circle
+    2300106: rails_1
+    2300108: support_beams_1
     3300000: body_1
     3300002: bottum_circle
     3300004: Cap_1
@@ -256,6 +262,8 @@ ModelImporter:
     3300100: Loft_NURBS_1_2
     3300102: Loft_NURBS_2
     3300104: right_circle
+    3300106: rails_1
+    3300108: support_beams_1
     4300000: Cylinder_15
     4300002: Cylinder_2
     4300004: Cylinder_1
@@ -309,6 +317,8 @@ ModelImporter:
     4300100: Cap_1_7
     4300102: Cap_2_7
     4300104: body_1
+    4300106: support_beams_1
+    4300108: rails_1
     10800000: Fill_Light
     10800002: Fill_Light_2
     10800004: Key_Light
