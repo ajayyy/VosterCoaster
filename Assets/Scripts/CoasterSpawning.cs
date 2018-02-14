@@ -42,10 +42,18 @@ public class CoasterSpawning : MonoBehaviour {
             lastspawned = false;
         }
 
-        if (Input.GetButton("RightTrackpadClick")) {
-            print("sdasdsad");
-        } else {
-            print(gameController.rightController.GetAxis());
+        if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
+            currentCoaster++;
+
+            if(currentCoaster >= options.Length) {
+                currentCoaster = 0;
+            }
+        }else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+            currentCoaster--;
+
+            if (currentCoaster < 0) {
+                currentCoaster = options.Length - 1;
+            }
         }
 
 
