@@ -7,6 +7,15 @@ public class CoasterSpawning : MonoBehaviour {
     //the coasters connected to the controller that you scroll through
     public GameObject[] options;
 
+    //all of the possible thumbnails that are scrolled through (options is the actual one that spawns)
+    public GameObject[] thumbnails;
+
+    //the parent of the thumbnails
+    public GameObject thumbnailPlacement;
+
+    //the thumbnail currently being displayed
+    GameObject currentThumbnail;
+
     //the current coaster scrolled to
     int currentCoaster = 0;
 
@@ -19,10 +28,13 @@ public class CoasterSpawning : MonoBehaviour {
     bool lastspawned;
 
 	void Start () {
-		
-	}
-	
-	void Update () {
+        currentThumbnail = Instantiate(thumbnails[currentCoaster]);
+        currentThumbnail.transform.parent = thumbnailPlacement.transform;
+        currentThumbnail.transform.localPosition = Vector3.zero;
+        currentThumbnail.transform.localEulerAngles = Vector3.zero;
+    }
+
+    void Update () {
 
         GameController gameController = GameController.instance;
 
@@ -35,8 +47,8 @@ public class CoasterSpawning : MonoBehaviour {
 
             newCoaster.transform.parent = newCoaster.transform.root;
 
-            newCoaster.transform.position = rightController.transform.position + Vector3.up * 0;
-            newCoaster.transform.eulerAngles = rightController.transform.eulerAngles + Vector3.up * 90; //the thumbnail is rotated 90 degrees from the controller
+            newCoaster.transform.position = thumbnailPlacement.transform.position;
+            newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
 
         } else if(Input.GetAxis("RightTrigger") != 1) {
             lastspawned = false;
@@ -48,12 +60,23 @@ public class CoasterSpawning : MonoBehaviour {
             if(currentCoaster >= options.Length) {
                 currentCoaster = 0;
             }
-        }else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+
+            Destroy(currentThumbnail);
+            currentThumbnail = Instantiate(thumbnails[currentCoaster]);
+            currentThumbnail.transform.parent = thumbnailPlacement.transform;
+            currentThumbnail.transform.localPosition = Vector3.zero;
+            currentThumbnail.transform.localEulerAngles = Vector3.zero;
+        } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
             currentCoaster--;
 
             if (currentCoaster < 0) {
                 currentCoaster = options.Length - 1;
             }
+            Destroy(currentThumbnail);
+            currentThumbnail = Instantiate(thumbnails[currentCoaster]);
+            currentThumbnail.transform.parent = thumbnailPlacement.transform;
+            currentThumbnail.transform.localPosition = Vector3.zero;
+            currentThumbnail.transform.localEulerAngles = Vector3.zero;
         }
 
 
