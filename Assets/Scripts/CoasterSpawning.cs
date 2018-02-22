@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CoasterSpawning : MonoBehaviour {
 
+    //Which mode it is currently on (move or place mode)
+    int currentMode = 0;
+
     //the coasters connected to the controller that you scroll through
     public GameObject[] options;
 
