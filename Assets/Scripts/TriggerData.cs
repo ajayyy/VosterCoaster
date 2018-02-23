@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class TriggerData : MonoBehaviour {
 
-    BoxCollider collider;
-
-    public bool colliding;
+    public List<Collider> collidingObjects = new List<Collider>();
 
 	void Start () {
-        collider = GetComponent<BoxCollider>();
+
 	}
 	
 	void Update () {
@@ -17,14 +15,10 @@ public class TriggerData : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider other) {
-        colliding = true;
-    }
-
-    void OnTriggerStay(Collider other) {
-        colliding = true;
+        collidingObjects.Add(other);
     }
 
     void OnTriggerExit(Collider other) {
-        colliding = false;
+        collidingObjects.Remove(other);
     }
 }
