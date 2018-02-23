@@ -39,6 +39,8 @@ public class CoasterSpawning : MonoBehaviour {
 
     void Update () {
 
+        print(rightController.GetComponent<TriggerData>().colliding);
+
         GameController gameController = GameController.instance;
 
         //print(Input.GetAxis("RightTrigger") + " " + Input.GetAxis("LeftTrigger"));   ,
