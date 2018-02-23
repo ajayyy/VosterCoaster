@@ -30,6 +30,8 @@ public class CoasterSpawning : MonoBehaviour {
     //did they just hit spawn
     bool lastspawned;
 
+    
+
 	void Start () {
         currentThumbnail = Instantiate(thumbnails[currentCoaster]);
         currentThumbnail.transform.parent = thumbnailPlacement.transform;

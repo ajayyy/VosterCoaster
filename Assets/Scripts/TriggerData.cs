@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TriggerData : MonoBehaviour {
 
-    public List<Collider> collidingObjects = new List<Collider>();
+    public List<GameObject> collidingObjects = new List<GameObject>();
 
 	void Start () {
 
@@ -15,10 +15,10 @@ public class TriggerData : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider other) {
-        collidingObjects.Add(other);
+        collidingObjects.Add(other.gameObject);
     }
 
     void OnTriggerExit(Collider other) {
-        collidingObjects.Remove(other);
+        collidingObjects.Remove(other.gameObject);
     }
 }
