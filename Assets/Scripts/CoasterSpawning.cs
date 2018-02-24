@@ -27,16 +27,23 @@ public class CoasterSpawning : MonoBehaviour {
     //for getting inputs
     public SteamVR_TrackedController rightTracking;
 
+    //for getting velocities
+    SteamVR_Controller.Device rightDevice;
+
     //did they just hit spawn
     bool lastspawned;
 
-    
+    //objects that the controller is currently holding on to (only right controller for now
+    List<GameObject> attachedObjects = new List<GameObject>();
 
 	void Start () {
         currentThumbnail = Instantiate(thumbnails[currentCoaster]);
         currentThumbnail.transform.parent = thumbnailPlacement.transform;
         currentThumbnail.transform.localPosition = Vector3.zero;
         currentThumbnail.transform.localEulerAngles = Vector3.zero;
+
+        rightDevice = SteamVR_Controller.Input(SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost));
+
     }
 
     void Update () {
@@ -47,43 +54,74 @@ public class CoasterSpawning : MonoBehaviour {
 
         //print(Input.GetAxis("RightTrigger") + " " + Input.GetAxis("LeftTrigger"));   ,
 
-        if(Input.GetAxis("RightTrigger") == 1 && !lastspawned) {
-            lastspawned = true;
+        if (currentMode == 0) {
 
-            GameObject newCoaster = Instantiate(options[currentCoaster]);
+            if (Input.GetAxis("RightTrigger") == 1 && !lastspawned) {
+                lastspawned = true;
 
-            newCoaster.transform.parent = newCoaster.transform.root;
+                GameObject newCoaster = Instantiate(options[currentCoaster]);
 
-            newCoaster.transform.position = thumbnailPlacement.transform.position;
-            newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
+                newCoaster.transform.parent = newCoaster.transform.root;
 
-        } else if(Input.GetAxis("RightTrigger") != 1) {
-            lastspawned = false;
-        }
+                newCoaster.transform.position = thumbnailPlacement.transform.position;
+                newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
 
-        if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
-            currentCoaster++;
-
-            if(currentCoaster >= options.Length) {
-                currentCoaster = 0;
+            } else if (Input.GetAxis("RightTrigger") != 1) {
+                lastspawned = false;
             }
 
-            Destroy(currentThumbnail);
-            currentThumbnail = Instantiate(thumbnails[currentCoaster]);
-            currentThumbnail.transform.parent = thumbnailPlacement.transform;
-            currentThumbnail.transform.localPosition = Vector3.zero;
-            currentThumbnail.transform.localEulerAngles = Vector3.zero;
-        } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
-            currentCoaster--;
+            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
+                currentCoaster++;
+                currentMode = 1;
 
-            if (currentCoaster < 0) {
-                currentCoaster = options.Length - 1;
+                if (currentCoaster >= options.Length) {
+                    currentCoaster = 0;
+                }
+
+                Destroy(currentThumbnail);
+                currentThumbnail = Instantiate(thumbnails[currentCoaster]);
+                currentThumbnail.transform.parent = thumbnailPlacement.transform;
+                currentThumbnail.transform.localPosition = Vector3.zero;
+                currentThumbnail.transform.localEulerAngles = Vector3.zero;
+            } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+                currentCoaster--;
+
+                if (currentCoaster < 0) {
+                    currentCoaster = options.Length - 1;
+                }
+                Destroy(currentThumbnail);
+                currentThumbnail = Instantiate(thumbnails[currentCoaster]);
+                currentThumbnail.transform.parent = thumbnailPlacement.transform;
+                currentThumbnail.transform.localPosition = Vector3.zero;
+                currentThumbnail.transform.localEulerAngles = Vector3.zero;
             }
-            Destroy(currentThumbnail);
-            currentThumbnail = Instantiate(thumbnails[currentCoaster]);
-            currentThumbnail.transform.parent = thumbnailPlacement.transform;
-            currentThumbnail.transform.localPosition = Vector3.zero;
-            currentThumbnail.transform.localEulerAngles = Vector3.zero;
+
+        }else if(currentMode == 1) {
+
+            TriggerData triggerData = rightController.GetComponent<TriggerData>();
+
+            if (triggerData.collidingObjects.Count > 0 && Input.GetAxis("RightTrigger") == 1 && !attachedObjects.Contains(triggerData.collidingObjects[0])) {
+                triggerData.collidingObjects[0].transform.parent = thumbnailPlacement.transform;
+                triggerData.collidingObjects[0].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+
+                attachedObjects.Add(triggerData.collidingObjects[0]);
+            }
+
+            if (attachedObjects.Count > 0 && Input.GetAxis("RightTrigger") == 0) {
+                attachedObjects[0].transform.parent = transform.root;
+
+                print(rightDevice.velocity);
+
+                attachedObjects[0].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                attachedObjects[0].GetComponent<Rigidbody>().AddForce(rightDevice.velocity * 100);
+
+                attachedObjects.RemoveAt(0);
+            }
+
+            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+                currentMode = 0;
+            }
+
         }
 
 
