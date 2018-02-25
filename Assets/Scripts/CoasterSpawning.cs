@@ -36,6 +36,9 @@ public class CoasterSpawning : MonoBehaviour {
     //objects that the controller is currently holding on to (only right controller for now
     List<GameObject> attachedObjects = new List<GameObject>();
 
+    //the text that says what mode the rightcontroller is currenly on
+    public GameObject modeText;
+
 	void Start () {
         currentThumbnail = Instantiate(thumbnails[currentCoaster]);
         currentThumbnail.transform.parent = thumbnailPlacement.transform;
@@ -72,7 +75,11 @@ public class CoasterSpawning : MonoBehaviour {
 
             if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
                 currentCoaster++;
+
+                //change mode
                 currentMode = 1;
+                modeText.GetComponent<TextMesh>().text = "Move Mode";
+                modeText.GetComponent<Animator>().SetTrigger("fade");
 
                 if (currentCoaster >= options.Length) {
                     currentCoaster = 0;
@@ -119,7 +126,12 @@ public class CoasterSpawning : MonoBehaviour {
             }
 
             if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+
+                //change mode
                 currentMode = 0;
+
+                modeText.GetComponent<TextMesh>().text = "Place Mode";
+                modeText.GetComponent<Animator>().SetTrigger("fade");
             }
 
         }
