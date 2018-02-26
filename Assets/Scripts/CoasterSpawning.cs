@@ -55,7 +55,7 @@ public class CoasterSpawning : MonoBehaviour {
 
         GameController gameController = GameController.instance;
 
-        //print(Input.GetAxis("RightTrigger") + " " + Input.GetAxis("LeftTrigger"));   ,
+        print(gameController.rightController.GetAxis().y);
 
         if (currentMode == 0) {
 
@@ -73,13 +73,20 @@ public class CoasterSpawning : MonoBehaviour {
                 lastspawned = false;
             }
 
-            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
-                currentCoaster++;
-
+            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y > 0.5) {
                 //change mode
                 currentMode = 1;
                 modeText.GetComponent<TextMesh>().text = "Move Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
+
+            } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y < -0.5) {
+                //change mode
+                currentMode = 1;
+                modeText.GetComponent<TextMesh>().text = "Move Mode";
+                modeText.GetComponent<Animator>().SetTrigger("fade");
+
+            } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
+                currentCoaster++;
 
                 if (currentCoaster >= options.Length) {
                     currentCoaster = 0;
@@ -125,15 +132,23 @@ public class CoasterSpawning : MonoBehaviour {
                 attachedObjects.RemoveAt(0);
             }
 
-            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
+            if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y > 0.5) {
 
                 //change mode
                 currentMode = 0;
 
                 modeText.GetComponent<TextMesh>().text = "Place Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
-            }
 
+            } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y < -0.5) {
+
+                //change mode
+                currentMode = 0;
+
+                modeText.GetComponent<TextMesh>().text = "Place Mode";
+                modeText.GetComponent<Animator>().SetTrigger("fade");
+
+            }
         }
 
 
