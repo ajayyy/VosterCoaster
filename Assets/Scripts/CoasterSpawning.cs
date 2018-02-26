@@ -79,11 +79,15 @@ public class CoasterSpawning : MonoBehaviour {
                 modeText.GetComponent<TextMesh>().text = "Move Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
 
+                currentThumbnail.SetActive(false);
+
             } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y < -0.5) {
                 //change mode
                 currentMode = 1;
                 modeText.GetComponent<TextMesh>().text = "Move Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
+
+                currentThumbnail.SetActive(false);
 
             } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x > 0) {
                 currentCoaster++;
@@ -140,6 +144,8 @@ public class CoasterSpawning : MonoBehaviour {
                 modeText.GetComponent<TextMesh>().text = "Place Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
 
+                currentThumbnail.SetActive(true);
+
             } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().y < -0.5) {
 
                 //change mode
@@ -147,6 +153,8 @@ public class CoasterSpawning : MonoBehaviour {
 
                 modeText.GetComponent<TextMesh>().text = "Place Mode";
                 modeText.GetComponent<Animator>().SetTrigger("fade");
+
+                currentThumbnail.SetActive(true);
 
             }
         }
