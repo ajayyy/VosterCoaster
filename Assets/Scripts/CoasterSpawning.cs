@@ -114,11 +114,11 @@ public class CoasterSpawning : MonoBehaviour {
                 currentThumbnail.transform.localEulerAngles = Vector3.zero;
             }
 
-        }else if(currentMode == 1) {
+        } else if(currentMode == 1) {
 
             TriggerData triggerData = rightController.GetComponent<TriggerData>();
 
-            if (triggerData.collidingObjects.Count > 0 && Input.GetAxis("RightTrigger") == 1 && !attachedObjects.Contains(triggerData.collidingObjects[0])) {
+            if (triggerData.collidingObjects.Count > 0 && Input.GetAxis("RightTrigger") >= 0.96 && !attachedObjects.Contains(triggerData.collidingObjects[0])) {
                 triggerData.collidingObjects[0].transform.parent = thumbnailPlacement.transform;
                 triggerData.collidingObjects[0].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
