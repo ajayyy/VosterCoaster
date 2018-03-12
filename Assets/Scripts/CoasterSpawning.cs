@@ -60,14 +60,19 @@ public class CoasterSpawning : MonoBehaviour {
         if (currentMode == 0) {
 
             if (Input.GetAxis("RightTrigger") == 1 && !lastspawned) {
-                lastspawned = true;
 
-                GameObject newCoaster = Instantiate(options[currentCoaster]);
+                RaycastHit hit;
 
-                newCoaster.transform.parent = newCoaster.transform.root;
+                if (Physics.Raycast(rightController.transform.position, Vector3.down, out hit)) {
+                    lastspawned = true;
 
-                newCoaster.transform.position = thumbnailPlacement.transform.position;
-                newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
+                    GameObject newCoaster = Instantiate(options[currentCoaster]);
+
+                    newCoaster.transform.parent = newCoaster.transform.root;
+
+                    newCoaster.transform.position = hit.point;
+                    //newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
+                }
 
             } else if (Input.GetAxis("RightTrigger") != 1) {
                 lastspawned = false;
