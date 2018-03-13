@@ -57,6 +57,13 @@ public class CoasterSpawning : MonoBehaviour {
 
         print(gameController.rightController.GetAxis().y);
 
+        RaycastHit groundHit;
+
+        if (Physics.Raycast(rightController.transform.position, Vector3.down, out groundHit)) {
+            currentThumbnail.transform.position = groundHit.point;
+        }
+        currentThumbnail.transform.eulerAngles = new Vector3(0, rightController.transform.eulerAngles.y, 0);
+
         if (currentMode == 0) {
 
             if (Input.GetAxis("RightTrigger") == 1 && !lastspawned) {
@@ -71,7 +78,7 @@ public class CoasterSpawning : MonoBehaviour {
                     newCoaster.transform.parent = newCoaster.transform.root;
 
                     newCoaster.transform.position = hit.point;
-                    //newCoaster.transform.eulerAngles = thumbnailPlacement.transform.eulerAngles;
+                    newCoaster.transform.eulerAngles = new Vector3(0, currentThumbnail.transform.eulerAngles.y, 0);
                 }
 
             } else if (Input.GetAxis("RightTrigger") != 1) {
@@ -103,7 +110,7 @@ public class CoasterSpawning : MonoBehaviour {
 
                 Destroy(currentThumbnail);
                 currentThumbnail = Instantiate(thumbnails[currentCoaster]);
-                currentThumbnail.transform.parent = thumbnailPlacement.transform;
+                //currentThumbnail.transform.parent = thumbnailPlacement.transform;
                 currentThumbnail.transform.localPosition = Vector3.zero;
                 currentThumbnail.transform.localEulerAngles = Vector3.zero;
             } else if (Input.GetButtonDown("RightTrackpadClick") && gameController.rightController.GetAxis().x < 0) {
@@ -114,7 +121,7 @@ public class CoasterSpawning : MonoBehaviour {
                 }
                 Destroy(currentThumbnail);
                 currentThumbnail = Instantiate(thumbnails[currentCoaster]);
-                currentThumbnail.transform.parent = thumbnailPlacement.transform;
+                //currentThumbnail.transform.parent = thumbnailPlacement.transform;
                 currentThumbnail.transform.localPosition = Vector3.zero;
                 currentThumbnail.transform.localEulerAngles = Vector3.zero;
             }
