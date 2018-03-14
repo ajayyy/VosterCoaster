@@ -72,7 +72,9 @@ public class CoasterSpawning : MonoBehaviour {
 
                     Vector3 spawnPosition = currentThumbnail.transform.position;
 
-                    if(groundHit.collider.gameObject.tag == "Track") {
+                    float spawnRotation = currentThumbnail.transform.eulerAngles.y;
+
+                    if (groundHit.collider.gameObject.tag == "Track") {
 
                         Vector3 spawnPositionForward = groundHit.collider.gameObject.transform.position + (groundHit.collider.gameObject.transform.forward * ((BoxCollider)groundHit.collider).size.z) * groundHit.collider.gameObject.transform.localScale.x;
                         Vector3 spawnPositionBackward = groundHit.collider.gameObject.transform.position + ((-groundHit.collider.gameObject.transform.forward) * ((BoxCollider)groundHit.collider).size.z) * groundHit.collider.gameObject.transform.localScale.x;
@@ -85,6 +87,8 @@ public class CoasterSpawning : MonoBehaviour {
                         } else {
                             spawnPosition = spawnPositionBackward;
                         }
+
+                        spawnRotation = groundHit.collider.gameObject.transform.eulerAngles.y;
                     }
 
                     lastspawned = true;
@@ -94,7 +98,7 @@ public class CoasterSpawning : MonoBehaviour {
                     newCoaster.transform.parent = newCoaster.transform.root;
 
                     newCoaster.transform.position = spawnPosition;
-                    newCoaster.transform.eulerAngles = new Vector3(0, currentThumbnail.transform.eulerAngles.y, 0);
+                    newCoaster.transform.eulerAngles = new Vector3(0, spawnRotation, 0);
                 }
 
             } else if (Input.GetAxis("RightTrigger") != 1) {
