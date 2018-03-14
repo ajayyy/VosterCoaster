@@ -55,12 +55,12 @@ public class CoasterSpawning : MonoBehaviour {
 
         GameController gameController = GameController.instance;
 
-        print(gameController.rightController.GetAxis().y);
-
         RaycastHit groundHit;
 
-        if (Physics.Raycast(rightController.transform.position, Vector3.down, out groundHit)) {
-            currentThumbnail.transform.position = groundHit.point;
+        bool groundBoxCastCollided = Physics.BoxCast(rightController.transform.position, (options[currentCoaster].GetComponent<BoxCollider>()).size * options[currentCoaster].transform.localScale.x / 2, Vector3.down, out groundHit, Quaternion.Euler(new Vector3(180, 0, 0)));
+
+        if (groundBoxCastCollided) {
+            currentThumbnail.transform.position = new Vector3(rightController.transform.position.x, groundHit.point.y, rightController.transform.position.z);
         }
         currentThumbnail.transform.eulerAngles = new Vector3(0, rightController.transform.eulerAngles.y, 0);
 
@@ -68,14 +68,23 @@ public class CoasterSpawning : MonoBehaviour {
 
             if (Input.GetAxis("RightTrigger") == 1 && !lastspawned) {
 
-                RaycastHit hit;
+                if (groundBoxCastCollided) {
 
-                if (Physics.Raycast(rightController.transform.position, Vector3.down, out hit)) {
+                    Vector3 spawnPosition = currentThumbnail.transform.position;
 
-                    Vector3 spawnPosition = hit.point;
+                    if(groundHit.collider.gameObject.tag == "Track") {
 
-                    if(hit.collider.gameObject.tag == "Track") {
-                        spawnPosition = hit.collider.gameObject.transform.position + ((BoxCollider) hit.collider).size * hit.collider.gameObject.transform.localScale.x;
+                        Vector3 spawnPositionForward = groundHit.collider.gameObject.transform.position + (groundHit.collider.gameObject.transform.forward * ((BoxCollider)groundHit.collider).size.z) * groundHit.collider.gameObject.transform.localScale.x;
+                        Vector3 spawnPositionBackward = groundHit.collider.gameObject.transform.position + ((-groundHit.collider.gameObject.transform.forward) * ((BoxCollider)groundHit.collider).size.z) * groundHit.collider.gameObject.transform.localScale.x;
+
+                        float distForward = Vector3.Distance(currentThumbnail.transform.position, spawnPositionForward);
+                        float distBackward = Vector3.Distance(currentThumbnail.transform.position, spawnPositionBackward);
+
+                        if(distForward < distBackward) {
+                            spawnPosition = spawnPositionForward;
+                        } else {
+                            spawnPosition = spawnPositionBackward;
+                        }
                     }
 
                     lastspawned = true;
