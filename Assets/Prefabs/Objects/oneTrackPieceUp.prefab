@@ -1042,7 +1042,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4451520585885530}
-  - component: {fileID: 54574121603075174}
   - component: {fileID: 65677553314615048}
   m_Layer: 0
   m_Name: oneTrackPieceUp
@@ -4392,21 +4391,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1028711036479626}
   m_Mesh: {fileID: 4300076, guid: 507090f32cb622445b299a898f1c0016, type: 3}
---- !u!54 &54574121603075174
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1951086279752096}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &65677553314615048
 BoxCollider:
   m_ObjectHideFlags: 1
