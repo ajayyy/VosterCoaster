@@ -71,13 +71,20 @@ public class CoasterSpawning : MonoBehaviour {
                 RaycastHit hit;
 
                 if (Physics.Raycast(rightController.transform.position, Vector3.down, out hit)) {
+
+                    Vector3 spawnPosition = hit.point;
+
+                    if(hit.collider.gameObject.tag == "Track") {
+                        spawnPosition = hit.collider.gameObject.transform.position + ((BoxCollider) hit.collider).size * hit.collider.gameObject.transform.localScale.x;
+                    }
+
                     lastspawned = true;
 
                     GameObject newCoaster = Instantiate(options[currentCoaster]);
 
                     newCoaster.transform.parent = newCoaster.transform.root;
 
-                    newCoaster.transform.position = hit.point;
+                    newCoaster.transform.position = spawnPosition;
                     newCoaster.transform.eulerAngles = new Vector3(0, currentThumbnail.transform.eulerAngles.y, 0);
                 }
 
