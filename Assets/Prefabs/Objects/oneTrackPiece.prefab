@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 54020375131877592}
   m_Layer: 0
   m_Name: oneTrackPiece
-  m_TagString: Untagged
+  m_TagString: Track
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4417,5 +4417,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.11, y: 2.12, z: 5.14}
-  m_Center: {x: 0, y: 1.04, z: 0}
+  m_Size: {x: 4.1099977, y: 2.1200001, z: 4.9647975}
+  m_Center: {x: 0, y: 1.04, z: 0.08760101}
