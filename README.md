@@ -29,8 +29,3 @@ Make an issue with your planned changes to make sure no one is working on the sa
 # License
 
 This project is under the GNU General Public License v3.0.
-
-A **summary** of the GNU General Public License v3.0 can be found below.
-
-
-![summary of license](https://i.imgur.com/EuAAO8Z.png)
