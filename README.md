@@ -28,4 +28,4 @@ Make an issue with your planned changes to make sure no one is working on the sa
 
 # License
 
-This project is under the GNU General Public License v3.0.
+This project is under the MIT License
