@@ -10,7 +10,7 @@ public class AddIncline : MonoBehaviour {
     //array of all of the parents of the rail bones. This will be set by the inspector
     public GameObject[] railParents = new GameObject[3];
 
-    Vector3 adjustmentAngle = new Vector3(9, 0, 0); //the number in the x represents the total angle the whole track rotates divided by 10
+    Vector3 adjustmentAngle = new Vector3(4.5f, 0, 0); //the number in the x represents the total angle the whole track rotates divided by 10
 
     void Start() {
         //create the rails array from the railParents
