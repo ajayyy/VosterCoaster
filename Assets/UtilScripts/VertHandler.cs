@@ -47,11 +47,28 @@ public class VertHandler : MonoBehaviour {
 
         handles = GameObject.FindGameObjectsWithTag(TAG_HANDLE);
 
+        //print(verts.Length);
+
+        float angleAdjustment = 0;
+
         for (int i = 0; i < verts.Length; i++) {
-            verts[i] = handles[i].transform.localPosition;
+
+            if(i % 30 == 0) {
+                angleAdjustment += 5;
+            }
+
+            int number = i / 30 - 10;
+            if (number < 0) number = 0;
+
+            float fullAngleX = Mathf.Cos(angleAdjustment * Mathf.Deg2Rad);
+            float fullAngleY = Mathf.Sin(angleAdjustment * Mathf.Deg2Rad);
+
+            //print(fullAngleX + "   " + fullAngleY);
+
+            verts[i] = handles[i].transform.localPosition + Vector3.up * (fullAngleY) + Vector3.right * fullAngleX + Vector3.up;
         }
 
-        mesh.vertices = verts;
+        
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
 
