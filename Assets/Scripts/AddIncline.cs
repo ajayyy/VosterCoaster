@@ -10,7 +10,7 @@ public class AddIncline : MonoBehaviour {
     //array of all of the parents of the rail bones. This will be set by the inspector
     public GameObject[] railParents = new GameObject[3];
 
-    Vector3 adjustmentAngle = new Vector3(0, 10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
+    Vector3 adjustmentAngle = new Vector3(0, -10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
 
     void Start() {
         //create the rails array from the railParents
@@ -54,13 +54,17 @@ public class AddIncline : MonoBehaviour {
                 rails[i][r].transform.localPosition *= multiplier;
                 if(r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
-                    //rails[i][r].transform.localPosition += 0.40264f * new Vector3(1, 0, 0);
                 }
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accomidate
-                    if (i != 1) { //in this case, 1 is the inside rail (doing just zero for now as a test, in the final version it should be based on if the angle is negative or positive)
-                        //get full offset compared to rails[1]
-                        float offset = Mathf.Abs(railParents[1].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+                    int insideRail = 0;
+                    if (adjustmentAngle.y > 0) {
+                        insideRail = 1;
+                    }
+
+                    if (i != insideRail) { //in this case, 1 is the inside rail (doing just zero for now as a test, in the final version it should be based on if the angle is negative or positive)
+                        //get full offset compared to rails[insideRail]
+                        float offset = Mathf.Abs(railParents[insideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
 
                         //radius of the inside circle
                         float radius1 = Mathf.Abs(sizes[i]);
