@@ -32,4 +32,4 @@ This project is under the MIT License
 
 # Updates
 
-Follor https://twitter.com/VosterCoaster
+See https://twitter.com/VosterCoaster
