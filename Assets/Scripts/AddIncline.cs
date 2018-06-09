@@ -35,7 +35,7 @@ public class AddIncline : MonoBehaviour {
         }
 
         for (int i = 0; i < rails.Length; i++) {
-            for (int r = 1; r < rails[i].Length; r++) {
+            for (int r = 1; r < rails[i].Length - 1; r++) {
                 //Attempt to rotate them all
                 rails[i][r].transform.localEulerAngles += adjustmentAngle;
             }
@@ -48,10 +48,14 @@ public class AddIncline : MonoBehaviour {
 
             float multiplier = sizes[i] / difference;
 
-            for (int r = 1; r < rails[i].Length; r++) {
+            for (int r = 1; r < rails[i].Length - 1; r++) {
                 Vector3 pos = rails[i][r].transform.position;
 
                 rails[i][r].transform.localPosition *= multiplier;
+                if(r == rails[i].Length - 2) {
+                    rails[i][r].transform.localPosition *= 2;
+                    //rails[i][r].transform.localPosition += 0.40264f * new Vector3(1, 0, 0);
+                }
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accomidate
                     if (i != 1) { //in this case, 1 is the inside rail (doing just zero for now as a test, in the final version it should be based on if the angle is negative or positive)
