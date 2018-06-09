@@ -10,7 +10,7 @@ public class AddIncline : MonoBehaviour {
     //array of all of the parents of the rail bones. This will be set by the inspector
     public GameObject[] railParents = new GameObject[3];
 
-    Vector3 adjustmentAngle = new Vector3(0, -10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
+    Vector3 adjustmentAngle = new Vector3(0, 10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
 
     void Start() {
         //create the rails array from the railParents
@@ -56,7 +56,7 @@ public class AddIncline : MonoBehaviour {
                     rails[i][r].transform.localPosition *= 2;
                 }
 
-                if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accomidate
+                if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accommodate
                     int insideRail = 0;
                     if (adjustmentAngle.y > 0) {
                         insideRail = 1;
