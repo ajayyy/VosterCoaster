@@ -219,9 +219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   railParents:
-  - {fileID: 1560234621}
   - {fileID: 329350369}
   - {fileID: 1173543783}
+  - {fileID: 1560234621}
 --- !u!4 &446856884
 Transform:
   m_ObjectHideFlags: 0
@@ -389,6 +389,10 @@ Prefab:
     - target: {fileID: 4851472451675188, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalPosition.z
       value: -0.402642
+      objectReference: {fileID: 0}
+    - target: {fileID: 1895833612636966, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
