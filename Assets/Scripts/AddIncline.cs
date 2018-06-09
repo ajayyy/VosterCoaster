@@ -65,7 +65,7 @@ public class AddIncline : MonoBehaviour {
 
                         print(radius1 + "  " + radius2 + "    " + radius2/radius1);
 
-                        //rails[i][r].transform.localPosition *= radius2/radius1;
+                        rails[i][r].transform.localPosition *= radius2 / radius1;
                     }
                 }
             }
