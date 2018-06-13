@@ -10,7 +10,7 @@ public class AddIncline : MonoBehaviour {
     //array of all of the parents of the rail bones. This will be set by the inspector
     public GameObject[] railParents = new GameObject[3];
 
-    Vector3 adjustmentAngle = new Vector3(0, 10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
+    Vector3 adjustmentAngle = new Vector3(0, 5, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
 
     void Start() {
         //create the rails array from the railParents
@@ -68,12 +68,12 @@ public class AddIncline : MonoBehaviour {
 
                         //off set if not the full circumference, divide it by the angle in some way
 
+                        //calculate the full angle this track piece gets to
                         float totalAngle = adjustmentAngle.y * 9f;
-                        float size = Mathf.Abs(sizes[i]) / (totalAngle / 90f);
 
-                        //radius of the inside circle
-                        float radius1 = size;
-                        //radius of outside circle (rails[i])
+                        //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
+                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngle * Mathf.Deg2Rad);
+                        //radius of inside circle (rails[i])
                         float radius2 = radius1 - offset;
 
                         print(radius1 + "  " + radius2 + "    " + radius2/radius1);
