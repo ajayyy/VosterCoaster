@@ -56,20 +56,25 @@ public class AddIncline : MonoBehaviour {
                     rails[i][r].transform.localPosition *= 2;
                 }
 
-                if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accommodate
-                    int insideRail = 0;
+                if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
+                    int outsideRail = 1;
                     if (adjustmentAngle.y > 0) {
-                        insideRail = 1;
+                        outsideRail = 0;
                     }
 
-                    if (i != insideRail) { //in this case, 1 is the inside rail (doing just zero for now as a test, in the final version it should be based on if the angle is negative or positive)
-                        //get full offset compared to rails[insideRail]
-                        float offset = Mathf.Abs(railParents[insideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+                    if (i != outsideRail) {
+                        //get full offset compared to rails[outsideRail]
+                        float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+
+                        //off set if not the full circumference, divide it by the angle in some way
+
+                        float totalAngle = adjustmentAngle.y * 9f;
+                        float size = Mathf.Abs(sizes[i]) / (totalAngle / 90f);
 
                         //radius of the inside circle
-                        float radius1 = Mathf.Abs(sizes[i]);
+                        float radius1 = size;
                         //radius of outside circle (rails[i])
-                        float radius2 = radius1 + offset;
+                        float radius2 = radius1 - offset;
 
                         print(radius1 + "  " + radius2 + "    " + radius2/radius1);
 
