@@ -10,7 +10,7 @@ public class AddIncline : MonoBehaviour {
     //array of all of the parents of the rail bones. This will be set by the inspector
     public GameObject[] railParents = new GameObject[3];
 
-    Vector3 adjustmentAngle = new Vector3(0, 10, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
+    Vector3 adjustmentAngle = new Vector3(0, 3, 0); //the number in the x represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
 
     void Start() {
         //create the rails array from the railParents
@@ -56,20 +56,23 @@ public class AddIncline : MonoBehaviour {
                     rails[i][r].transform.localPosition *= 2;
                 }
 
-                if (adjustmentAngle.y != 0) { //making a turn, extend outside curves to accommodate
-                    int insideRail = 0;
+                if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
+                    int outsideRail = 1;
                     if (adjustmentAngle.y > 0) {
-                        insideRail = 1;
+                        outsideRail = 0;
                     }
 
-                    if (i != insideRail) { //in this case, 1 is the inside rail (doing just zero for now as a test, in the final version it should be based on if the angle is negative or positive)
-                        //get full offset compared to rails[insideRail]
-                        float offset = Mathf.Abs(railParents[insideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+                    if (i != outsideRail) {
+                        //get full offset compared to rails[outsideRail]
+                        float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
 
-                        //radius of the inside circle
-                        float radius1 = Mathf.Abs(sizes[i]);
-                        //radius of outside circle (rails[i])
-                        float radius2 = radius1 + offset;
+                        //calculate the full angle this track piece gets to
+                        float totalAngle = 90 - adjustmentAngle.y * 9f;
+
+                        //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
+                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngle * Mathf.Deg2Rad);
+                        //radius of inside circle (rails[i])
+                        float radius2 = radius1 - offset;
 
                         print(radius1 + "  " + radius2 + "    " + radius2/radius1);
 
