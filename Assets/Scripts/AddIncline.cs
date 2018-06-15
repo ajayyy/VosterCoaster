@@ -10,14 +10,17 @@ public class AddIncline : MonoBehaviour {
     //variable that stores the default distance between bone points, used to reset the meshes
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
 
+    //original sizes (used for scaling)
+    float[] sizes = new float[3];
+
     float x = 1;
 
     void Start() {
-        
+        FindSizes();
     }
 
     void Update () {
-        ResetTrack();
+        //ResetTrack();
         AdjustTrack(new Vector3(0, x, 0));
 
         x += 1 * Time.deltaTime;
@@ -29,9 +32,6 @@ public class AddIncline : MonoBehaviour {
         GameObject[][] rails = new GameObject[3][];
 
         //create the rails array from the railParents
-
-        //original sizes (used for scaling)
-        float[] sizes = new float[3];
 
         for (int i = 0; i < railParents.Length; i++) {
             GameObject[] bones = new GameObject[11];
@@ -45,14 +45,15 @@ public class AddIncline : MonoBehaviour {
             }
 
             rails[i] = bones;
-
-            sizes[i] = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
         }
 
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length - 1; r++) {
                 //Attempt to rotate them all
-                rails[i][r].transform.localEulerAngles += adjustmentAngle;
+                rails[i][r].transform.localEulerAngles = adjustmentAngle;
+
+                //reset their position
+                rails[i][r].transform.localPosition = defaultBonePosition;
             }
         }
 
@@ -64,9 +65,8 @@ public class AddIncline : MonoBehaviour {
             float multiplier = sizes[i] / difference;
 
             for (int r = 1; r < rails[i].Length - 1; r++) {
-                Vector3 pos = rails[i][r].transform.position;
 
-                rails[i][r].transform.localPosition *= multiplier;
+                rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
                 if (r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
                 }
@@ -88,8 +88,6 @@ public class AddIncline : MonoBehaviour {
                         float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngle * Mathf.Deg2Rad);
                         //radius of inside circle (rails[i])
                         float radius2 = radius1 - offset;
-
-                        print(radius1 + "  " + radius2 + "    " + radius2 / radius1);
 
                         rails[i][r].transform.localPosition *= radius2 / radius1;
                     }
@@ -126,5 +124,29 @@ public class AddIncline : MonoBehaviour {
 
         }
 
+    }
+
+    //find sizes for use later when adjusting the track
+    public void FindSizes() {
+
+        //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
+        GameObject[][] rails = new GameObject[3][];
+
+        //create the rails array from the railParents
+        for (int i = 0; i < railParents.Length; i++) {
+            GameObject[] bones = new GameObject[11];
+
+            //every iteration, parent is set to the next object in the hierchy to get the next child
+            GameObject parent = railParents[i];
+
+            for (int b = 0; b < bones.Length; b++) {
+                parent = parent.transform.GetChild(0).gameObject;
+                bones[b] = parent;
+            }
+
+            rails[i] = bones;
+
+            sizes[i] = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
+        }
     }
 }
