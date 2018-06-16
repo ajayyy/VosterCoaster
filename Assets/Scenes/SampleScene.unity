@@ -184,63 +184,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!1 &329350369 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1009643211780908, guid: 2ea00258b47aa784cb6bd15c159d5d52,
-    type: 2}
-  m_PrefabInternal: {fileID: 551270750}
---- !u!1 &446856882
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 446856884}
-  - component: {fileID: 446856883}
-  m_Layer: 0
-  m_Name: AddIncline
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &446856883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 446856882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecbaceb225be7d04f8762d87f842b15e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  railParents:
-  - {fileID: 329350369}
-  - {fileID: 1173543783}
-  - {fileID: 1560234621}
---- !u!4 &446856884
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 446856882}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &551270750
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1192084389}
     m_Modifications:
     - target: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalPosition.x
@@ -256,15 +207,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
       propertyPath: m_LocalRotation.w
@@ -274,16 +225,44 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1274992015664382, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
+      propertyPath: m_Name
+      value: TrackPiece0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2ea00258b47aa784cb6bd15c159d5d52, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1173543783 stripped
+--- !u!1 &1192084388
 GameObject:
-  m_PrefabParentObject: {fileID: 1541486261646734, guid: 2ea00258b47aa784cb6bd15c159d5d52,
-    type: 2}
-  m_PrefabInternal: {fileID: 551270750}
---- !u!1 &1560234621 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1473017707842776, guid: 2ea00258b47aa784cb6bd15c159d5d52,
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1192084389}
+  m_Layer: 0
+  m_Name: RollerCoaster
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1192084389
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1192084388}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1317461800}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1317461800 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4109271492245072, guid: 2ea00258b47aa784cb6bd15c159d5d52,
     type: 2}
   m_PrefabInternal: {fileID: 551270750}

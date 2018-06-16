@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AddIncline : MonoBehaviour {
+public class TrackPiece : MonoBehaviour {
 
     //array of all of the parents of the rail bones. This will be set by the inspector
-    public GameObject[] railParents = new GameObject[3];
+    GameObject[] railParents = new GameObject[3];
 
     //variable that stores the default distance between bone points, used to reset the meshes
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
@@ -16,6 +16,7 @@ public class AddIncline : MonoBehaviour {
     float x = 1;
 
     void Start() {
+        GetParents();
         FindSizes();
     }
 
@@ -123,6 +124,15 @@ public class AddIncline : MonoBehaviour {
             }
 
         }
+
+    }
+
+    //gets rail parents
+    public void GetParents() {
+
+        railParents[0] = transform.Find("Left_Rail").gameObject;
+        railParents[1] = transform.Find("Right_Rail").gameObject;
+        railParents[2] = transform.Find("Bottom_Rail").gameObject;
 
     }
 
