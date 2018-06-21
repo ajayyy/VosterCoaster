@@ -13,18 +13,18 @@ public class TrackPiece : MonoBehaviour {
     //original sizes (used for scaling)
     float[] sizes = new float[3];
 
-    float x = 1;
+    [HideInInspector]
+    public Vector3 totalAngle = new Vector3(0, 45, 0);
 
     void Start() {
         GetParents();
         FindSizes();
+
+        AdjustTrack(totalAngle / 9);
     }
 
     void Update () {
-        //ResetTrack();
-        AdjustTrack(new Vector3(0, x, 0));
-
-        x += 1 * Time.deltaTime;
+        
     }
 
     //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
