@@ -65,6 +65,9 @@ public class TrackPiece : MonoBehaviour {
 
             float multiplier = sizes[i] / difference;
 
+            //multiplier does not make sense for the real world, remove it for now
+            multiplier = 1;
+
             for (int r = 1; r < rails[i].Length - 1; r++) {
 
                 rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
