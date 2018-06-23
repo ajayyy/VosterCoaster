@@ -20,7 +20,7 @@ public class TrackPiece : MonoBehaviour {
         GetParents();
         FindSizes();
 
-        AdjustTrack(totalAngle / 9);
+        AdjustTrack(totalAngle);
     }
 
     void Update () {
@@ -29,6 +29,10 @@ public class TrackPiece : MonoBehaviour {
 
     //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
     public void AdjustTrack(Vector3 adjustmentAngle) {
+        //set variable for total angle for other classes to view
+        totalAngle = adjustmentAngle;
+        adjustmentAngle = adjustmentAngle / 9;
+
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
 

@@ -20,7 +20,7 @@ public class RollerCoaster : MonoBehaviour {
 
     void Start () {
         //just for now, since we must start with one
-        trackPieces.Add(transform.Find("Track0").gameObject);
+        trackPieces.Add(transform.Find("TrackPiece0").gameObject);
 
         //TODO: set tracksize dynamically based on calling the TrackPiece class
 	}
@@ -71,10 +71,18 @@ public class RollerCoaster : MonoBehaviour {
         float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
 
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
-        float tracksNeeded = trackLengthRequired / trackBoneSize / 9f;
+        //int for now just to make things easier
+        int tracksNeeded = (int) (trackLengthRequired / trackBoneSize / 9f);
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
-
+        int startTrackIndex = trackPieces.IndexOf(startTrack);
+        for (int i = 1; i < tracksNeeded + 1; i++) {
+            if(startTrackIndex + i < trackPieces.Count) {
+                trackPieces[i + startTrackIndex].GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
+            } else {
+                AddTrackPiece(angle / tracksNeeded);
+            }
+        }
 
 
         //make for loop to theoretically count the needed track pieces
@@ -97,7 +105,6 @@ public class RollerCoaster : MonoBehaviour {
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
         newTrackPieceClass.totalAngle = angle;
-        newTrackPieceClass.AdjustTrack(angle);
     }
 
     public void RemoveTrackPiece(GameObject trackPiece) {
