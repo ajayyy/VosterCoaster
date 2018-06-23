@@ -6,6 +6,9 @@ public class RollerCoaster : MonoBehaviour {
 
     List<GameObject> trackPieces = new List<GameObject>();
 
+    //List containing disabled track pieces. This is used because creating and destroying gameobjects constantly causes massive amounts of lag.
+    List<GameObject> unusedTrackPieces = new List<GameObject>();
+
     //this should be calculated on the spot
     float trackSize = -4.021012071f;
 
@@ -77,6 +80,31 @@ public class RollerCoaster : MonoBehaviour {
         //make for loop to theoretically count the needed track pieces
 
 
+    }
+
+    public void AddTrackPiece (Vector3 angle) {
+        GameObject newTrackPiece;
+
+        if(unusedTrackPieces.Count > 0) {
+            newTrackPiece = unusedTrackPieces[0];
+            unusedTrackPieces.RemoveAt(0);
+
+            newTrackPiece.SetActive(true);
+        } else {
+            newTrackPiece = Instantiate(trackPrefab);
+        }
+
+        TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
+
+        newTrackPieceClass.totalAngle = angle;
+        newTrackPieceClass.AdjustTrack(angle);
+    }
+
+    public void RemoveTrackPiece(GameObject trackPiece) {
+        unusedTrackPieces.Add(trackPiece);
+        trackPieces.Remove(trackPiece);
+
+        trackPiece.SetActive(false);
     }
 
     public Vector3 getCurrentAngle() {
