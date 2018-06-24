@@ -26,7 +26,7 @@ public class RollerCoaster : MonoBehaviour {
 	}
 	
 	void Update () {
-        CreatePath(Vector3.zero, gameObject);
+        CreatePath(Vector3.zero, trackPieces[0]);
 
     }
 
@@ -72,16 +72,30 @@ public class RollerCoaster : MonoBehaviour {
 
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
-        int tracksNeeded = (int) (trackLengthRequired / trackBoneSize / 9f);
+        int tracksNeeded = (int) Mathf.Abs(trackLengthRequired / trackBoneSize / 9f);
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
         int startTrackIndex = trackPieces.IndexOf(startTrack);
         for (int i = 1; i < tracksNeeded + 1; i++) {
             if(startTrackIndex + i < trackPieces.Count) {
-                trackPieces[i + startTrackIndex].GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
+                GameObject trackPiece = trackPieces[i + startTrackIndex];
+                trackPiece.GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
+
+                trackPiece.transform.eulerAngles = angle / tracksNeeded * (i - 1);
+                //this finds the last bone
+                trackPiece.transform.position = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
             } else {
-                AddTrackPiece(angle / tracksNeeded);
+                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded);
+
+                trackPiece.transform.eulerAngles = angle / tracksNeeded * (i - 1);
+                //this finds the last bone
+                trackPiece.transform.position = trackPieces[trackPieces.Count - 2].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
             }
+        }
+
+        //remove all unneeded track pieces, don't add to i since trackPieces.Count will be continuing to shrink
+        for (int i = startTrackIndex + tracksNeeded + 1; i < trackPieces.Count;) {
+            RemoveTrackPiece(trackPieces[i]);
         }
 
 
@@ -90,7 +104,7 @@ public class RollerCoaster : MonoBehaviour {
 
     }
 
-    public void AddTrackPiece (Vector3 angle) {
+    public GameObject AddTrackPiece (Vector3 angle) {
         GameObject newTrackPiece;
 
         if(unusedTrackPieces.Count > 0) {
@@ -105,6 +119,10 @@ public class RollerCoaster : MonoBehaviour {
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
         newTrackPieceClass.totalAngle = angle;
+
+        trackPieces.Add(newTrackPiece);
+
+        return newTrackPiece;
     }
 
     public void RemoveTrackPiece(GameObject trackPiece) {
