@@ -16,7 +16,7 @@ public class RollerCoaster : MonoBehaviour {
     public static float scale = 0.008f;
 
     //the length of one track's bone
-    float trackBoneSize = 0.402642f * scale;
+    float trackBoneSize = 0.402642f;
 
     //the prefab for an empty piece of track
     public GameObject trackPrefab;
@@ -29,7 +29,11 @@ public class RollerCoaster : MonoBehaviour {
         trackPieces.Add(transform.Find("TrackPiece0").gameObject);
 
         //TODO: set tracksize dynamically based on calling the TrackPiece class
-	}
+
+        //set track bone size based on scale
+        trackBoneSize *= scale;
+
+    }
 	
 	void Update () {
         CreatePath(Vector3.zero, trackPieces[0]);
@@ -54,7 +58,7 @@ public class RollerCoaster : MonoBehaviour {
         print(amount);
 
         //temperarily hardcoded
-        Vector3 targetAngle = new Vector3(0, 100, 0);
+        Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle();
         Vector3 angle = targetAngle - currentAngle;
 
@@ -80,17 +84,18 @@ public class RollerCoaster : MonoBehaviour {
         for (int i = 1; i < tracksNeeded + 1; i++) {
             if(startTrackIndex + i < trackPieces.Count) {
                 GameObject trackPiece = trackPieces[i + startTrackIndex];
+
+                trackPiece.transform.eulerAngles = angle / tracksNeeded * (i - 1);
+                //this finds the last bone plus half of the track size (because position is based off the center of the object
+                trackPiece.transform.position = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position + new Vector3(0, 0, trackBoneSize * 5);
+
+                //adjust the track
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
 
-                trackPiece.transform.eulerAngles = angle / tracksNeeded * (i - 1);
-                //this finds the last bone
-                trackPiece.transform.position = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
             } else {
-                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded);
+                //position is the last bone
+                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded, angle / tracksNeeded * (i - 1), trackPieces[trackPieces.Count - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position);
 
-                trackPiece.transform.eulerAngles = angle / tracksNeeded * (i - 1);
-                //this finds the last bone
-                trackPiece.transform.position = trackPieces[trackPieces.Count - 2].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
             }
         }
 
@@ -105,7 +110,7 @@ public class RollerCoaster : MonoBehaviour {
 
     }
 
-    public GameObject AddTrackPiece (Vector3 angle) {
+    public GameObject AddTrackPiece (Vector3 angle, Vector3 position, Vector3 eulerAngles) {
         GameObject newTrackPiece;
 
         if(unusedTrackPieces.Count > 0) {
@@ -116,6 +121,9 @@ public class RollerCoaster : MonoBehaviour {
         } else {
             newTrackPiece = Instantiate(trackPrefab, transform);
         }
+
+        newTrackPiece.transform.eulerAngles = eulerAngles;
+        newTrackPiece.transform.position = position + new Vector3(0, 0, trackBoneSize * 5);
 
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
