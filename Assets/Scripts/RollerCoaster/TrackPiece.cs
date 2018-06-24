@@ -67,14 +67,9 @@ public class TrackPiece : MonoBehaviour {
             //get relative total offset for the adjusted track
             float difference = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
 
-            float multiplier = sizes[i] / difference;
-
-            //multiplier does not make sense for the real world, remove it for now
-            multiplier = 1;
-
             for (int r = 1; r < rails[i].Length - 1; r++) {
 
-                rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
+                rails[i][r].transform.localPosition = defaultBonePosition;
                 if (r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
                 }
