@@ -12,11 +12,17 @@ public class RollerCoaster : MonoBehaviour {
     //this should be calculated on the spot
     float trackSize = -4.021012071f;
 
+    //the scale the world is set at
+    public static float scale = 0.008f;
+
     //the length of one track's bone
-    float trackBoneSize = 0.402642f;
+    float trackBoneSize = 0.402642f * scale;
 
     //the prefab for an empty piece of track
     public GameObject trackPrefab;
+
+    //just for now, the right controller is going to be loaded in here
+    public GameObject rightController;
 
     void Start () {
         //just for now, since we must start with one
@@ -35,12 +41,7 @@ public class RollerCoaster : MonoBehaviour {
     public void CreatePath(Vector3 position, GameObject startTrack) {
         Vector3 startPositon = startTrack.transform.position;
 
-        //this won't be used in the non-testing version
-        Vector3 mousePosition = Input.mousePosition;
-        //times 1/n is the same as divided by n
-        mousePosition.Scale(new Vector3(1f / Screen.height, 1f / Screen.height, 1f));
-        mousePosition *= 10;
-        mousePosition += new Vector3(- (float) Screen.width / Screen.height * 10f / 2f, -5);
+        Vector3 controllerPosition = rightController.transform.position;
 
         //GOAL: the smallest curve possible to reach the required distance
 
@@ -49,7 +50,7 @@ public class RollerCoaster : MonoBehaviour {
 
         //get how far up it has to go
 
-        Vector3 amount = mousePosition - startPositon;
+        Vector3 amount = controllerPosition - startPositon;
         print(amount);
 
         //temperarily hardcoded
@@ -62,7 +63,7 @@ public class RollerCoaster : MonoBehaviour {
         //need to go from 0 to angle
         //find x of this angle
         //just using y part of angle for now
-        float x = (mousePosition.y - startPositon.y) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
+        float x = (controllerPosition.x - startPositon.x) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
 
         //find the radius for the cicle with this point
         float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
@@ -113,7 +114,7 @@ public class RollerCoaster : MonoBehaviour {
 
             newTrackPiece.SetActive(true);
         } else {
-            newTrackPiece = Instantiate(trackPrefab);
+            newTrackPiece = Instantiate(trackPrefab, transform);
         }
 
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();

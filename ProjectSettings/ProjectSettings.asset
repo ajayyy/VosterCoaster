@@ -279,7 +279,8 @@ PlayerSettings:
     - Oculus
   - m_BuildTarget: Metro
     m_Enabled: 0
-    m_Devices: []
+    m_Devices:
+    - WindowsMR
   - m_BuildTarget: N3DS
     m_Enabled: 0
     m_Devices: []
