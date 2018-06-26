@@ -54,9 +54,6 @@ public class RollerCoaster : MonoBehaviour {
 
         //get how far up it has to go
 
-        Vector3 amount = controllerPosition - startPositon;
-        print(amount);
-
         //temperarily hardcoded
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
@@ -67,7 +64,8 @@ public class RollerCoaster : MonoBehaviour {
         //need to go from 0 to angle
         //find x of this angle
         //just using y part of angle for now
-        float x = (controllerPosition.x - startPositon.x) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
+
+        float x = (controllerPosition.z - startPositon.z) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
 
         //find the radius for the cicle with this point
         float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
@@ -86,7 +84,7 @@ public class RollerCoaster : MonoBehaviour {
             if(startTrackIndex + i < trackPieces.Count) {
                 GameObject trackPiece = trackPieces[i + startTrackIndex];
 
-                Vector3 eulerAngles = angle / tracksNeeded * (i - 1);
+                Vector3 eulerAngles = angle / (tracksNeeded * (i - 1));
                 trackPiece.transform.eulerAngles = eulerAngles;
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
                 Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position + new Vector3(0, 0, trackBoneSize * 5);
@@ -99,7 +97,7 @@ public class RollerCoaster : MonoBehaviour {
 
             } else {
                 //position is the last bone
-                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded, angle / tracksNeeded * (i - 1), trackPieces[trackPieces.Count - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position);
+                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded, angle / (tracksNeeded * (i - 1)), trackPieces[trackPieces.Count - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position);
 
             }
         }

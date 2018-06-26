@@ -13,14 +13,15 @@ public class TrackPiece : MonoBehaviour {
     //original sizes (used for scaling)
     float[] sizes = new float[3];
 
-    [HideInInspector]
-    public Vector3 totalAngle = new Vector3(0, 45, 0);
+    public Vector3 totalAngle = new Vector3(0, 0, 0);
 
     void Start() {
         GetParents();
         FindSizes();
 
-        AdjustTrack(totalAngle);
+        if (totalAngle != Vector3.zero) {
+            AdjustTrack(totalAngle);
+        }
     }
 
     void Update () {
@@ -28,10 +29,10 @@ public class TrackPiece : MonoBehaviour {
     }
 
     //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
-    public void AdjustTrack(Vector3 adjustmentAngle) {
+    public void AdjustTrack(Vector3 totalAngle) {
         //set variable for total angle for other classes to view
-        totalAngle = adjustmentAngle;
-        adjustmentAngle = adjustmentAngle / 9;
+        this.totalAngle = totalAngle;
+        Vector3 adjustmentAngle = totalAngle / 9;
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -69,7 +70,9 @@ public class TrackPiece : MonoBehaviour {
 
             for (int r = 1; r < rails[i].Length - 1; r++) {
 
-                rails[i][r].transform.localPosition = defaultBonePosition;
+                float multiplier = sizes[i] / difference;
+
+                rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
                 if (r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
                 }
@@ -85,10 +88,10 @@ public class TrackPiece : MonoBehaviour {
                         float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
 
                         //calculate the full angle this track piece gets to
-                        float totalAngle = 90 - adjustmentAngle.y * 9f;
+                        float totalAngleOfCurve = 90 - adjustmentAngle.y * 9f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
-                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngle * Mathf.Deg2Rad);
+                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
                         //radius of inside circle (rails[i])
                         float radius2 = radius1 - offset;
 

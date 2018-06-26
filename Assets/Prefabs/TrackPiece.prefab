@@ -5364,6 +5364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecbaceb225be7d04f8762d87f842b15e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalAngle: {x: 0, y: 0, z: 0}
 --- !u!137 &137096014567647588
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
