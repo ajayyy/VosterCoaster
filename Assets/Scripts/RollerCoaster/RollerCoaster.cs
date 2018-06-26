@@ -84,13 +84,13 @@ public class RollerCoaster : MonoBehaviour {
             if(startTrackIndex + i < trackPieces.Count) {
                 GameObject trackPiece = trackPieces[i + startTrackIndex];
 
-                Vector3 eulerAngles = angle / (tracksNeeded * (i - 1));
-                trackPiece.transform.eulerAngles = eulerAngles;
+                Vector3 eulerAngles = angle / tracksNeeded * (i - 1);
+                trackPiece.transform.localEulerAngles = eulerAngles;
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
-                Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position + new Vector3(0, 0, trackBoneSize * 5);
+                Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
                 //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-                trackPiece.transform.position = modifiedPosition + new Vector3(0, Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5);
+                trackPiece.transform.position = modifiedPosition + (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 10));
 
                 //adjust the track
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
