@@ -12,7 +12,7 @@ Currently, you can build a roller coaster by placing the pieces next to eachothe
 
 You will be able to click a bunch of points, and it will build a roller coaster between them.
 
-The latest code is pushed to https://github.com/ajayyy/VosterCoasterVR/tree/experimental, this most recent build in that branch might not be working at all, the latest stable version will be in the master branch. After each new stable release, the changes will be merged to the master branch.
+The latest code is pushed to [the experimental branch](https://github.com/ajayyy/VosterCoasterVR/tree/experimental), this most recent build in that branch might not be working at all, the latest stable version will be in the master branch. After each new stable release, the changes will be merged to the master branch.
 
 # Usage
 
