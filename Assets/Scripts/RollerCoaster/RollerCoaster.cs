@@ -127,7 +127,7 @@ public class RollerCoaster : MonoBehaviour {
 
         newTrackPiece.transform.eulerAngles = eulerAngles;
         //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-        newTrackPiece.transform.position = position + new Vector3(0, Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5);
+        newTrackPiece.transform.position = position - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
 
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
