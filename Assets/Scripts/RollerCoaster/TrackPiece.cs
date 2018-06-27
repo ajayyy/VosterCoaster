@@ -70,9 +70,9 @@ public class TrackPiece : MonoBehaviour {
 
             for (int r = 1; r < rails[i].Length - 1; r++) {
 
-                float multiplier = sizes[i] / difference;
+                float height = difference; //calculate height of this track piece
 
-                rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
+                rails[i][r].transform.localPosition = defaultBonePosition;
                 if (r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
                 }
@@ -91,7 +91,7 @@ public class TrackPiece : MonoBehaviour {
                         float totalAngleOfCurve = 90 - adjustmentAngle.y * 9f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
-                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
+                        float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
                         //radius of inside circle (rails[i])
                         float radius2 = radius1 - offset;
 
