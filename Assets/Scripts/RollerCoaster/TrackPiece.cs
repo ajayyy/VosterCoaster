@@ -28,7 +28,7 @@ public class TrackPiece : MonoBehaviour {
         
     }
 
-    //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
+    //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle)
     public void AdjustTrack(Vector3 totalAngle) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
@@ -85,7 +85,7 @@ public class TrackPiece : MonoBehaviour {
 
                     if (i != outsideRail) {
                         //get full offset compared to rails[outsideRail]
-                        float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+                        float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) - Mathf.Abs(railParents[i].transform.position.x);
 
                         //calculate the full angle this track piece gets to
                         float totalAngleOfCurve = 90 - adjustmentAngle.y * 9f;
