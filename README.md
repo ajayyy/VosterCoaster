@@ -14,7 +14,7 @@ You will be able to click a bunch of points, and it will build a roller coaster 
 
 # Usage
 
-1. Download [Unity 2018.1.0f2](https://unity3d.com/get-unity/download/archive)
+1. Download [Unity 2018.1.0](https://unity3d.com/get-unity/download/archive)
 2. Clone this repository
 3. Open the repository as a Unity project in Unity
 
