@@ -94,7 +94,7 @@ public class TrackPiece : MonoBehaviour {
                         float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - adjustmentAngle.y * 9f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
