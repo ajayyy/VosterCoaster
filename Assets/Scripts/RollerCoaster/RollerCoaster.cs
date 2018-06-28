@@ -103,8 +103,13 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.transform.localEulerAngles = eulerAngles;
 
             } else {
-                //position is the last bone
-                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded, angle / (tracksNeeded * (i - 1)), trackPieces[trackPieces.Count - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position);
+
+                //calculate adjustments
+                Vector3 eulerAngles = angle / tracksNeeded * (i - 1) + getCurrentAngle(startTrack);
+                //this finds the last bone plus half of the track size (because position is based off the center of the object
+                Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
+
+                GameObject trackPiece = AddTrackPiece(angle / tracksNeeded, modifiedPosition, eulerAngles);
 
             }
         }
@@ -120,7 +125,7 @@ public class RollerCoaster : MonoBehaviour {
 
     }
 
-    public GameObject AddTrackPiece (Vector3 angle, Vector3 position, Vector3 eulerAngles) {
+    public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles) {
         GameObject newTrackPiece;
 
         if(unusedTrackPieces.Count > 0) {
@@ -139,16 +144,16 @@ public class RollerCoaster : MonoBehaviour {
 
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
-        newTrackPieceClass.totalAngle = angle;
+        newTrackPieceClass.totalAngle = totalAngle;
         trackPieces.Add(newTrackPiece);
 
         //adjust the track
-        newTrackPieceClass.AdjustTrack(angle);
+        newTrackPieceClass.AdjustTrack(totalAngle);
 
         //set track rotation (after adjustment to make sure the adjustment process goes well)
         newTrackPiece.transform.eulerAngles = eulerAngles;
         //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-        newTrackPiece.transform.position = position - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+        newTrackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
 
         return newTrackPiece;
     }
