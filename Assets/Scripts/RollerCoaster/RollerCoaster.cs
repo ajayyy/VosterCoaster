@@ -92,7 +92,7 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(angle / tracksNeeded);
 
                 //calculate adjustments
-                Vector3 eulerAngles = angle / tracksNeeded * (i - 1);
+                Vector3 eulerAngles = angle / tracksNeeded * (i - 1) + getCurrentAngle(startTrack);
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
                 Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
