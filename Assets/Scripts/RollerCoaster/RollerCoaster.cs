@@ -47,6 +47,8 @@ public class RollerCoaster : MonoBehaviour {
 
         Vector3 controllerPosition = rightController.transform.position;
 
+        Vector3 deltaPosition = controllerPosition - startPositon;
+
         //GOAL: the smallest curve possible to reach the required distance
 
         //Check if it is needed to switch angles to get to it
@@ -58,6 +60,28 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
         Vector3 angle = targetAngle - currentAngle;
+        //make sure the smallest difference between the angles is found
+        angle = new Vector3(Mathf.Abs(angle.x), Mathf.Abs(angle.y), Mathf.Abs(angle.z));
+        //do 360 - angle if over 180 for each
+        {
+            float x1 = angle.x;
+            float y1 = angle.y;
+            float z1 = angle.z;
+
+            if(x1 > 180) {
+                x1 = 360 - x1;
+            }
+
+            if (y1 > 180) {
+                y1 = 360 - y1;
+            }
+
+            if (z1 > 180) {
+                z1 = 360 - z1;
+            }
+
+            angle = new Vector3(x1, y1, z1);
+        }
 
         //create a partial circle out of that angle (circumference is known)
 
@@ -65,7 +89,7 @@ public class RollerCoaster : MonoBehaviour {
         //find x of this angle
         //just using y part of angle for now
 
-        float x = (controllerPosition.z - startPositon.z) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
+        float x = (deltaPosition.z) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
 
         //find the radius for the cicle with this point
         float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
