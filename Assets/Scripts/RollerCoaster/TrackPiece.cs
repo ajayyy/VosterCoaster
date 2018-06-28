@@ -10,14 +10,10 @@ public class TrackPiece : MonoBehaviour {
     //variable that stores the default distance between bone points, used to reset the meshes
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
 
-    //original sizes (used for scaling)
-    float[] sizes = new float[3];
-
     public Vector3 totalAngle = new Vector3(0, 0, 0);
 
     void Start() {
         GetParents();
-        FindSizes();
 
         if (totalAngle != Vector3.zero) {
             AdjustTrack(totalAngle);
@@ -141,27 +137,4 @@ public class TrackPiece : MonoBehaviour {
 
     }
 
-    //find sizes for use later when adjusting the track
-    public void FindSizes() {
-
-        //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
-        GameObject[][] rails = new GameObject[3][];
-
-        //create the rails array from the railParents
-        for (int i = 0; i < railParents.Length; i++) {
-            GameObject[] bones = new GameObject[11];
-
-            //every iteration, parent is set to the next object in the hierchy to get the next child
-            GameObject parent = railParents[i];
-
-            for (int b = 0; b < bones.Length; b++) {
-                parent = parent.transform.GetChild(0).gameObject;
-                bones[b] = parent;
-            }
-
-            rails[i] = bones;
-
-            sizes[i] = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
-        }
-    }
 }
