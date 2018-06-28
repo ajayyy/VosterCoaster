@@ -12,11 +12,21 @@ public class TrackPiece : MonoBehaviour {
 
     public Vector3 totalAngle = new Vector3(0, 0, 0);
 
-    void Start() {
-        GetParents();
+    //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
+    public bool DEBUG_TEST = false;
 
-        if (totalAngle != Vector3.zero) {
-            AdjustTrack(totalAngle);
+    //has this trackpiece been initialised yet
+    bool initialised = false;
+
+    public void Start() {
+        if (!initialised) {
+            GetParents();
+
+            if (DEBUG_TEST) {
+                AdjustTrack(totalAngle);
+            }
+
+            initialised = true;
         }
     }
 

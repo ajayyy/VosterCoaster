@@ -130,17 +130,25 @@ public class RollerCoaster : MonoBehaviour {
             newTrackPiece.SetActive(true);
         } else {
             newTrackPiece = Instantiate(trackPrefab, transform);
+            newTrackPiece.GetComponent<TrackPiece>().Start();
         }
 
-        newTrackPiece.transform.eulerAngles = eulerAngles;
-        //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-        newTrackPiece.transform.position = position - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+        //reset position and angle before adjusting the track
+        newTrackPiece.transform.position = Vector3.zero;
+        newTrackPiece.transform.localEulerAngles = Vector3.zero;
 
         TrackPiece newTrackPieceClass = newTrackPiece.GetComponent<TrackPiece>();
 
         newTrackPieceClass.totalAngle = angle;
         trackPieces.Add(newTrackPiece);
 
+        //adjust the track
+        newTrackPieceClass.AdjustTrack(angle);
+
+        //set track rotation (after adjustment to make sure the adjustment process goes well)
+        newTrackPiece.transform.eulerAngles = eulerAngles;
+        //need to offset it by trackBoneSize by the angle (for now just with y part of angle
+        newTrackPiece.transform.position = position - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
 
         return newTrackPiece;
     }
