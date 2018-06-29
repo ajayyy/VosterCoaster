@@ -104,7 +104,6 @@ public class RollerCoaster : MonoBehaviour {
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
         int tracksNeeded = (int) Mathf.Abs(trackLengthRequired / trackBoneSize / 9f);
-        print(tracksNeeded);
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
         int startTrackIndex = trackPieces.IndexOf(startTrack);
