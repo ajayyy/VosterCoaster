@@ -93,7 +93,10 @@ public class RollerCoaster : MonoBehaviour {
         //find x of this angle
         //just using y part of angle for now
 
-        float x = (deltaPosition.z) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
+        //find the "b" value (y intercept of this linear equation) (b = y - mx)
+        float b = deltaPosition.z - (Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad) * deltaPosition.x);
+
+        float x = (b) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
 
         //find the radius for the cicle with this point
         float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
