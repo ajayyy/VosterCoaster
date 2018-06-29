@@ -62,7 +62,7 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 angle = targetAngle - currentAngle;
         //make sure the smallest difference between the angles is found
         angle = new Vector3(Mathf.Abs(angle.x), Mathf.Abs(angle.y), Mathf.Abs(angle.z));
-        //do 360 - angle if over 180 for each
+        //do 360 - angle if over 180 for each (see https://stackoverflow.com/questions/6722272/smallest-difference-between-two-angles)
         {
             float x1 = angle.x;
             float y1 = angle.y;
@@ -81,6 +81,10 @@ public class RollerCoaster : MonoBehaviour {
             }
 
             angle = new Vector3(x1, y1, z1);
+        }
+
+        if(deltaPosition.x > 0) {
+            angle = -angle;
         }
 
         //create a partial circle out of that angle (circumference is known)
