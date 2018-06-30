@@ -79,18 +79,18 @@ public class RollerCoaster : MonoBehaviour {
             angle = -angle;
         }
 
-        //find slope for the line showing all the possible points on the circle (tan(180 - (0.5 * 60 + 45)) * x + b)
-        float slope = Mathf.Tan(180 - (0.5f * angle.y + 45));
+        //find slope for the line showing all the possible points on the circle (tan(180 - (0.5 * (-angle) + 45)) * x + b)
+        float slope = Mathf.Tan(180 - (0.5f * (-angle.y) + 45));
 
         //find the "b" value (y intercept of this linear equation) for the target angle line (b = y - mx)
-        float b = deltaPosition.z - (Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad) * deltaPosition.x);
+        float b = -deltaPosition.z - (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) * (-deltaPosition.x));
 
         //get the slope of the targets linear equation
-        float targetSlope = Mathf.Tan(90 - angle.y);
+        float targetSlope = Mathf.Tan(180 - angle.y);
 
         //find the intersection between the target angle and the slope line created above x = (-(m2*d) - b1 + b2) / (-m2 + m)
-        float x = (-(targetSlope * deltaPosition.x) - deltaPosition.z + b) / (-targetSlope + slope);
-
+        float x = (-(targetSlope * (-deltaPosition.x)) + deltaPosition.z + b) / (-targetSlope + slope);
+        
         //create a partial circle out of that angle (circumference is known)
 
         //need to go from 0 to angle
