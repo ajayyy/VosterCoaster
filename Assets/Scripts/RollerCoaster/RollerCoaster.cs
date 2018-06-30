@@ -49,14 +49,6 @@ public class RollerCoaster : MonoBehaviour {
 
         Vector3 deltaPosition = controllerPosition - startPositon;
 
-        //GOAL: the smallest curve possible to reach the required distance
-
-        //Check if it is needed to switch angles to get to it
-        //slowly change angles to the target angle
-
-        //get how far up it has to go
-
-        //temperarily hardcoded
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
         Vector3 angle = targetAngle - currentAngle;
@@ -87,16 +79,21 @@ public class RollerCoaster : MonoBehaviour {
             angle = -angle;
         }
 
+        //find slope for the line showing all the possible points on the circle (tan(180 - (0.5 * 60 + 45)) * x + b)
+        float slope = Mathf.Tan(180 - (0.5f * angle.y + 45));
+
+        //find the "b" value (y intercept of this linear equation) for the target angle line (b = y - mx)
+        float b = deltaPosition.z - (Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad) * deltaPosition.x);
+
+        //get the slope of the targets linear equation
+        float targetSlope = Mathf.Tan(90 - angle.y);
+
+        //find the intersection between the target angle and the slope line created above x = (-(m2*d) - b1 + b2) / (-m2 + m)
+        float x = (-(targetSlope * deltaPosition.x) - deltaPosition.z + b) / (-targetSlope + slope);
+
         //create a partial circle out of that angle (circumference is known)
 
         //need to go from 0 to angle
-        //find x of this angle
-        //just using y part of angle for now
-
-        //find the "b" value (y intercept of this linear equation) (b = y - mx)
-        float b = deltaPosition.z - (Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad) * deltaPosition.x);
-
-        float x = (b) / (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) - Mathf.Tan((90 - angle.y) * Mathf.Deg2Rad));
 
         //find the radius for the cicle with this point
         float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
@@ -107,6 +104,12 @@ public class RollerCoaster : MonoBehaviour {
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
         int tracksNeeded = (int) Mathf.Abs(trackLengthRequired / trackBoneSize / 9f);
+        print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
+
+        //temperary override to fix issue with way too many tracks being needed when the angle is 0
+        if(angle.y == 0) {
+            tracksNeeded = 0;
+        }
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
         int startTrackIndex = trackPieces.IndexOf(startTrack);
