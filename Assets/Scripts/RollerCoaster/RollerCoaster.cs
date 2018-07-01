@@ -24,6 +24,8 @@ public class RollerCoaster : MonoBehaviour {
     //just for now, the right controller is going to be loaded in here
     public GameObject rightController;
 
+    public int tracksNeeded = 1;
+
     void Start () {
         //just for now, since we must start with one
         trackPieces.Add(transform.Find("TrackPiece0").gameObject);
@@ -43,11 +45,6 @@ public class RollerCoaster : MonoBehaviour {
     //will create a path of tracks from a start position until the next position
     //startTrack: track that this path is starting on
     public void CreatePath(Vector3 position, GameObject startTrack) {
-        Vector3 startPositon = startTrack.transform.position;
-
-        Vector3 controllerPosition = rightController.transform.position;
-
-        Vector3 deltaPosition = controllerPosition - startPositon;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
@@ -75,19 +72,41 @@ public class RollerCoaster : MonoBehaviour {
             angle = new Vector3(x1, y1, z1);
         }
 
-        if(deltaPosition.x > 0) {
-            angle = -angle;
-        }
-
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
         //for now just set to a static number
-        int tracksNeeded = 10;
 
-        //TODO: comment this out
+        //TODO: delete this
         //print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
 
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
+
+        //find the collision between the start line and the target line (x = (b2 - b1) / (m1 - m2))
+
+        //calculate the slope for the target angle
+        float targetSlope = Mathf.Tan((90 - targetAngle.y) * Mathf.Deg2Rad);
+        //calculate slope for the start
+        float startSlope = Mathf.Tan((90 - getCurrentAngle(startTrack).y) * Mathf.Deg2Rad);
+
+        //the b value for the target angle (b = y - mx)
+        float targetB = rightController.transform.position.z - targetSlope * rightController.transform.position.x;
+        //the b value for the start angle (b = y - mx)
+        float startB = startTrack.transform.position.z - startSlope * startTrack.transform.position.x;
+
+        //calculate the collision point
+        float collisionX = (startB - targetB) / (targetSlope - startSlope);
+        float collisionY = targetSlope * collisionX + targetB;
+
+        //get distance from the start
+        float distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startTrack.transform.position.x, 2) + Mathf.Pow(collisionY - startTrack.transform.position.y, 2));
+
+        //float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
+
+        //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
+        //int for now just to make things easier
+        tracksNeeded = (int) Mathf.Abs(distanceFromStart / trackBoneSize / 9f) - 1;
+
+        angle = Vector3.zero;
 
         int startTrackIndex = trackPieces.IndexOf(startTrack);
         for (int i = 1; i < tracksNeeded + 1; i++) {
