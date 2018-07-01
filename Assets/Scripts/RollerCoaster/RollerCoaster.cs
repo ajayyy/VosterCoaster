@@ -107,9 +107,12 @@ public class RollerCoaster : MonoBehaviour {
         //int for now just to make things easier
 
         //the amount of tracks need coming straight off the start track
-        int curveTracksNeeded = 3;
-        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / trackBoneSize / 9f) - curveTracksNeeded;
-        int targetTracksNeeded = (int)Mathf.Abs(distanceFromTarget / trackBoneSize / 9f) - curveTracksNeeded;
+        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / trackBoneSize / 9f);
+        int targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / trackBoneSize / 9f);
+        int curveTracksNeeded = Mathf.Min(startTracksNeeded, targetTracksNeeded);
+
+        startTracksNeeded -= curveTracksNeeded;
+        targetTracksNeeded -= curveTracksNeeded;
 
         int totalTracksNeeded = startTracksNeeded + curveTracksNeeded + targetTracksNeeded;
 
