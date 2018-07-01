@@ -79,37 +79,14 @@ public class RollerCoaster : MonoBehaviour {
             angle = -angle;
         }
 
-        //find slope for the line showing all the possible points on the circle (tan(180 - (0.5 * (-angle) + 45)) * x + b)
-        float slope = Mathf.Tan((180 - (0.5f * (-angle.y) + 45)) * Mathf.Deg2Rad);
-
-        //find the "b" value (y intercept of this linear equation) for the target angle line (b = y - mx)
-        float b = -deltaPosition.z - (Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad) * (-deltaPosition.x));
-
-        //get the slope of the targets linear equation
-        float targetSlope = Mathf.Tan((180 - angle.y) * Mathf.Deg2Rad);
-
-        //find the intersection between the target angle and the slope line created above x = (-(m2*d) - b1 + b2) / (-m2 + m)
-        float x = (-(targetSlope * (-deltaPosition.x)) + deltaPosition.z + b) / (-targetSlope + slope);
-        
-        //create a partial circle out of that angle (circumference is known)
-
-        //need to go from 0 to angle
-
-        //find the radius for the cicle with this point
-        float radius = x / Mathf.Cos((180 - angle.y) * Mathf.Deg2Rad);
-
-        //find the length of track required for this angle at this radius
-        float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
-
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
-        int tracksNeeded = (int) Mathf.Abs(trackLengthRequired / trackBoneSize / 9f);
-        print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
+        //for now just set to a static number
+        int tracksNeeded = 10;
 
-        //temperary override to fix issue with way too many tracks being needed when the angle is 0
-        if(angle.y == 0) {
-            tracksNeeded = 0;
-        }
+        //TODO: comment this out
+        //print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
+
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
         int startTrackIndex = trackPieces.IndexOf(startTrack);
