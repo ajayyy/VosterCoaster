@@ -96,10 +96,12 @@ public class RollerCoaster : MonoBehaviour {
         float collisionY = targetSlope * collisionX + targetB;
 
         //get distance from the start
-        float distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startTrack.transform.position.x, 2) + Mathf.Pow(collisionY - startTrack.transform.position.z, 2));
+        float distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startTrack.transform.position.x, 2) 
+            + Mathf.Pow(collisionY - startTrack.transform.position.z, 2));
 
         //get distance from target
-        float distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - rightController.transform.position.x, 2) + Mathf.Pow(collisionY - rightController.transform.position.z, 2));
+        float distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - rightController.transform.position.x, 2) 
+            + Mathf.Pow(collisionY - rightController.transform.position.z, 2));
 
         //float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
 
