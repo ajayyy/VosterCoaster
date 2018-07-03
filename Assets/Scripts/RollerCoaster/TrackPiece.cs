@@ -2,32 +2,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AddIncline : MonoBehaviour {
+public class TrackPiece : MonoBehaviour {
 
     //array of all of the parents of the rail bones. This will be set by the inspector
-    public GameObject[] railParents = new GameObject[3];
+    GameObject[] railParents = new GameObject[3];
 
     //variable that stores the default distance between bone points, used to reset the meshes
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
 
-    //original sizes (used for scaling)
-    float[] sizes = new float[3];
+    public Vector3 totalAngle = new Vector3(0, 0, 0);
 
-    float x = 1;
+    //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
+    public bool DEBUG_TEST = false;
 
-    void Start() {
-        FindSizes();
+    //has this trackpiece been initialised yet
+    bool initialised = false;
+
+    public void Start() {
+        if (!initialised) {
+            GetParents();
+
+            if (DEBUG_TEST) {
+                AdjustTrack(totalAngle);
+            }
+
+            initialised = true;
+        }
     }
 
     void Update () {
-        //ResetTrack();
-        AdjustTrack(new Vector3(0, x, 0));
-
-        x += 1 * Time.deltaTime;
+        
     }
 
-    //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle
-    public void AdjustTrack(Vector3 adjustmentAngle) {
+    //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle)
+    public void AdjustTrack(Vector3 totalAngle) {
+        //set variable for total angle for other classes to view
+        this.totalAngle = totalAngle;
+        Vector3 adjustmentAngle = totalAngle / 9;
+
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
 
@@ -62,11 +74,11 @@ public class AddIncline : MonoBehaviour {
             //get relative total offset for the adjusted track
             float difference = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
 
-            float multiplier = sizes[i] / difference;
-
             for (int r = 1; r < rails[i].Length - 1; r++) {
 
-                rails[i][r].transform.localPosition = defaultBonePosition * multiplier;
+                float height = difference; //calculate height of this track piece
+
+                rails[i][r].transform.localPosition = defaultBonePosition;
                 if (r == rails[i].Length - 2) {
                     rails[i][r].transform.localPosition *= 2;
                 }
@@ -79,13 +91,13 @@ public class AddIncline : MonoBehaviour {
 
                     if (i != outsideRail) {
                         //get full offset compared to rails[outsideRail]
-                        float offset = Mathf.Abs(railParents[outsideRail].transform.position.x) + Mathf.Abs(railParents[i].transform.position.x);
+                        float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
-                        float totalAngle = 90 - adjustmentAngle.y * 9f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
-                        float radius1 = Mathf.Abs(sizes[i]) / Mathf.Cos(totalAngle * Mathf.Deg2Rad);
+                        float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
                         //radius of inside circle (rails[i])
                         float radius2 = radius1 - offset;
 
@@ -126,27 +138,13 @@ public class AddIncline : MonoBehaviour {
 
     }
 
-    //find sizes for use later when adjusting the track
-    public void FindSizes() {
+    //gets rail parents
+    public void GetParents() {
 
-        //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
-        GameObject[][] rails = new GameObject[3][];
+        railParents[0] = transform.Find("Left_Rail").gameObject;
+        railParents[1] = transform.Find("Right_Rail").gameObject;
+        railParents[2] = transform.Find("Bottom_Rail").gameObject;
 
-        //create the rails array from the railParents
-        for (int i = 0; i < railParents.Length; i++) {
-            GameObject[] bones = new GameObject[11];
-
-            //every iteration, parent is set to the next object in the hierchy to get the next child
-            GameObject parent = railParents[i];
-
-            for (int b = 0; b < bones.Length; b++) {
-                parent = parent.transform.GetChild(0).gameObject;
-                bones[b] = parent;
-            }
-
-            rails[i] = bones;
-
-            sizes[i] = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
-        }
     }
+
 }
