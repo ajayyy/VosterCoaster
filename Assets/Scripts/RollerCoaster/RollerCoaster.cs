@@ -177,10 +177,6 @@ public class RollerCoaster : MonoBehaviour {
             RemoveTrackPiece(trackPieces[i]);
         }
 
-
-        //make for loop to theoretically count the needed track pieces
-
-
     }
 
     public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles) {
