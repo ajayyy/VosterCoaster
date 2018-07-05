@@ -118,9 +118,9 @@ public class RollerCoaster : MonoBehaviour {
 
         int totalTracksNeeded = startTracksNeeded + curveTracksNeeded + targetTracksNeeded;
 
-        int startTrackIndex = trackPieces.IndexOf(startTrack);
-        for (int i = 1; i < totalTracksNeeded + 1; i++) {
-
+        //Amount of tracks already placed down
+        int startTrackAmount = trackPieces.IndexOf(startTrack) + 1;
+        for (int i = 0; i < totalTracksNeeded; i++) {
             Vector3 eulerAngles = getCurrentAngle(startTrack);
             //the total angle going through one whole track piece
             Vector3 totalTrackAngle = Vector3.zero;
@@ -135,14 +135,12 @@ public class RollerCoaster : MonoBehaviour {
 
             if (i > startTracksNeeded + curveTracksNeeded) {
                 //back to straight path, but in the angle of the target
-
                 eulerAngles = targetAngle;
-
                 totalTrackAngle = Vector3.zero;
             }
 
-            if (startTrackIndex + i < trackPieces.Count) {
-                GameObject trackPiece = trackPieces[i + startTrackIndex];
+            if (startTrackAmount + i < trackPieces.Count) {
+                GameObject trackPiece = trackPieces[i + startTrackAmount];
 
                 //reset position and angle before adjusting the track
                 trackPiece.transform.position = Vector3.zero;
@@ -153,7 +151,7 @@ public class RollerCoaster : MonoBehaviour {
 
                 //calculate adjustments
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
-                Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
+                Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
                 //need to offset it by trackBoneSize by the angle (for now just with y part of angle
                 trackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
@@ -162,10 +160,9 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.transform.localEulerAngles = eulerAngles;
 
             } else {
-
                 //calculate adjustments
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
-                Vector3 modifiedPosition = trackPieces[i + startTrackIndex - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
+                Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
                 GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles);
 
@@ -173,13 +170,9 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //remove all unneeded track pieces, don't add to i since trackPieces.Count will be continuing to shrink
-        for (int i = startTrackIndex + totalTracksNeeded + 1; i < trackPieces.Count;) {
+        for (int i = startTrackAmount + totalTracksNeeded + 1; i < trackPieces.Count;) {
             RemoveTrackPiece(trackPieces[i]);
         }
-
-
-        //make for loop to theoretically count the needed track pieces
-
 
     }
 
