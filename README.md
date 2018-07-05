@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ajayyy/VosterCoasterVR.svg?branch=master)](https://travis-ci.org/ajayyy/VosterCoasterVR)
+
 # Voster Coaster VR
 
 Voster Coaster is an experimental VR (Room Scale) roller coaster builder and theme park tycoon game.
