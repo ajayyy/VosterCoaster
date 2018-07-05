@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/ajayyy/VosterCoasterVR.svg?branch=master)](https://travis-ci.org/ajayyy/VosterCoasterVR)
+Stable: [![Build Status](https://travis-ci.org/ajayyy/VosterCoasterVR.svg?branch=master)](https://travis-ci.org/ajayyy/VosterCoasterVR)
+
+Experimental: [![Build Status](https://travis-ci.org/ajayyy/VosterCoasterVR.svg?branch=experimental)](https://travis-ci.org/ajayyy/VosterCoasterVR)
 
 # Voster Coaster VR
 
