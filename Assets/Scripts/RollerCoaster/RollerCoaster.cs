@@ -125,15 +125,15 @@ public class RollerCoaster : MonoBehaviour {
             //the total angle going through one whole track piece
             Vector3 totalTrackAngle = Vector3.zero;
 
-            if(i > startTracksNeeded) {
+            if(i + 1 > startTracksNeeded) {
                 //then it is time to create a curve instead of just a straight line coming off the start track
                 //calculate the adjustment needed for the curve
-                eulerAngles = angle / curveTracksNeeded * (i - 1 - startTracksNeeded) + getCurrentAngle(startTrack);
+                eulerAngles = angle / curveTracksNeeded * (i - startTracksNeeded) + getCurrentAngle(startTrack);
 
                 totalTrackAngle = angle / curveTracksNeeded;
             }
 
-            if (i > startTracksNeeded + curveTracksNeeded) {
+            if (i + 1 > startTracksNeeded + curveTracksNeeded) {
                 //back to straight path, but in the angle of the target
                 eulerAngles = targetAngle;
                 totalTrackAngle = Vector3.zero;
@@ -170,7 +170,7 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //remove all unneeded track pieces, don't add to i since trackPieces.Count will be continuing to shrink
-        for (int i = startTrackAmount + totalTracksNeeded + 1; i < trackPieces.Count;) {
+        for (int i = startTrackAmount + totalTracksNeeded; i < trackPieces.Count;) {
             RemoveTrackPiece(trackPieces[i]);
         }
 
