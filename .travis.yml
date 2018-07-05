@@ -6,6 +6,6 @@ before_install:
 - chmod a+x ./Scripts/install.sh
 - chmod a+x ./Scripts/build.sh
 install:
-- ./Scripts/install.sh
+- travis_wait 60 ./Scripts/install.sh
 script:
-- ./Scripts/build.sh
+- travis_wait 60 ./Scripts/build.sh
