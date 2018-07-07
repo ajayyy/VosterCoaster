@@ -84,21 +84,18 @@ public class TrackPiece : MonoBehaviour {
                 //}
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
-                    int outsideRail = 1;
-                    if (adjustmentAngle.y > 0) {
-                        outsideRail = 0;
-                    }
+                    int middleRail = 2;
 
-                    if (i != outsideRail) {
-                        //get full offset compared to rails[outsideRail]
-                        float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
+                    if (i != middleRail) {
+                        //get full offset compared to rails[middleRail]
+                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
                         float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
 
-                        //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
+                        //radius of the middle circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
-                        //radius of inside circle (rails[i])
+                        //radius of this circle (rails[i])
                         float radius2 = radius1 - offset;
 
                         rails[i][r].transform.localPosition *= radius2 / radius1;

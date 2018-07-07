@@ -140,7 +140,7 @@ public class RollerCoaster : MonoBehaviour {
             float percentageOfRadius = Mathf.Sqrt(Mathf.Pow(startNormalX - targetNormalX, 2) + Mathf.Pow(startNormalY - targetNormalY, 2));
 
             //radius of the curve using the percentage calculations from above
-            float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius - (1.64703f * scale);
+            float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius;
             print("radius: " + radius + " size: " + Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) + " percentageOfRadius: " + percentageOfRadius + " xdist: " + (circleTargetX - startPosition.x) + " ydist: " + (circleTargetY - startPosition.z));
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
