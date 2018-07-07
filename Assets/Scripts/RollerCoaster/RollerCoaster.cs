@@ -44,6 +44,10 @@ public class RollerCoaster : MonoBehaviour {
     //startTrack: track that this path is starting on
     public void CreatePath(Vector3 position, GameObject startTrack) {
 
+        //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
+        //Vector3 startPosition = startTrack.transform.position + new Vector3(Mathf.Cos(getCurrentAngle(startTrack).y) * trackBoneSize * 9f, 0, Mathf.Sin(getCurrentAngle(startTrack).y) * trackBoneSize * 9f);
+        Vector3 startPosition = startTrack.transform.position;
+
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
         Vector3 angle = targetAngle - currentAngle;
@@ -109,12 +113,63 @@ public class RollerCoaster : MonoBehaviour {
         //int for now just to make things easier
 
         //the amount of tracks need coming straight off the start track
-        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / trackBoneSize / 9f);
-        int targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / trackBoneSize / 9f);
+        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / (trackBoneSize * 9f));
+        int targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / (trackBoneSize * 9f));
         int curveTracksNeeded = Mathf.Min(startTracksNeeded, targetTracksNeeded);
 
-        startTracksNeeded -= curveTracksNeeded;
-        targetTracksNeeded -= curveTracksNeeded;
+        if (curveTracksNeeded == startTracksNeeded) {
+            //find intersection between line to the end of curve from the start of curve
+            float startToEndCurveSlope = Mathf.Tan((((180 - targetAngle.y) / 2) - getCurrentAngle(startTrack).y) * Mathf.Deg2Rad);
+            //the b value (b = y - mx)
+            float startToEndCurveB = startTrack.transform.position.z - startToEndCurveSlope * startTrack.transform.position.x;
+
+            //find intersection between this line and the target line (x = (b2 - b1) / (m1 - m2))
+            //this position will be the second point on the circle of the curve (end point), the first is the start track
+            float circleTargetX = (startToEndCurveB - targetB) / (targetSlope - startToEndCurveSlope);
+            float circleTargetY = startToEndCurveSlope * circleTargetX + startToEndCurveB;
+            //startTrack.transform.position = new Vector3(circleTargetX, 0, circleTargetY);
+
+            //y = rsinA, x = rcosA
+            //these are the positions of these angles on a circle with a radius of 1
+            float targetNormalX = Mathf.Cos(targetAngle.y * Mathf.Deg2Rad);
+            float targetNormalY = Mathf.Sin(targetAngle.y * Mathf.Deg2Rad);
+            float startNormalX = Mathf.Cos(getCurrentAngle(startTrack).y * Mathf.Deg2Rad);
+            float startNormalY = Mathf.Sin(getCurrentAngle(startTrack).y * Mathf.Deg2Rad);
+
+            //the radius would be equal to 1 for a circle like this. Find how much the distances between the points account for the radius of the circle
+            float percentageOfRadius = Mathf.Sqrt(Mathf.Pow(startNormalX - targetNormalX, 2) + Mathf.Pow(startNormalY - targetNormalY, 2));
+
+            //radius of the curve using the percentage calculations from above
+            float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startTrack.transform.position.x, 2) + Mathf.Pow(circleTargetY - startTrack.transform.position.z, 2)) / percentageOfRadius;
+
+            //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
+            float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
+
+            curveTracksNeeded = (int) (curveLength / (trackBoneSize * 9f));
+
+            startTracksNeeded = 0;
+
+            //Find difference between circleTarget and the target position
+            targetTracksNeeded = (int) (Mathf.Sqrt(Mathf.Pow(circleTargetX - rightController.transform.position.x, 2) + Mathf.Pow(circleTargetY - rightController.transform.position.z, 2)) / (trackBoneSize * 9f));
+            print("circleTarget: " + circleTargetX + " " + circleTargetY);
+
+
+        } else {
+            //find intersection between line to the start of curve from the end of curve
+            float startToEndCurveSlope = Mathf.Tan((getCurrentAngle(startTrack).y - (180 - targetAngle.y)) * Mathf.Deg2Rad);
+            //the b value (b = y - mx)
+            float startToEndCurveB = rightController.transform.position.z - startToEndCurveSlope * rightController.transform.position.x;
+
+            //find intersection between this line and the start line (x = (b2 - b1) / (m1 - m2))
+            //this position will be the second point on the circle of the curve (end point), the first is the target track
+            float circleStartX = (startToEndCurveB - startB) / (startSlope - startToEndCurveSlope);
+            float circleStartY = startSlope * circleStartX + startB;
+
+
+        }
+
+        //startTracksNeeded -= curveTracksNeeded;
+        //targetTracksNeeded -= curveTracksNeeded;
 
         int totalTracksNeeded = startTracksNeeded + curveTracksNeeded + targetTracksNeeded;
 
@@ -125,7 +180,7 @@ public class RollerCoaster : MonoBehaviour {
             //the total angle going through one whole track piece
             Vector3 totalTrackAngle = Vector3.zero;
 
-            if(i + 1 > startTracksNeeded) {
+            if(i >= startTracksNeeded) {
                 //then it is time to create a curve instead of just a straight line coming off the start track
                 //calculate the adjustment needed for the curve
                 eulerAngles = angle / curveTracksNeeded * (i - startTracksNeeded) + getCurrentAngle(startTrack);
@@ -133,7 +188,7 @@ public class RollerCoaster : MonoBehaviour {
                 totalTrackAngle = angle / curveTracksNeeded;
             }
 
-            if (i + 1 > startTracksNeeded + curveTracksNeeded) {
+            if (i >= startTracksNeeded + curveTracksNeeded) {
                 //back to straight path, but in the angle of the target
                 eulerAngles = targetAngle;
                 totalTrackAngle = Vector3.zero;
