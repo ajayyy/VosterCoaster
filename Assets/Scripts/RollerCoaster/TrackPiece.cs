@@ -70,7 +70,7 @@ public class TrackPiece : MonoBehaviour {
         }
 
         //try to stretch the newly shaped incline to the proper size
-        for (int i = 0; i < rails.Length; i++) {
+        for (int i = 0; i < rails.Length - 1; i++) {
             //get relative total offset for the adjusted track
             float difference = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
 
@@ -94,7 +94,7 @@ public class TrackPiece : MonoBehaviour {
                         float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);

@@ -45,7 +45,7 @@ public class RollerCoaster : MonoBehaviour {
     public void CreatePath(Vector3 position, GameObject startTrack) {
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
-        //Vector3 startPosition = startTrack.transform.position + new Vector3(Mathf.Cos(getCurrentAngle(startTrack).y) * trackBoneSize * 10f, 0, Mathf.Sin(getCurrentAngle(startTrack).y) * trackBoneSize * 10f);
+        //Vector3 startPosition = startTrack.transform.position + new Vector3(Mathf.Cos(getCurrentAngle(startTrack).y) * trackBoneSize * 9f, 0, Mathf.Sin(getCurrentAngle(startTrack).y) * trackBoneSize * 9f);
         Vector3 startPosition = startTrack.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
@@ -81,7 +81,7 @@ public class RollerCoaster : MonoBehaviour {
         //TODO: delete this
         //print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
 
-        //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 10f)
+        //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 9f)
 
         //find the collision between the start line and the target line (x = (b2 - b1) / (m1 - m2))
 
@@ -113,8 +113,8 @@ public class RollerCoaster : MonoBehaviour {
         //int for now just to make things easier
 
         //the amount of tracks need coming straight off the start track
-        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / (trackBoneSize * 10f));
-        int targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / (trackBoneSize * 10f));
+        int startTracksNeeded = (int) Mathf.Abs(distanceFromStart / (trackBoneSize * 9f));
+        int targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / (trackBoneSize * 9f));
         int curveTracksNeeded = Mathf.Min(startTracksNeeded, targetTracksNeeded);
 
         if (curveTracksNeeded == startTracksNeeded) {
@@ -140,19 +140,19 @@ public class RollerCoaster : MonoBehaviour {
             float percentageOfRadius = Mathf.Sqrt(Mathf.Pow(startNormalX - targetNormalX, 2) + Mathf.Pow(startNormalY - targetNormalY, 2));
 
             //radius of the curve using the percentage calculations from above
-            float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius;
+            float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius - (1.64703f * scale);
             print("radius: " + radius + " size: " + Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) + " percentageOfRadius: " + percentageOfRadius + " xdist: " + (circleTargetX - startPosition.x) + " ydist: " + (circleTargetY - startPosition.z));
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
             float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
             print("curveLength: " + curveLength);
 
-            curveTracksNeeded = (int) (curveLength / (trackBoneSize * 10f));
+            curveTracksNeeded = (int) (curveLength / (trackBoneSize * 9f));
 
             startTracksNeeded = 0;
 
             //Find difference between circleTarget and the target position
-            targetTracksNeeded = (int) (Mathf.Sqrt(Mathf.Pow(circleTargetX - rightController.transform.position.x, 2) + Mathf.Pow(circleTargetY - rightController.transform.position.z, 2)) / (trackBoneSize * 10f));
+            targetTracksNeeded = (int) (Mathf.Sqrt(Mathf.Pow(circleTargetX - rightController.transform.position.x, 2) + Mathf.Pow(circleTargetY - rightController.transform.position.z, 2)) / (trackBoneSize * 9f));
             print("circleTarget: " + circleTargetX + " " + circleTargetY);
 
         } else {
@@ -182,10 +182,10 @@ public class RollerCoaster : MonoBehaviour {
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
             float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
 
-            curveTracksNeeded = (int)(curveLength / (trackBoneSize * 10f));
+            curveTracksNeeded = (int)(curveLength / (trackBoneSize * 9f));
 
             //Find difference between circleTarget and the target position
-            startTracksNeeded = (int)(Mathf.Sqrt(Mathf.Pow(circleStartX - rightController.transform.position.x, 2) + Mathf.Pow(circleStartY - rightController.transform.position.z, 2)) / (trackBoneSize * 10f));
+            startTracksNeeded = (int)(Mathf.Sqrt(Mathf.Pow(circleStartX - rightController.transform.position.x, 2) + Mathf.Pow(circleStartY - rightController.transform.position.z, 2)) / (trackBoneSize * 9f));
 
             targetTracksNeeded = 0;
         }
