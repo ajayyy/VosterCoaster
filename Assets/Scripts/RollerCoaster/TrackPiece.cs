@@ -38,7 +38,7 @@ public class TrackPiece : MonoBehaviour {
     public void AdjustTrack(Vector3 totalAngle) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
-        Vector3 adjustmentAngle = totalAngle / 9;
+        Vector3 adjustmentAngle = totalAngle / 10f;
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -74,14 +74,14 @@ public class TrackPiece : MonoBehaviour {
             //get relative total offset for the adjusted track
             float difference = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
 
-            for (int r = 1; r < rails[i].Length - 1; r++) {
+            for (int r = 1; r < rails[i].Length; r++) {
 
                 float height = difference; //calculate height of this track piece
 
                 rails[i][r].transform.localPosition = defaultBonePosition;
-                if (r == rails[i].Length - 2) {
-                    rails[i][r].transform.localPosition *= 2;
-                }
+                //if (r == rails[i].Length - 2) {
+                //    rails[i][r].transform.localPosition *= 2;
+                //}
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
                     int outsideRail = 1;
@@ -94,7 +94,7 @@ public class TrackPiece : MonoBehaviour {
                         float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
 
                         //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
