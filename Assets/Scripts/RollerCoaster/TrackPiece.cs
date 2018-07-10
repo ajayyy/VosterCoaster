@@ -43,9 +43,6 @@ public class TrackPiece : MonoBehaviour {
         this.totalAngle = totalAngle;
         Vector3 adjustmentAngle = totalAngle / 10f;
 
-        //find the distance to place each segement away from eachother by
-        float modifiedTrackBoneDifference = getDistanceForAngle(adjustmentAngle.y, defaultBonePosition.z, 10);
-
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
 
@@ -84,10 +81,7 @@ public class TrackPiece : MonoBehaviour {
 
                 float height = difference; //calculate height of this track piece
 
-                rails[i][r].transform.localPosition = new Vector3(0, 0, modifiedTrackBoneDifference);
-                //if (r == rails[i].Length - 2) {
-                //    rails[i][r].transform.localPosition *= 2;
-                //}
+                rails[i][r].transform.localPosition = defaultBonePosition;
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
                     int middleRail = 2;
