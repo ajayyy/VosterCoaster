@@ -18,6 +18,9 @@ public class TrackPiece : MonoBehaviour {
     //has this trackpiece been initialised yet
     bool initialised = false;
 
+    //the roller coaster this is a part of
+    public RollerCoaster rollerCoaster;
+
     public void Start() {
         if (!initialised) {
             GetParents();
@@ -38,7 +41,10 @@ public class TrackPiece : MonoBehaviour {
     public void AdjustTrack(Vector3 totalAngle) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
-        Vector3 adjustmentAngle = totalAngle / 9;
+        Vector3 adjustmentAngle = totalAngle / 10f;
+
+        //find the distance to place each segement away from eachother by
+        float modifiedTrackBoneDifference = getDistanceForAngle(adjustmentAngle.y, defaultBonePosition.z, 10);
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -60,7 +66,7 @@ public class TrackPiece : MonoBehaviour {
         }
 
         for (int i = 0; i < rails.Length; i++) {
-            for (int r = 1; r < rails[i].Length - 1; r++) {
+            for (int r = 1; r < rails[i].Length; r++) {
                 //Attempt to rotate them all
                 rails[i][r].transform.localEulerAngles = adjustmentAngle;
 
@@ -74,31 +80,28 @@ public class TrackPiece : MonoBehaviour {
             //get relative total offset for the adjusted track
             float difference = rails[i][rails[i].Length - 1].transform.position.z - rails[i][0].transform.position.z;
 
-            for (int r = 1; r < rails[i].Length - 1; r++) {
+            for (int r = 1; r < rails[i].Length; r++) {
 
                 float height = difference; //calculate height of this track piece
 
-                rails[i][r].transform.localPosition = defaultBonePosition;
-                if (r == rails[i].Length - 2) {
-                    rails[i][r].transform.localPosition *= 2;
-                }
+                rails[i][r].transform.localPosition = new Vector3(0, 0, modifiedTrackBoneDifference);
+                //if (r == rails[i].Length - 2) {
+                //    rails[i][r].transform.localPosition *= 2;
+                //}
 
                 if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
-                    int outsideRail = 1;
-                    if (adjustmentAngle.y > 0) {
-                        outsideRail = 0;
-                    }
+                    int middleRail = 2;
 
-                    if (i != outsideRail) {
-                        //get full offset compared to rails[outsideRail]
-                        float offset = Mathf.Abs(railParents[outsideRail].transform.localPosition.x - railParents[i].transform.localPosition.x) * RollerCoaster.scale;
+                    if (i != middleRail) {
+                        //get full offset compared to rails[middleRail]
+                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 9f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
 
-                        //radius of the outside circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
+                        //radius of the middle circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
-                        //radius of inside circle (rails[i])
+                        //radius of this circle (rails[i])
                         float radius2 = radius1 - offset;
 
                         rails[i][r].transform.localPosition *= radius2 / radius1;
@@ -145,6 +148,32 @@ public class TrackPiece : MonoBehaviour {
         railParents[1] = transform.Find("Right_Rail").gameObject;
         railParents[2] = transform.Find("Bottom_Rail").gameObject;
 
+    }
+
+    //because the track pieces are not actual circles and are made up of straight segments, the margin of error must be calculated
+    public float getDistanceForAngle(float adjustmentAngle, float currentDistance, int amount) {
+
+        //total displacement on each axis
+        float totalX = 0;
+        float totalY = 0;
+
+        for(int i = 0; i < amount; i++) {
+            //calculate x value for this segment
+            float x = Mathf.Sin(adjustmentAngle * (i + 1) * Mathf.Deg2Rad) * (currentDistance / Mathf.Sin(Mathf.PI / 2));
+            //calculate y using x in the pythagorean formula
+            float y = Mathf.Sqrt(Mathf.Pow(currentDistance, 2) - Mathf.Pow(x, 2));
+
+            totalX += x;
+            totalY += y;
+        }
+
+        float totalDisplacement = Mathf.Sqrt(Mathf.Pow(totalX, 2) + Mathf.Pow(totalY, 2));
+
+        //find the factor of error this displacement has versus the ideal
+        float differenceFactor = ((rollerCoaster.trackBoneSize / RollerCoaster.scale) * amount) / totalDisplacement;
+
+        //multiply this error factor by the current distance and return it to be the real distance
+        return currentDistance * differenceFactor;
     }
 
 }
