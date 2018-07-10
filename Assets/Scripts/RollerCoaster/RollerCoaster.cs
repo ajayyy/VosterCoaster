@@ -129,8 +129,8 @@ public class RollerCoaster : MonoBehaviour {
 
             //y = rsinA, x = rcosA
             //these are the positions of these angles on a circle with a radius of 1
-            float targetNormalX = Mathf.Cos((targetAngle.y + 90) * Mathf.Deg2Rad);
-            float targetNormalY = Mathf.Sin((targetAngle.y + 90) * Mathf.Deg2Rad);
+            float targetNormalX = Mathf.Cos((-targetAngle.y + 360) * Mathf.Deg2Rad);
+            float targetNormalY = Mathf.Sin((-targetAngle.y + 360) * Mathf.Deg2Rad);
             float startNormalX = Mathf.Cos(getCurrentAngle(startTrack).y * Mathf.Deg2Rad);
             float startNormalY = Mathf.Sin(getCurrentAngle(startTrack).y * Mathf.Deg2Rad);
 
@@ -139,11 +139,9 @@ public class RollerCoaster : MonoBehaviour {
 
             //radius of the curve using the percentage calculations from above
             float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius;
-            //print("radius: " + radius + " size: " + Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) + " percentageOfRadius: " + percentageOfRadius + " xdist: " + (circleTargetX - startPosition.x) + " ydist: " + (circleTargetY - startPosition.z));
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
             float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
-            //print("curveLength: " + curveLength);
 
             curveTracksNeeded = (int) (curveLength / (trackBoneSize * 10f));
 
@@ -153,7 +151,6 @@ public class RollerCoaster : MonoBehaviour {
 
             //Find difference between circleTarget and the target position
             targetTracksNeeded = (int) (Mathf.Sqrt(Mathf.Pow(circleTargetX - rightController.transform.position.x, 2) + Mathf.Pow(circleTargetY - rightController.transform.position.z, 2)) / (trackBoneSize * 10f));
-            //print("circleTarget: " + circleTargetX + " " + circleTargetY);
 
         } else {
             //find intersection between line to the start of curve from the end of curve

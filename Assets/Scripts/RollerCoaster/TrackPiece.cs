@@ -45,7 +45,6 @@ public class TrackPiece : MonoBehaviour {
 
         //find the distance to place each segement away from eachother by
         float modifiedTrackBoneDifference = getDistanceForAngle(adjustmentAngle.y, defaultBonePosition.z, 10);
-        getDistanceForAngle(adjustmentAngle.y, modifiedTrackBoneDifference, 10);
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -172,7 +171,6 @@ public class TrackPiece : MonoBehaviour {
 
         //find the factor of error this displacement has versus the ideal
         float differenceFactor = ((rollerCoaster.trackBoneSize / RollerCoaster.scale) * amount) / totalDisplacement;
-        print("differenceFactor: " + differenceFactor + " top: " + ((rollerCoaster.trackBoneSize / RollerCoaster.scale) * amount) + " totalDisplacement: " + totalDisplacement);
 
         //multiply this error factor by the current distance and return it to be the real distance
         return currentDistance * differenceFactor;
