@@ -90,6 +90,11 @@ public class TrackPiece : MonoBehaviour {
                         //get full offset compared to rails[middleRail]
                         float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
 
+                        //if the angle is negative, the outside rail is the inside rail and the inside rail is the outside rail
+                        if(adjustmentAngle.y < 0) {
+                            offset = -offset;
+                        }
+
                         //calculate the full angle this track piece gets to
                         float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
 
