@@ -48,14 +48,14 @@ public class RollerCoaster : MonoBehaviour {
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 currentAngle = getCurrentAngle(startTrack);
-        Vector3 angle = targetAngle - currentAngle;
+        Vector3 angleDifference = targetAngle - currentAngle;
         //make sure the smallest difference between the angles is found
-        angle = new Vector3(Mathf.Abs(angle.x), Mathf.Abs(angle.y), Mathf.Abs(angle.z));
+        Vector3 smallestAngleDifference = new Vector3(Mathf.Abs(angleDifference.x), Mathf.Abs(angleDifference.y), Mathf.Abs(angleDifference.z));
         //do 360 - angle if over 180 for each (see https://stackoverflow.com/questions/6722272/smallest-difference-between-two-angles)
         {
-            float x1 = angle.x;
-            float y1 = angle.y;
-            float z1 = angle.z;
+            float x1 = smallestAngleDifference.x;
+            float y1 = smallestAngleDifference.y;
+            float z1 = smallestAngleDifference.z;
 
             if (x1 > 180) {
                 x1 = 360 - x1;
@@ -69,7 +69,7 @@ public class RollerCoaster : MonoBehaviour {
                 z1 = 360 - z1;
             }
 
-            angle = new Vector3(x1, y1, z1);
+            smallestAngleDifference = new Vector3(x1, y1, z1);
         }
 
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
@@ -147,7 +147,7 @@ public class RollerCoaster : MonoBehaviour {
             float radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.x, 2) + Mathf.Pow(circleTargetY - startPosition.z, 2)) / percentageOfRadius;
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
-            float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
+            float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
 
             curveTracksNeeded = (int) (curveLength / (trackBoneSize * 10f));
 
@@ -183,7 +183,7 @@ public class RollerCoaster : MonoBehaviour {
             float radius = Mathf.Sqrt(Mathf.Pow(circleStartX - rightController.transform.position.x, 2) + Mathf.Pow(circleStartY - rightController.transform.position.z, 2)) / percentageOfRadius;
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
-            float curveLength = 2 * Mathf.PI * radius * (angle.y / 360f);
+            float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
 
             curveTracksNeeded = (int)(curveLength / (trackBoneSize * 10f));
 
@@ -196,7 +196,12 @@ public class RollerCoaster : MonoBehaviour {
         int totalTracksNeeded = startTracksNeeded + curveTracksNeeded + targetTracksNeeded;
 
         if (rightSide) {
-            angle = new Vector3(angle.x, -(angle.y), angle.z);
+            smallestAngleDifference = new Vector3(smallestAngleDifference.x, -(smallestAngleDifference.y), smallestAngleDifference.z);
+        }
+
+        //check if this is actually a proper angle to create a track
+        if(((angleDifference.y < 180 || angleDifference.y > 270) && rightSide) || ((angleDifference.y < 90 || angleDifference.y > 180) && !rightSide)) {
+            totalTracksNeeded = 0;
         }
 
         //Amount of tracks already placed down
@@ -209,9 +214,9 @@ public class RollerCoaster : MonoBehaviour {
             if(i >= startTracksNeeded) {
                 //then it is time to create a curve instead of just a straight line coming off the start track
                 //calculate the adjustment needed for the curve
-                eulerAngles = angle / curveTracksNeeded * (i - startTracksNeeded) + getCurrentAngle(startTrack);
+                eulerAngles = smallestAngleDifference / curveTracksNeeded * (i - startTracksNeeded) + getCurrentAngle(startTrack);
 
-                totalTrackAngle = angle / curveTracksNeeded;
+                totalTrackAngle = smallestAngleDifference / curveTracksNeeded;
             }
 
             if (i >= startTracksNeeded + curveTracksNeeded) {
