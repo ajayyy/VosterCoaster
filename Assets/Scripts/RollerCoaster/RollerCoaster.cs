@@ -76,9 +76,6 @@ public class RollerCoaster : MonoBehaviour {
         //int for now just to make things easier
         //for now just set to a static number
 
-        //TODO: delete this
-        //print("b: " + b + " targetSlope: " + targetSlope + " slope: " + slope + " x: " + x + " radius: " + radius + " trackLengthRequired: " + trackLengthRequired + " tracksNeeded: " + tracksNeeded);
-
         //that many tracks can now be created with an angle of angle.y divided by each bone (tracksNeeded * 10f)
 
         //find the collision between the start line and the target line (x = (b2 - b1) / (m1 - m2))
@@ -150,8 +147,6 @@ public class RollerCoaster : MonoBehaviour {
             float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
 
             curveTracksNeeded = (curveLength / (trackBoneSize * 10f));
-
-            //print("curveTracksNeeded: " + curveTracksNeeded + " curveLength: " + curveLength + " circumference: " + (2 * Mathf.PI * radius) + " radius: " + radius);
 
             startTracksNeeded = 0;
 
