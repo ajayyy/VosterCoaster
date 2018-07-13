@@ -116,15 +116,18 @@ public class TrackPiece : MonoBehaviour {
         }
 
         //cut this off to make sure it is only the percentageOfTrack
+        if (percentageOfTrack != 1) {
+            print(percentageOfTrack);
+        }
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length; r++) {
-                if (r / boneAmount > percentageOfTrack) {
+                if ((r - 1) / boneAmount > percentageOfTrack) {
                     rails[i][r].transform.localPosition = Vector3.zero;
                     rails[i][r].transform.localEulerAngles = Vector3.zero;
                     rails[i][r].SetActive(false);
-                } else if ((r + 1) / boneAmount > percentageOfTrack && percentageOfTrack != 1) {
-                    rails[i][r].transform.localPosition = ((percentageOfTrack - (r / boneAmount)) * boneAmount) * defaultBonePosition;
-                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - (r / boneAmount)) * boneAmount) * adjustmentAngle;
+                } else if ((r + 1 - 1) / boneAmount > percentageOfTrack && percentageOfTrack != 1) {
+                    rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * defaultBonePosition;
+                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * adjustmentAngle;
                     rails[i][r].SetActive(true);
                 }
             }
