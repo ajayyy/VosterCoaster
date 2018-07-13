@@ -21,12 +21,15 @@ public class TrackPiece : MonoBehaviour {
     //the roller coaster this is a part of
     public RollerCoaster rollerCoaster;
 
+    //amount of bones per track piece
+    float boneAmount = 10f;
+
     public void Start() {
         if (!initialised) {
             GetParents();
 
             if (DEBUG_TEST) {
-                AdjustTrack(totalAngle);
+                AdjustTrack(totalAngle, 1);
             }
 
             initialised = true;
@@ -38,10 +41,10 @@ public class TrackPiece : MonoBehaviour {
     }
 
     //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle)
-    public void AdjustTrack(Vector3 totalAngle) {
+    public void AdjustTrack(Vector3 totalAngle, float percentageOfTrack) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
-        Vector3 adjustmentAngle = totalAngle / 10f;
+        Vector3 adjustmentAngle = totalAngle / boneAmount;
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -69,6 +72,9 @@ public class TrackPiece : MonoBehaviour {
 
                 //reset their position
                 rails[i][r].transform.localPosition = defaultBonePosition;
+
+                //set active
+                rails[i][r].SetActive(true);
             }
         }
 
@@ -96,7 +102,7 @@ public class TrackPiece : MonoBehaviour {
                         }
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * boneAmount;
 
                         //radius of the middle circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
@@ -107,7 +113,20 @@ public class TrackPiece : MonoBehaviour {
                     }
                 }
             }
+        }
 
+        //cut this off to make sure it is only the percentageOfTrack
+        print(percentageOfTrack);
+        for (int i = 0; i < rails.Length; i++) {
+            for (int r = 1; r < rails[i].Length; r++) {
+                if (r / boneAmount > percentageOfTrack) {
+                    rails[i][r].transform.localPosition = Vector3.zero;
+                    rails[i][r].SetActive(false);
+                } else if ((r + 1) / boneAmount > percentageOfTrack) {
+                    rails[i][r].transform.localPosition = (percentageOfTrack - (r / boneAmount)) * defaultBonePosition;
+                    rails[i][r].SetActive(true);
+                }
+            }
         }
     }
 
