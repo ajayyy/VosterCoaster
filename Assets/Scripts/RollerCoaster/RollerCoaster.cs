@@ -209,6 +209,8 @@ public class RollerCoaster : MonoBehaviour {
             Vector3 eulerAngles = getCurrentAngle(startTrack);
             //the total angle going through one whole track piece
             Vector3 totalTrackAngle = Vector3.zero;
+            //angle that the tracks start with if they have a startTrack value that is not -1
+            Vector3 startAngle = Vector3.zero;
 
             float percentageOfTrack = 1;
 
@@ -221,6 +223,7 @@ public class RollerCoaster : MonoBehaviour {
                     int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
 
                     totalTrackAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
+                    startAngle = Vector3.zero;
 
                     startTrackAngle = totalTrackAngle;
                     smallestAngleDifference -= startTrackAngle;
@@ -230,7 +233,7 @@ public class RollerCoaster : MonoBehaviour {
                 }
             }
 
-            if (i >= Mathf.CeilToInt(startTracksNeeded)) {
+            if (i >= Mathf.CeilToInt(startTracksNeeded) && i < Mathf.CeilToInt(startTracksNeeded) + Mathf.CeilToInt(curveTracksNeeded)) {
                 //then it is time to create a curve instead of just a straight line coming off the start track
                 //calculate the adjustment needed for the curve
                 eulerAngles = smallestAngleDifference / curveTracksNeeded * (i - Mathf.CeilToInt(startTracksNeeded)) + getCurrentAngle(startTrack);
@@ -240,8 +243,17 @@ public class RollerCoaster : MonoBehaviour {
 
                 //set it to the part of the track nessesary to finish drawing the curveTracksNeeded
                 percentageOfTrack = 1;
-                if (curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded)) < 1) {
+                if (curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded)) < 1 && targetTracksNeeded > 0) {
                     percentageOfTrack = curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded));
+
+                    int curveStartNum = (int)((percentageOfTrack) * 10f);
+
+                    startAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
+
+                    totalTrackAngle = Vector3.zero;
+
+                    //the remaining part of the track can be used for the target tracks needed
+                    targetTracksNeeded -= curveStartNum / 10f;
                 }
             }
 
@@ -261,6 +273,11 @@ public class RollerCoaster : MonoBehaviour {
             if (percentageOfTrack < 1 && i < Mathf.CeilToInt(startTracksNeeded)) {
                 //the remaining track will be used for the curve
                 curveStart = (int)((percentageOfTrack) * 10f);
+
+            }
+            if (percentageOfTrack < 1 && i >= Mathf.CeilToInt(startTracksNeeded) && i < Mathf.CeilToInt(startTracksNeeded) + Mathf.CeilToInt(curveTracksNeeded) && targetTracksNeeded > 0) {
+                //the remaining track will be used for the curve
+                curveStart = (int)((percentageOfTrack) * 10f);
             }
 
             if (startTrackAmount + i < trackPieces.Count) {
@@ -271,7 +288,7 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.transform.localEulerAngles = Vector3.zero;
 
                 //adjust the track
-                trackPiece.GetComponent<TrackPiece>().AdjustTrack(totalTrackAngle, percentageOfTrack, curveStart);
+                trackPiece.GetComponent<TrackPiece>().AdjustTrack(totalTrackAngle, startAngle, percentageOfTrack, curveStart);
 
                 //calculate adjustments
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
@@ -288,7 +305,7 @@ public class RollerCoaster : MonoBehaviour {
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
                 Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
-                GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, percentageOfTrack, curveStart);
+                GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, percentageOfTrack, curveStart);
 
             }
         }
@@ -300,7 +317,7 @@ public class RollerCoaster : MonoBehaviour {
 
     }
 
-    public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles, float percentageOfTrack, int curveStart) {
+    public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles, Vector3 startAngle, float percentageOfTrack, int curveStart) {
         GameObject newTrackPiece;
 
         if(unusedTrackPieces.Count > 0) {
@@ -327,7 +344,7 @@ public class RollerCoaster : MonoBehaviour {
         trackPieces.Add(newTrackPiece);
 
         //adjust the track
-        newTrackPieceClass.AdjustTrack(totalAngle, percentageOfTrack, curveStart);
+        newTrackPieceClass.AdjustTrack(totalAngle, startAngle, percentageOfTrack, curveStart);
 
         //set track rotation (after adjustment to make sure the adjustment process goes well)
         newTrackPiece.transform.eulerAngles = eulerAngles;

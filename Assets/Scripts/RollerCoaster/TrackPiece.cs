@@ -29,7 +29,7 @@ public class TrackPiece : MonoBehaviour {
             GetParents();
 
             if (DEBUG_TEST) {
-                AdjustTrack(totalAngle, 1, -1);
+                AdjustTrack(totalAngle, Vector3.zero, 1, -1);
             }
 
             initialised = true;
@@ -41,13 +41,20 @@ public class TrackPiece : MonoBehaviour {
     }
 
     //curveStart: bone where the curve starts
-    public void AdjustTrack(Vector3 totalAngle, float percentageOfTrack, int curveStart) {
+    //startAngle: angle for time before curveStart
+    public void AdjustTrack(Vector3 totalAngle, Vector3 startAngle, float percentageOfTrack, int curveStart) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
-        Vector3 adjustmentAngle = totalAngle / (boneAmount - curveStart);
+        int startAmount = curveStart;
+        Vector3 adjustmentAngle = totalAngle / boneAmount;
+        //if it were a negative number, it would not divide properly (-1 means N/A)
+        //print(startAngle);
+        if (curveStart > 0) {
+            adjustmentAngle = totalAngle / (boneAmount - startAmount);
+            startAngle = startAngle / (startAmount);
+        }
+        //print(startAmount);
 
-        //angle for time before curveStart
-        Vector3 startAngle = Vector3.zero;
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -136,6 +143,7 @@ public class TrackPiece : MonoBehaviour {
         }
 
         //cut this off to make sure it is only the percentageOfTrack
+        print(curveStart);
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length; r++) {
 
