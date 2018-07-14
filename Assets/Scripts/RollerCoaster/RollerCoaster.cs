@@ -248,9 +248,10 @@ public class RollerCoaster : MonoBehaviour {
 
                     //this means there are more tracks after the curve, part of the curve track can be used for that
                     if (targetTracksNeeded > 0) {
-                        int curveStartNum = (int)((percentageOfTrack) * 10f);
+                        int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
+                        int curveEndNum = (int)((percentageOfTrack) * 10f);
 
-                        startAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
+                        startAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveEndNum;
 
                         totalTrackAngle = Vector3.zero;
 
