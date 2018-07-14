@@ -257,7 +257,7 @@ public class RollerCoaster : MonoBehaviour {
                 }
             }
 
-            int curveStart = 0;
+            int curveStart = -1;
             if (percentageOfTrack < 1 && i < Mathf.CeilToInt(startTracksNeeded)) {
                 //the remaining track will be used for the curve
                 curveStart = (int)((percentageOfTrack) * 10f);

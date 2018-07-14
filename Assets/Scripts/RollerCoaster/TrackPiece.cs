@@ -29,7 +29,7 @@ public class TrackPiece : MonoBehaviour {
             GetParents();
 
             if (DEBUG_TEST) {
-                AdjustTrack(totalAngle, 1, 0);
+                AdjustTrack(totalAngle, 1, -1);
             }
 
             initialised = true;
@@ -140,22 +140,22 @@ public class TrackPiece : MonoBehaviour {
             for (int r = 1; r < rails[i].Length; r++) {
 
                 //if the curve start is normal, treat this normally, otherwise just use the start angle
-                if (curveStart == 0) {
+                if (curveStart == -1) {
                     currentAngle = adjustmentAngle;
                 } else {
                     currentAngle = startAngle;
                 }
 
-                if ((r - 1) / boneAmount > percentageOfTrack && curveStart != 0) {
+                if ((r - 1) / boneAmount > percentageOfTrack && curveStart != -1) {
                     //if the curve start is not zero, treat the rest of the track as the upcomming angle instead of the start angle
                     rails[i][r].transform.localPosition = defaultBonePosition;
                     rails[i][r].transform.localEulerAngles = adjustmentAngle;
                     rails[i][r].SetActive(true);
-                } else if ((r - 1) / boneAmount > percentageOfTrack && curveStart == 0) {
+                } else if ((r - 1) / boneAmount > percentageOfTrack && curveStart == -1) {
                     //if the curve start is zero, then treat the rest of the track as if it does not exist
                     rails[i][r].transform.localPosition = Vector3.zero;
                     rails[i][r].transform.localEulerAngles = Vector3.zero;
-                    rails[i][r].SetActive(true);
+                    rails[i][r].SetActive(false);
                 } else if ((r + 1 - 1) / boneAmount > percentageOfTrack && percentageOfTrack != 1) {
                     rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * defaultBonePosition;
                     rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * currentAngle;
