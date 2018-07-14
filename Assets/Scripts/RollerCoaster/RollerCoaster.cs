@@ -243,17 +243,20 @@ public class RollerCoaster : MonoBehaviour {
 
                 //set it to the part of the track nessesary to finish drawing the curveTracksNeeded
                 percentageOfTrack = 1;
-                if (curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded)) < 1 && targetTracksNeeded > 0) {
+                if (curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded)) < 1) {
                     percentageOfTrack = curveTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded));
 
-                    int curveStartNum = (int)((percentageOfTrack) * 10f);
+                    //this means there are more tracks after the curve, part of the curve track can be used for that
+                    if (targetTracksNeeded > 0) {
+                        int curveStartNum = (int)((percentageOfTrack) * 10f);
 
-                    startAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
+                        startAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
 
-                    totalTrackAngle = Vector3.zero;
+                        totalTrackAngle = Vector3.zero;
 
-                    //the remaining part of the track can be used for the target tracks needed
-                    targetTracksNeeded -= curveStartNum / 10f;
+                        //the remaining part of the track can be used for the target tracks needed
+                        targetTracksNeeded -= curveStartNum / 10f;
+                    }
                 }
             }
 
@@ -267,6 +270,7 @@ public class RollerCoaster : MonoBehaviour {
                 if (targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded)) < 1) {
                     percentageOfTrack = targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded));
                 }
+                print(targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded)));
             }
 
             int curveStart = -1;

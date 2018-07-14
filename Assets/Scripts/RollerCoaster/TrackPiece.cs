@@ -143,10 +143,8 @@ public class TrackPiece : MonoBehaviour {
         }
 
         //cut this off to make sure it is only the percentageOfTrack
-        print(curveStart);
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length; r++) {
-
                 //if the curve start is normal, treat this normally, otherwise just use the start angle
                 if (curveStart == -1) {
                     currentAngle = adjustmentAngle;
