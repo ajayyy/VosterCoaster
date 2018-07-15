@@ -146,7 +146,7 @@ public class RollerCoaster : MonoBehaviour {
         float curveTracksNeeded = 0;
 
         //if the controller is on the right side
-        bool rightSide = targetPosition.x > 0;
+        bool rightSide = targetPosition.x > startPosition.x;
 
         //amount to check for for the first if statement in the curve
         float checkAmount = startTracksNeeded;
