@@ -196,7 +196,7 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //check if this is actually a proper angle to create a track
-        if(((angleDifference.y < 180 || angleDifference.y > 270) && rightSide) || ((angleDifference.y < 90 || angleDifference.y > 180) && !rightSide)) {
+        if(totalTracksNeeded() > 250) {
             totalTracksNeeded = () => 0;
         }
 
@@ -271,7 +271,6 @@ public class RollerCoaster : MonoBehaviour {
                 if (targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded)) < 1) {
                     percentageOfTrack = targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded));
                 }
-                print(targetTracksNeeded - (i - Mathf.CeilToInt(startTracksNeeded) - Mathf.CeilToInt(curveTracksNeeded)));
             }
 
             int secondCurveStart = -1;
