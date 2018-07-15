@@ -57,8 +57,8 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
-        Vector3 startTrackAngleRelative = startTrack.transform.eulerAngles;
-        Vector3 currentAngle = startTrack.transform.eulerAngles;
+        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack);
+        Vector3 currentAngle = getCurrentAngle(startTrack);
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
         Vector3 smallestAngleDifference = new Vector3(Mathf.Abs(angleDifference.x), Mathf.Abs(angleDifference.y), Mathf.Abs(angleDifference.z));
@@ -406,6 +406,7 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 currentAngle = Vector3.zero;
 
         currentAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
+        currentAngle += startTrack.GetComponent<TrackPiece>().startAngle;
         currentAngle += startTrack.transform.eulerAngles;
 
         return currentAngle;

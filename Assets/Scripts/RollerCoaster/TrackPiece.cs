@@ -11,6 +11,8 @@ public class TrackPiece : MonoBehaviour {
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
 
     public Vector3 totalAngle = new Vector3(0, 0, 0);
+    //used when one track piece has mutliple angles on it
+    public Vector3 startAngle = new Vector3(0, 0, 0);
 
     //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
     public bool DEBUG_TEST = false;
@@ -44,16 +46,19 @@ public class TrackPiece : MonoBehaviour {
     //startAngle: angle for time before curveStart
     public void AdjustTrack(Vector3 totalAngle, Vector3 startAngle, float percentageOfTrack, int secondCurveStart) {
         //set variable for total angle for other classes to view
-        this.totalAngle = totalAngle;
+        if (secondCurveStart == -1) {
+            this.totalAngle = totalAngle * percentageOfTrack;
+        } else {
+            this.totalAngle = totalAngle;
+        }
         int startAmount = secondCurveStart;
+        this.startAngle = startAngle;
         Vector3 adjustmentAngle = totalAngle / boneAmount;
         //if it were a negative number, it would not divide properly (-1 means N/A)
-        //print(startAngle);
         if (secondCurveStart > 0) {
             adjustmentAngle = totalAngle / (boneAmount - startAmount);
             startAngle = startAngle / (startAmount);
         }
-        //print(startAmount);
 
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
