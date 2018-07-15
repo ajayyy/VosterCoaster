@@ -40,16 +40,16 @@ public class TrackPiece : MonoBehaviour {
         
     }
 
-    //curveStart: bone where the curve starts
+    //secondCurveStart: bone where the second curve starts
     //startAngle: angle for time before curveStart
-    public void AdjustTrack(Vector3 totalAngle, Vector3 startAngle, float percentageOfTrack, int curveStart) {
+    public void AdjustTrack(Vector3 totalAngle, Vector3 startAngle, float percentageOfTrack, int secondCurveStart) {
         //set variable for total angle for other classes to view
         this.totalAngle = totalAngle;
-        int startAmount = curveStart;
+        int startAmount = secondCurveStart;
         Vector3 adjustmentAngle = totalAngle / boneAmount;
         //if it were a negative number, it would not divide properly (-1 means N/A)
         //print(startAngle);
-        if (curveStart > 0) {
+        if (secondCurveStart > 0) {
             adjustmentAngle = totalAngle / (boneAmount - startAmount);
             startAngle = startAngle / (startAmount);
         }
@@ -81,7 +81,7 @@ public class TrackPiece : MonoBehaviour {
             for (int r = 1; r < rails[i].Length; r++) {
 
                 //check if current angle should switch from the start angle to the full angle
-                if (r - 1 >= curveStart) {
+                if (r - 1 >= secondCurveStart) {
                     currentAngle = adjustmentAngle;
                 } else {
                     currentAngle = startAngle;
@@ -106,7 +106,7 @@ public class TrackPiece : MonoBehaviour {
             for (int r = 1; r < rails[i].Length; r++) {
 
                 //check if current angle should switch from the start angle to the full angle
-                if(r - 1 >= curveStart) {
+                if(r - 1 >= secondCurveStart) {
                     currentAngle = adjustmentAngle;
                 } else {
                     currentAngle = startAngle;
@@ -146,18 +146,18 @@ public class TrackPiece : MonoBehaviour {
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length; r++) {
                 //if the curve start is normal, treat this normally, otherwise just use the start angle
-                if (curveStart == -1) {
+                if (secondCurveStart == -1) {
                     currentAngle = adjustmentAngle;
                 } else {
                     currentAngle = startAngle;
                 }
 
-                if ((r - 1) / boneAmount > percentageOfTrack && curveStart != -1) {
+                if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart != -1) {
                     //if the curve start is not zero, treat the rest of the track as the upcomming angle instead of the start angle
                     rails[i][r].transform.localPosition = defaultBonePosition;
                     rails[i][r].transform.localEulerAngles = adjustmentAngle;
                     rails[i][r].SetActive(true);
-                } else if ((r - 1) / boneAmount > percentageOfTrack && curveStart == -1) {
+                } else if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart == -1) {
                     //if the curve start is zero, then treat the rest of the track as if it does not exist
                     rails[i][r].transform.localPosition = Vector3.zero;
                     rails[i][r].transform.localEulerAngles = Vector3.zero;
