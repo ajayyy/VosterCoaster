@@ -238,8 +238,8 @@ public class RollerCoaster : MonoBehaviour {
             smallestAngleDifference = new Vector3(smallestAngleDifference.x, -(smallestAngleDifference.y), smallestAngleDifference.z);
         }
 
-        //check if the generation was canceled
-        if(cancel || totalTracksNeeded() > 250) {
+        //check if the generation was canceled or the track is too big or small
+        if (cancel || totalTracksNeeded() > 250 || curveTracksNeeded < 3) {
             totalTracksNeeded = () => 0;
         }
 
