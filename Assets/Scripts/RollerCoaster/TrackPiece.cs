@@ -11,23 +11,27 @@ public class TrackPiece : MonoBehaviour {
     Vector3 defaultBonePosition = new Vector3(0, 0, -0.402642f);
 
     public Vector3 totalAngle = new Vector3(0, 0, 0);
-
-    //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
-    public bool DEBUG_TEST = false;
+    //used when one track piece has mutliple angles on it
+    public Vector3 startAngle = new Vector3(0, 0, 0);
+    public float percentageOfTrack = 1;
+    public float secondCurveStart = -1;
 
     //has this trackpiece been initialised yet
     bool initialised = false;
 
+    //has this track piece been modified by the current incomplete track
+    public bool modified = false;
+    public Vector3 oldTotalAngle = Vector3.zero;
+
     //the roller coaster this is a part of
     public RollerCoaster rollerCoaster;
+
+    //amount of bones per track piece
+    float boneAmount = 10f;
 
     public void Start() {
         if (!initialised) {
             GetParents();
-
-            if (DEBUG_TEST) {
-                AdjustTrack(totalAngle);
-            }
 
             initialised = true;
         }
@@ -37,14 +41,26 @@ public class TrackPiece : MonoBehaviour {
         
     }
 
-    //adjustment angle: the number represents the total angle the whole track rotates divided by 9 (first bone does not have an angle)
-    public void AdjustTrack(Vector3 totalAngle) {
+    //secondCurveStart: bone where the second curve starts
+    //startAngle: angle for time before curveStart
+    public void AdjustTrack(Vector3 totalAngle, Vector3 startAngle, float percentageOfTrack, int secondCurveStart) {
         //set variable for total angle for other classes to view
-        this.totalAngle = totalAngle;
-        Vector3 adjustmentAngle = totalAngle / 10f;
+        if (secondCurveStart == -1) {
+            this.totalAngle = totalAngle * percentageOfTrack;
+        } else {
+            this.totalAngle = totalAngle;
+        }
+        int startAmount = secondCurveStart;
+        this.startAngle = startAngle;
+        this.percentageOfTrack = percentageOfTrack;
+        this.secondCurveStart = secondCurveStart;
+        Vector3 adjustmentAngle = totalAngle / boneAmount;
+        //if it were a negative number, it would not divide properly (-1 means N/A)
+        if (secondCurveStart > 0) {
+            adjustmentAngle = totalAngle / (boneAmount - startAmount);
+            startAngle = startAngle / (startAmount);
+        }
 
-        //find the distance to place each segement away from eachother by
-        float modifiedTrackBoneDifference = getDistanceForAngle(adjustmentAngle.y, defaultBonePosition.z, 10);
 
         //an array that contains arrays of each joint on the rails (maybe move rails to it's own class in the future)
         GameObject[][] rails = new GameObject[3][];
@@ -65,13 +81,26 @@ public class TrackPiece : MonoBehaviour {
             rails[i] = bones;
         }
 
+        Vector3 currentAngle = startAngle;
+
         for (int i = 0; i < rails.Length; i++) {
             for (int r = 1; r < rails[i].Length; r++) {
+
+                //check if current angle should switch from the start angle to the full angle
+                if (r - 1 >= secondCurveStart) {
+                    currentAngle = adjustmentAngle;
+                } else {
+                    currentAngle = startAngle;
+                }
+
                 //Attempt to rotate them all
-                rails[i][r].transform.localEulerAngles = adjustmentAngle;
+                rails[i][r].transform.localEulerAngles = currentAngle;
 
                 //reset their position
                 rails[i][r].transform.localPosition = defaultBonePosition;
+
+                //set active
+                rails[i][r].SetActive(true);
             }
         }
 
@@ -82,22 +111,31 @@ public class TrackPiece : MonoBehaviour {
 
             for (int r = 1; r < rails[i].Length; r++) {
 
+                //check if current angle should switch from the start angle to the full angle
+                if(r - 1 >= secondCurveStart) {
+                    currentAngle = adjustmentAngle;
+                } else {
+                    currentAngle = startAngle;
+                }
+
                 float height = difference; //calculate height of this track piece
 
-                rails[i][r].transform.localPosition = new Vector3(0, 0, modifiedTrackBoneDifference);
-                //if (r == rails[i].Length - 2) {
-                //    rails[i][r].transform.localPosition *= 2;
-                //}
+                rails[i][r].transform.localPosition = defaultBonePosition;
 
-                if (adjustmentAngle.y != 0) { //making a turn, extend inside curves to accommodate
+                if (currentAngle.y != 0) { //making a turn, extend inside curves to accommodate
                     int middleRail = 2;
 
                     if (i != middleRail) {
                         //get full offset compared to rails[middleRail]
                         float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
 
+                        //if the angle is negative, the outside rail is the inside rail and the inside rail is the outside rail
+                        if(currentAngle.y < 0) {
+                            offset = -offset;
+                        }
+
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(adjustmentAngle.y) * 10f;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(currentAngle.y) * boneAmount;
 
                         //radius of the middle circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
@@ -108,7 +146,34 @@ public class TrackPiece : MonoBehaviour {
                     }
                 }
             }
+        }
 
+        //cut this off to make sure it is only the percentageOfTrack
+        for (int i = 0; i < rails.Length; i++) {
+            for (int r = 1; r < rails[i].Length; r++) {
+                //if the curve start is normal, treat this normally, otherwise just use the start angle
+                if (secondCurveStart == -1) {
+                    currentAngle = adjustmentAngle;
+                } else {
+                    currentAngle = startAngle;
+                }
+
+                if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart != -1) {
+                    //if the curve start is not zero, treat the rest of the track as the upcomming angle instead of the start angle
+                    rails[i][r].transform.localPosition = defaultBonePosition;
+                    rails[i][r].transform.localEulerAngles = adjustmentAngle;
+                    rails[i][r].SetActive(true);
+                } else if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart == -1) {
+                    //if the curve start is zero, then treat the rest of the track as if it does not exist
+                    rails[i][r].transform.localPosition = Vector3.zero;
+                    rails[i][r].transform.localEulerAngles = Vector3.zero;
+                    rails[i][r].SetActive(false);
+                } else if ((r + 1 - 1) / boneAmount > percentageOfTrack && percentageOfTrack != 1) {
+                    rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * defaultBonePosition;
+                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * currentAngle;
+                    rails[i][r].SetActive(true);
+                }
+            }
         }
     }
 
