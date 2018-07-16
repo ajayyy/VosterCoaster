@@ -142,7 +142,7 @@ public class RollerCoaster : MonoBehaviour {
 
         //the amount of tracks need coming straight off the start track
         float startTracksNeeded = Mathf.Abs(distanceFromStart / (trackBoneSize * 10f));
-        float targetTracksNeeded = (int) Mathf.Abs(distanceFromTarget / (trackBoneSize * 10f));
+        float targetTracksNeeded = Mathf.Abs(distanceFromTarget / (trackBoneSize * 10f));
         float curveTracksNeeded = 0;
 
         //if the controller is on the right side
@@ -150,7 +150,7 @@ public class RollerCoaster : MonoBehaviour {
 
         //amount to check for for the first if statement in the curve
         float checkAmount = startTracksNeeded;
-    
+
         if (Mathf.Min(startTracksNeeded, targetTracksNeeded) == checkAmount && !cancel) {
             //find intersection between line to the end of curve from the start of curve
             float startToEndCurveSlope = Mathf.Tan((((180 - targetAngle.y) / 2)) * Mathf.Deg2Rad);
