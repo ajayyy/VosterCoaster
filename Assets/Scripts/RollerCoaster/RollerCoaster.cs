@@ -182,6 +182,11 @@ public class RollerCoaster : MonoBehaviour {
 
             curveTracksNeeded = (curveLength / (trackBoneSize * 10f));
 
+            //curve too small
+            if (curveTracksNeeded < 1) {
+                cancel = true;
+            }
+
             startTracksNeeded = 0;
 
             //Find difference between circleTarget and the target position
@@ -215,6 +220,11 @@ public class RollerCoaster : MonoBehaviour {
             float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
 
             curveTracksNeeded = (curveLength / (trackBoneSize * 10f));
+
+            //curve too small
+            if (curveTracksNeeded < 1) {
+                cancel = true;
+            }
 
             //Find difference between circleTarget and the target position
             startTracksNeeded = (Mathf.Sqrt(Mathf.Pow(circleStartX - startPosition.x, 2) + Mathf.Pow(circleStartY - startPosition.z, 2)) / (trackBoneSize * 10f));
