@@ -362,6 +362,8 @@ public class RollerCoaster : MonoBehaviour {
                     //remove this amount as it was already dealt with here
                     startTracksNeeded -= curveStartNum / 10f;
 
+                    secondCurveStart = (int)((percentageOfTrack) * 10f);
+
                     reset = true;
                     firstPieceEdited = true;
 
