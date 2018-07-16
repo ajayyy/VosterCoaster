@@ -526,8 +526,12 @@ public class RollerCoaster : MonoBehaviour {
     public Vector3 getCurrentAngle(GameObject startTrack) {
         Vector3 currentAngle = Vector3.zero;
 
-        currentAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
-        currentAngle += startTrack.GetComponent<TrackPiece>().startAngle;
+        TrackPiece trackPiece = startTrack.GetComponent<TrackPiece>();
+
+        if (!trackPiece.modified) {
+            currentAngle = trackPiece.totalAngle;
+        }
+        currentAngle += trackPiece.startAngle;
         currentAngle += startTrack.transform.eulerAngles;
 
         return currentAngle;
