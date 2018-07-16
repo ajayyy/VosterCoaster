@@ -24,6 +24,7 @@ public class TrackPiece : MonoBehaviour {
 
     //has this track piece been modified by the current incomplete track
     public bool modified = false;
+    public Vector3 oldTotalAngle = Vector3.zero;
 
     //the roller coaster this is a part of
     public RollerCoaster rollerCoaster;

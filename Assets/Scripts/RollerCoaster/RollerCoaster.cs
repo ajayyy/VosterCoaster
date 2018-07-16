@@ -338,7 +338,15 @@ public class RollerCoaster : MonoBehaviour {
 
                     int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
 
-                    startAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
+                    TrackPiece startTrackScript = startTrack.GetComponent<TrackPiece>();
+
+                    startAngle = startTrackScript.totalAngle;
+                    if (startTrackScript.modified) {
+                        startAngle = startTrackScript.oldTotalAngle;
+                    } else {
+                        startTrackScript.oldTotalAngle = startTrackScript.totalAngle;
+                    }
+
                     totalTrackAngle = Vector3.zero;
 
                     //remove this amount as it was already dealt with here
@@ -355,7 +363,14 @@ public class RollerCoaster : MonoBehaviour {
                     int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
                     int curveEndNum = (int)((percentageOfTrack) * 10f);
 
-                    startAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
+                    TrackPiece startTrackScript = startTrack.GetComponent<TrackPiece>();
+
+                    startAngle = startTrackScript.totalAngle;
+                    if (startTrackScript.modified) {
+                        startAngle = startTrackScript.oldTotalAngle;
+                    } else {
+                        startTrackScript.oldTotalAngle = startTrackScript.totalAngle;
+                    }
 
                     totalTrackAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
 
@@ -429,6 +444,27 @@ public class RollerCoaster : MonoBehaviour {
         //remove all unneeded track pieces, don't add to i since trackPieces.Count will be continuing to shrink
         for (int i = Mathf.CeilToInt(startTrackAmount + totalTracksNeeded()); i < trackPieces.Count;) {
             RemoveTrackPiece(trackPieces[i]);
+        }
+        
+        //reset last track back to normal if nessesary
+        if(totalTracksNeeded() == 0 && startTrack.GetComponent<TrackPiece>().modified) {
+            TrackPiece trackPiece = startTrack.GetComponent<TrackPiece>();
+
+            Vector3 oldPosition = trackPiece.transform.position;
+            Vector3 oldAngles = trackPiece.transform.eulerAngles;
+
+            //reset position and angle before adjusting the track
+            trackPiece.transform.position = Vector3.zero;
+            trackPiece.transform.localEulerAngles = Vector3.zero;
+
+            //adjust the track back the how it was
+            trackPiece.AdjustTrack(trackPiece.oldTotalAngle, Vector3.zero, trackPiece.percentageOfTrack, -1);
+
+            //set it to what it was before
+            trackPiece.transform.position = oldPosition;
+            trackPiece.transform.localEulerAngles = oldAngles;
+
+            startTrack.GetComponent<TrackPiece>().modified = false;
         }
 
     }
