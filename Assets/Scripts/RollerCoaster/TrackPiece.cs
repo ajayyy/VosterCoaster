@@ -16,9 +16,6 @@ public class TrackPiece : MonoBehaviour {
     public float percentageOfTrack = 1;
     public float secondCurveStart = -1;
 
-    //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
-    public bool DEBUG_TEST = false;
-
     //has this trackpiece been initialised yet
     bool initialised = false;
 
@@ -35,10 +32,6 @@ public class TrackPiece : MonoBehaviour {
     public void Start() {
         if (!initialised) {
             GetParents();
-
-            if (DEBUG_TEST) {
-                AdjustTrack(totalAngle, Vector3.zero, 1, -1);
-            }
 
             initialised = true;
         }
