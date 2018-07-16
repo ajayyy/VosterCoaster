@@ -236,9 +236,15 @@ public class RollerCoaster : MonoBehaviour {
         //angle to start from when curves start if part of the curve is drawn during the start tracks
         Vector3 startTrackAngle = Vector3.zero;
 
+        //has the first piece been edited already
+        bool firstPieceEdited = false;
+
         //Amount of tracks already placed down
         int startTrackAmount = trackPieces.IndexOf(startTrack) + 1;
         for (int i = 0; i < totalTracksNeeded(); i++) {
+            //should the i not increment at the end
+            bool reset = false;
+
             Vector3 eulerAngles = startTrackAngleRelative;
             eulerAngles += currentAngle;
 
@@ -246,6 +252,10 @@ public class RollerCoaster : MonoBehaviour {
             Vector3 totalTrackAngle = Vector3.zero;
             //angle that the tracks start with if they have a startTrack value that is not -1
             Vector3 startAngle = Vector3.zero;
+
+            GameObject premadeTrackPiece = null;
+            //should a premade track piece be used instead of creating a new one
+            bool usePremadeTrackPiece = false;
 
             float percentageOfTrack = 1;
 
@@ -321,8 +331,62 @@ public class RollerCoaster : MonoBehaviour {
                 secondCurveStart = (int)((percentageOfTrack) * 10f);
             }
 
-            if (startTrackAmount + i < trackPieces.Count) {
-                GameObject trackPiece = trackPieces[i + startTrackAmount];
+            //check to see if this can merge with the start track
+            if (!firstPieceEdited && i == 0 && ((startTrack.GetComponent<TrackPiece>().percentageOfTrack != 1 && startTrack.GetComponent<TrackPiece>().secondCurveStart == -1) || startTrack.GetComponent<TrackPiece>().modified)) {
+                if (startTracksNeeded > 0) {
+                    percentageOfTrack = startTrack.GetComponent<TrackPiece>().percentageOfTrack;
+
+                    int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
+
+                    startAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
+                    totalTrackAngle = Vector3.zero;
+
+                    //remove this amount as it was already dealt with here
+                    startTracksNeeded -= curveStartNum / 10f;
+
+                    reset = true;
+                    firstPieceEdited = true;
+
+                    usePremadeTrackPiece = true;
+                    premadeTrackPiece = startTrack;
+                } else {
+                    percentageOfTrack = startTrack.GetComponent<TrackPiece>().percentageOfTrack;
+
+                    int curveStartNum = (int)((1 - percentageOfTrack) * 10f);
+                    int curveEndNum = (int)((percentageOfTrack) * 10f);
+
+                    startAngle = startTrack.GetComponent<TrackPiece>().totalAngle;
+
+                    totalTrackAngle = (smallestAngleDifference / (curveTracksNeeded * 10f)) * curveStartNum;
+
+                    secondCurveStart = (int)((percentageOfTrack) * 10f);
+
+                    //subtrack by the amount not done
+                    startTrackAngle = totalTrackAngle;
+                    smallestAngleDifference -= startTrackAngle;
+
+                    //remove this amount as it was already dealt with here
+                    curveTracksNeeded -= curveStartNum / 10f;
+
+                    reset = true;
+                    firstPieceEdited = true;
+
+                    usePremadeTrackPiece = true;
+                    premadeTrackPiece = startTrack;
+                }
+            }
+            if (startTrackAmount + i < trackPieces.Count || usePremadeTrackPiece) {
+                GameObject trackPiece = null;
+
+                if (usePremadeTrackPiece) {
+                    trackPiece = premadeTrackPiece;
+                    premadeTrackPiece.GetComponent<TrackPiece>().modified = true;
+                } else {
+                    trackPiece = trackPieces[i + startTrackAmount];
+                }
+
+                Vector3 oldPosition = trackPiece.transform.position;
+                Vector3 oldAngles = trackPiece.transform.eulerAngles;
 
                 //reset position and angle before adjusting the track
                 trackPiece.transform.position = Vector3.zero;
@@ -331,15 +395,22 @@ public class RollerCoaster : MonoBehaviour {
                 //adjust the track
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(totalTrackAngle, startAngle, percentageOfTrack, secondCurveStart);
 
-                //calculate adjustments
-                //this finds the last bone plus half of the track size (because position is based off the center of the object
-                Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
+                //premade track piece would already be in the correct position
+                if (!usePremadeTrackPiece) {
+                    //calculate adjustments
+                    //this finds the last bone plus half of the track size (because position is based off the center of the object
+                    Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
-                //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-                trackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5f));
+                    //need to offset it by trackBoneSize by the angle (for now just with y part of angle
+                    trackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5f));
 
-                //set track rotation (after adjustment to make sure the adjustment process goes well)
-                trackPiece.transform.localEulerAngles = eulerAngles;
+                    //set track rotation (after adjustment to make sure the adjustment process goes well)
+                    trackPiece.transform.localEulerAngles = eulerAngles;
+                } else {
+                    //set it to what it was before
+                    trackPiece.transform.position = oldPosition;
+                    trackPiece.transform.localEulerAngles = oldAngles;
+                }
 
             } else {
                 //calculate adjustments
@@ -347,7 +418,11 @@ public class RollerCoaster : MonoBehaviour {
                 Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
                 GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, percentageOfTrack, secondCurveStart);
+            }
 
+            //reset i if nessesary (this must be the last thing in the loop)
+            if (reset) {
+                i--;
             }
         }
 

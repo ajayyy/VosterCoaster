@@ -13,12 +13,17 @@ public class TrackPiece : MonoBehaviour {
     public Vector3 totalAngle = new Vector3(0, 0, 0);
     //used when one track piece has mutliple angles on it
     public Vector3 startAngle = new Vector3(0, 0, 0);
+    public float percentageOfTrack = 1;
+    public float secondCurveStart = -1;
 
     //used for testing, if enabled the adjust track function will be called at the start. This normally would be called by code, but if the track is added manually while debugging, this variable will need to be enabled
     public bool DEBUG_TEST = false;
 
     //has this trackpiece been initialised yet
     bool initialised = false;
+
+    //has this track piece been modified by the current incomplete track
+    public bool modified = false;
 
     //the roller coaster this is a part of
     public RollerCoaster rollerCoaster;
@@ -53,6 +58,8 @@ public class TrackPiece : MonoBehaviour {
         }
         int startAmount = secondCurveStart;
         this.startAngle = startAngle;
+        this.percentageOfTrack = percentageOfTrack;
+        this.secondCurveStart = secondCurveStart;
         Vector3 adjustmentAngle = totalAngle / boneAmount;
         //if it were a negative number, it would not divide properly (-1 means N/A)
         if (secondCurveStart > 0) {
