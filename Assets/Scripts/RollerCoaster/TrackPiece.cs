@@ -215,30 +215,4 @@ public class TrackPiece : MonoBehaviour {
 
     }
 
-    //because the track pieces are not actual circles and are made up of straight segments, the margin of error must be calculated
-    public float getDistanceForAngle(float adjustmentAngle, float currentDistance, int amount) {
-
-        //total displacement on each axis
-        float totalX = 0;
-        float totalY = 0;
-
-        for(int i = 0; i < amount; i++) {
-            //calculate x value for this segment
-            float x = Mathf.Sin(adjustmentAngle * (i + 1) * Mathf.Deg2Rad) * (currentDistance / Mathf.Sin(Mathf.PI / 2));
-            //calculate y using x in the pythagorean formula
-            float y = Mathf.Sqrt(Mathf.Pow(currentDistance, 2) - Mathf.Pow(x, 2));
-
-            totalX += x;
-            totalY += y;
-        }
-
-        float totalDisplacement = Mathf.Sqrt(Mathf.Pow(totalX, 2) + Mathf.Pow(totalY, 2));
-
-        //find the factor of error this displacement has versus the ideal
-        float differenceFactor = ((rollerCoaster.trackBoneSize / RollerCoaster.scale) * amount) / totalDisplacement;
-
-        //multiply this error factor by the current distance and return it to be the real distance
-        return currentDistance * differenceFactor;
-    }
-
 }
