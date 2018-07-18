@@ -25,6 +25,9 @@ public class RollerCoaster : MonoBehaviour {
     //the latest track to be permenently placed
     public GameObject currentTrack;
 
+    //is the incline being edited or the turns. true for incline, false for turns
+    public bool inclineMode = false;
+
     void Start () {
         //just for now, since we must start with one
         transform.Find("TrackPiece0").gameObject.GetComponent<TrackPiece>().rollerCoaster = this;
@@ -39,7 +42,14 @@ public class RollerCoaster : MonoBehaviour {
     }
 	
 	void Update () {
-        CreatePath(Vector3.zero, currentTrack, true);
+
+        GameController gameController = GameController.instance;
+
+        CreatePath(Vector3.zero, currentTrack, inclineMode);
+
+        if (Input.GetButtonDown("RightTrackpadClick")) {
+            inclineMode = !inclineMode;
+        }
 
         if (Input.anyKey) {
             currentTrack = trackPieces[trackPieces.Count - 1];
@@ -58,12 +68,12 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
-        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack);
-        Vector3 currentAngle = getCurrentAngle(startTrack);
+        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack, true);
+        Vector3 currentAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
-            startTrackAngleRelative = new Vector3(1, 0, 0) * getCurrentAngle(startTrack).x;
-            currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack).x;
+            startTrackAngleRelative = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
+            currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
         }
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
@@ -633,7 +643,8 @@ public class RollerCoaster : MonoBehaviour {
         trackPiece.SetActive(false);
     }
 
-    public Vector3 getCurrentAngle(GameObject startTrack) {
+    //normal: should it use the normal start track rotation or use a converted version using MathHelper.ConvertQuant2Euler()
+    public Vector3 getCurrentAngle(GameObject startTrack, bool normal) {
         Vector3 currentAngle = Vector3.zero;
 
         TrackPiece trackPiece = startTrack.GetComponent<TrackPiece>();
@@ -642,7 +653,13 @@ public class RollerCoaster : MonoBehaviour {
             currentAngle = trackPiece.totalAngle;
         }
         currentAngle += trackPiece.startAngle;
-        currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.rotation);
+
+        //that function does not puts the angle into the x, so it is not useful when doing turns
+        if (normal) {
+            currentAngle += startTrack.transform.localEulerAngles;
+        } else {
+            currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.rotation);
+        }
 
         return currentAngle;
     }
