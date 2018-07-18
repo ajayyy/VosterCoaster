@@ -498,8 +498,8 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
-        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack);
-        Vector3 currentAngle = getCurrentAngle(startTrack);
+        Vector3 startTrackAngleRelative = new Vector3(1, 0, 0) * getCurrentAngle(startTrack).x;
+        Vector3 currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack).x;
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
         Vector3 smallestAngleDifference = new Vector3(Mathf.Abs(angleDifference.x), Mathf.Abs(angleDifference.y), Mathf.Abs(angleDifference.z));
@@ -525,7 +525,7 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //rotate positions around the start angle
-        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, -new Vector3(-90, 0, 0));
+        targetPosition = RotatePointAroundPivot(targetPosition, startPosition,  new Vector3(90, 0, 0) - currentAngle);
         targetAngle -= currentAngle;
         startTrackAngleRelative = Vector3.zero;
 
@@ -553,15 +553,15 @@ public class RollerCoaster : MonoBehaviour {
         float collisionX = (startB - targetB) / (targetSlope - startSlope);
         float collisionY = targetSlope * collisionX + targetB;
 
-        //check if that point is infront or behind the starrt point (https://math.stackexchange.com/questions/1330210/how-to-check-if-a-point-is-in-the-direction-of-the-normal-of-a-plane)
-        Vector3 startNormal = new Vector3(Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad), Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad), 0);
+        //check if that point is infront or behind the start point (https://math.stackexchange.com/questions/1330210/how-to-check-if-a-point-is-in-the-direction-of-the-normal-of-a-plane)
+        Vector3 startNormal = new Vector3(0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad));
         float startNormalDistance = Vector3.Dot(startNormal, new Vector3(0, collisionY, collisionX) - startPosition);
         //check if the collision point is past the startPosition
         if (startNormalDistance < 0) {
             cancel = true;
         }
         //check for the target line as well
-        Vector3 targetNormal = new Vector3(Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad), Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad), 0);
+        Vector3 targetNormal = new Vector3(0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad));
         float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(0, collisionY, collisionX) - targetPosition);
         //check if the collision point is past the startPosition
         if (targetNormalDistance > 0) {
@@ -596,7 +596,7 @@ public class RollerCoaster : MonoBehaviour {
             //find intersection between line to the end of curve from the start of curve
             float startToEndCurveSlope = Mathf.Tan((((180 - targetAngle.x) / 2)) * Mathf.Deg2Rad);
             //the b value (b = y - mx)
-            float startToEndCurveB = startPosition.y - startToEndCurveSlope * startPosition.x;
+            float startToEndCurveB = startPosition.y - startToEndCurveSlope * startPosition.z;
 
             //find intersection between this line and the target line (x = (b2 - b1) / (m1 - m2))
             //this position will be the second point on the circle of the curve (end point), the first is the start track
@@ -981,7 +981,7 @@ public class RollerCoaster : MonoBehaviour {
             currentAngle = trackPiece.totalAngle;
         }
         currentAngle += trackPiece.startAngle;
-        currentAngle += startTrack.transform.eulerAngles;
+        currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.rotation);
 
         return currentAngle;
     }
