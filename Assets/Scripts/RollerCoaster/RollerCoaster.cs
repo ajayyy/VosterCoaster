@@ -45,7 +45,7 @@ public class RollerCoaster : MonoBehaviour {
 
         GameController gameController = GameController.instance;
 
-        CreatePath(Vector3.zero, currentTrack, inclineMode);
+        CreatePath(currentTrack, inclineMode);
 
         if (Input.GetButtonDown("RightTrackpadClick")) {
             inclineMode = !inclineMode;
@@ -59,7 +59,7 @@ public class RollerCoaster : MonoBehaviour {
     //will create a path of tracks from a start position until the next position by creating turns between them
     //startTrack: track that this path is starting on
     //incline: if this path is creating an incline, false if it is creating a turning path
-    public void CreatePath(Vector3 position, GameObject startTrack, bool incline) {
+    public void CreatePath(GameObject startTrack, bool incline) {
         //if any tracks should be created
         bool cancel = false;
 
