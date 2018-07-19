@@ -69,13 +69,12 @@ public class RollerCoaster : MonoBehaviour {
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
         Vector3 fullTargetAngle = rightController.transform.eulerAngles;
-        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack, true);
+        Vector3 startTrackAngleRelative = Vector3.zero;
         Vector3 currentAngle = getCurrentAngle(startTrack, true);
         //full angle without any edits
         Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
-            startTrackAngleRelative = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
             currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
             fullStartAngle = getCurrentAngle(startTrack, false);
         }
@@ -104,7 +103,6 @@ public class RollerCoaster : MonoBehaviour {
         } else {
             targetAngle -= currentAngle;
         }
-        startTrackAngleRelative = Vector3.zero;
 
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
