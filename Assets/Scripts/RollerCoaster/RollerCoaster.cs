@@ -68,13 +68,40 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
+        Vector3 fullTargetAngle = rightController.transform.eulerAngles;
         Vector3 startTrackAngleRelative = getCurrentAngle(startTrack, true);
         Vector3 currentAngle = getCurrentAngle(startTrack, true);
+        //full angle without any edits
+        Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
             startTrackAngleRelative = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
             currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
+            fullStartAngle = getCurrentAngle(startTrack, false);
         }
+
+        if (incline) {
+            //adjust angle to make it like it was normal
+            float angle = Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+
+            targetAngle = new Vector3(angle, 0, 0);
+
+            //theoretical position as if it was at a normal position
+            float x = Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad) * targetPosition.x + Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * targetPosition.z;
+            float y = targetPosition.y;
+
+            //set that position so that future calculations use that position instead
+            targetPosition = new Vector3(0, y, x);
+        }
+        //rotate positions around the start angle
+        Vector3 pivotAngle = -currentAngle;
+        if (incline) {
+            pivotAngle += new Vector3(90, 0, 0);
+        }
+        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+        targetAngle -= currentAngle;
+        startTrackAngleRelative = Vector3.zero;
+
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
         Vector3 smallestAngleDifference = new Vector3(Mathf.Abs(angleDifference.x), Mathf.Abs(angleDifference.y), Mathf.Abs(angleDifference.z));
@@ -98,15 +125,6 @@ public class RollerCoaster : MonoBehaviour {
 
             smallestAngleDifference = new Vector3(x1, y1, z1);
         }
-
-        //rotate positions around the start angle
-        Vector3 pivotAngle = -currentAngle;
-        if (incline) {
-            pivotAngle += new Vector3(90, 0, 0);
-        }
-        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
-        targetAngle -= currentAngle;
-        startTrackAngleRelative = Vector3.zero;
 
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
@@ -204,6 +222,7 @@ public class RollerCoaster : MonoBehaviour {
         bool otherSide = targetPosition.x > startPosition.x;
         if (incline) {
             otherSide = targetPosition.z < startPosition.z;
+            //print(targetPosition + " " + startPosition);
         }
 
         //amount to check for for the first if statement in the curve
@@ -508,6 +527,12 @@ public class RollerCoaster : MonoBehaviour {
                     premadeTrackPiece = startTrack;
                 }
             }
+
+            if (incline) {
+                //rotate tracks by the y rotation if there is an incline (as the input has been rotated to be normal, the output has to be rotated back)
+                eulerAngles += new Vector3(0, 1, 0) * fullStartAngle.z;
+            }
+
             if (startTrackAmount + i < trackPieces.Count || usePremadeTrackPiece) {
                 GameObject trackPiece = null;
 
@@ -538,6 +563,9 @@ public class RollerCoaster : MonoBehaviour {
                     Vector3 offset = (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
                     if (incline) {
                         offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+
+                        //rotate the offset by the y angle incase it needs to be pointing in a different direction
+                        offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
                     }
 
                     //subtract offset
