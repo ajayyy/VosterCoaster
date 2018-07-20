@@ -603,8 +603,11 @@ public class RollerCoaster : MonoBehaviour {
 
                 //need to offset it by trackBoneSize by the angle
                 Vector3 offset = (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
-                if (incline) {
+                if (incline || eulerAngles.x != 0 || eulerAngles.y != 0) {
                     offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+
+                    //rotate the offset by the y angle incase it needs to be pointing in a different direction
+                    offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
                 }
 
                 GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, offset, percentageOfTrack, secondCurveStart);
