@@ -94,7 +94,15 @@ public class RollerCoaster : MonoBehaviour {
             float y = targetPosition.y;
 
             //set that position so that future calculations use that position instead
-            targetPosition = new Vector3(0, y, x + startPosition.z - startPosition.x);
+            targetPosition = new Vector3(0, y, x);
+
+            //calculate the same for startPosition
+            //theoretical position as if it was at a normal position
+            x = Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad) * startPosition.x + Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * startPosition.z;
+            y = startPosition.y;
+
+            //set that position so that future calculations use that position instead
+            startPosition = new Vector3(0, y, x);
         }
         //rotate positions around the start angle
         Vector3 pivotAngle = -currentAngle;
