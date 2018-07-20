@@ -94,7 +94,7 @@ public class RollerCoaster : MonoBehaviour {
             float y = targetPosition.y;
 
             //set that position so that future calculations use that position instead
-            targetPosition = new Vector3(0, y, x);
+            targetPosition = new Vector3(0, y, x + startPosition.z - startPosition.x);
         }
         //rotate positions around the start angle
         Vector3 pivotAngle = -currentAngle;
