@@ -575,6 +575,11 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.transform.position = Vector3.zero;
                 trackPiece.transform.localEulerAngles = Vector3.zero;
 
+                if (targetAngle == Vector3.zero) {
+                    //force total track angle to be zero
+                    totalTrackAngle = Vector3.zero;
+                }
+
                 //adjust the track
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(totalTrackAngle, startAngle, percentageOfTrack, secondCurveStart);
 
