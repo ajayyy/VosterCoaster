@@ -51,7 +51,7 @@ public class RollerCoaster : MonoBehaviour {
 
         if (Input.GetButtonDown("RightTrackpadClick")) {
             inclineMode = !inclineMode;
-        } else if (Input.GetAxis("RightTrigger") > 0.5) {
+        } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
             currentTrack = trackPieces[trackPieces.Count - 1];
         }
 
@@ -78,7 +78,8 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
-            currentAngle = new Vector3(1, 0, 0) * getCurrentAngle(startTrack, false).x;
+            currentAngle = getCurrentAngle(startTrack, false);
+            currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
             fullStartAngle = getCurrentAngle(startTrack, false);
         }
 
@@ -98,13 +99,14 @@ public class RollerCoaster : MonoBehaviour {
         //rotate positions around the start angle
         Vector3 pivotAngle = -currentAngle;
         if (incline) {
+            pivotAngle = - new Vector3(1, 0, 0) * currentAngle.x;
             pivotAngle += new Vector3(90, 0, 0);
         }
         targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
         if (!incline) {
             targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
         } else {
-            targetAngle -= currentAngle;
+            targetAngle -= new Vector3(1, 0, 0) * currentAngle.x;
         }
 
         //set angle to 0 if the straight button is being held
@@ -207,10 +209,6 @@ public class RollerCoaster : MonoBehaviour {
         float distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startPosition.x, 2)
             + Mathf.Pow(collisionY - startPosition.z, 2));
 
-        if ((targetAngle.x == 0 && !incline) || (targetAngle.y == 0 && incline)) {
-            distanceFromStart = Vector3.Distance(startPosition, targetPosition);
-        }
-
         //get distance from target
         float distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - targetPosition.x, 2)
             + Mathf.Pow(collisionY - targetPosition.z, 2));
@@ -221,6 +219,11 @@ public class RollerCoaster : MonoBehaviour {
 
             distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - targetPosition.z, 2)
                 + Mathf.Pow(collisionY - targetPosition.y, 2));
+        }
+
+        //if the angle is 0, then get the normal difference, do not try to form a curve
+        if ((targetAngle.x == 0 && !incline) || (targetAngle.y == 0 && incline)) {
+            distanceFromStart = Vector3.Distance(startPosition, targetPosition);
         }
 
         //float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
@@ -545,11 +548,6 @@ public class RollerCoaster : MonoBehaviour {
                     usePremadeTrackPiece = true;
                     premadeTrackPiece = startTrack;
                 }
-            }
-
-            if (incline) {
-                //rotate tracks by the y rotation if there is an incline (as the input has been rotated to be normal, the output has to be rotated back)
-                eulerAngles += new Vector3(0, 1, 0) * fullStartAngle.z;
             }
 
             if (startTrackAmount + i < trackPieces.Count || usePremadeTrackPiece) {
