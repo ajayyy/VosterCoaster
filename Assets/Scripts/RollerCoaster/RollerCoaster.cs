@@ -80,17 +80,17 @@ public class RollerCoaster : MonoBehaviour {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
             currentAngle = getCurrentAngle(startTrack, false);
             currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
-            fullStartAngle = getCurrentAngle(startTrack, false);
+            fullStartAngle = getCurrentAngle(startTrack, true);
         }
 
         if (incline) {
             //adjust angle to make it like it was normal
-            float angle = Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
 
             targetAngle = new Vector3(angle, 0, 0);
 
             //theoretical position as if it was at a normal position
-            float x = Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad) * targetPosition.x + Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * targetPosition.z;
+            float x = Mathf.Sin(currentAngle.y * Mathf.Deg2Rad) * targetPosition.x + Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * targetPosition.z;
             float y = targetPosition.y;
 
             //set that position so that future calculations use that position instead
@@ -98,24 +98,35 @@ public class RollerCoaster : MonoBehaviour {
 
             //calculate the same for startPosition
             //theoretical position as if it was at a normal position
-            x = Mathf.Sin(fullStartAngle.z * Mathf.Deg2Rad) * startPosition.x + Mathf.Cos(fullStartAngle.z * Mathf.Deg2Rad) * startPosition.z;
+            x = Mathf.Sin(currentAngle.y * Mathf.Deg2Rad) * startPosition.x + Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * startPosition.z;
             y = startPosition.y;
 
             //set that position so that future calculations use that position instead
             startPosition = new Vector3(0, y, x);
         }
+
         //rotate positions around the start angle
         Vector3 pivotAngle = -currentAngle;
         if (incline) {
-            pivotAngle = - new Vector3(1, 0, 0) * currentAngle.x;
+            pivotAngle = -new Vector3(1, 0, 0) * fullStartAngle.x;
             pivotAngle += new Vector3(90, 0, 0);
         }
+
         targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+
         if (!incline) {
             targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
         } else {
-            targetAngle -= new Vector3(1, 0, 0) * currentAngle.x;
+            //make sure angle is positive
+            if(targetAngle.x < 0) {
+                targetAngle = targetAngle + new Vector3(360, 0, 0);
+            }
+
+            targetAngle -= new Vector3(1, 0, 0) * fullStartAngle.x;
         }
+
+        //reset current angle to the proper angle
+        currentAngle = fullStartAngle;
 
         //set angle to 0 if the straight button is being held
         if (straight) {
@@ -734,7 +745,7 @@ public class RollerCoaster : MonoBehaviour {
         if (normal) {
             currentAngle += startTrack.transform.localEulerAngles;
         } else {
-            currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.rotation);
+            currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.localRotation);
         }
 
         return currentAngle;
