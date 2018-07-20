@@ -234,7 +234,8 @@ public class RollerCoaster : MonoBehaviour {
             distanceFromStart = startPosition.z - targetPosition.z;
 
             if (incline) {
-                distanceFromStart = targetPosition.z;
+                //uses y because when the angle is zero, y ends up being the horizontal variable
+                distanceFromStart = targetPosition.y;
             }
 
             //check to see if the target is behind the start track
