@@ -186,14 +186,14 @@ public class RollerCoaster : MonoBehaviour {
             Vector3 startNormal = new Vector3(Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad));
             float startNormalDistance = Vector3.Dot(startNormal, new Vector3(collisionX, 0, collisionY) - startPosition);
             //check if the collision point is past the startPosition
-            if (startNormalDistance > 0 && targetAngle.y != 0) {
+            if (startNormalDistance > 0 && targetAngle != Vector3.zero) {
                 cancel = true;
             }
             //check for the target line as well
             Vector3 targetNormal = new Vector3(Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad));
             float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(collisionX, 0, collisionY) - targetPosition);
             //check if the collision point is past the startPosition
-            if (targetNormalDistance < 0 && targetAngle.y != 0) {
+            if (targetNormalDistance < 0 && targetAngle != Vector3.zero) {
                 cancel = true;
             }
         } else if (incline) {
@@ -201,14 +201,14 @@ public class RollerCoaster : MonoBehaviour {
             Vector3 startNormal = new Vector3(0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad));
             float startNormalDistance = Vector3.Dot(startNormal, new Vector3(0, collisionY, collisionX) - startPosition);
             //check if the collision point is past the startPosition
-            if (startNormalDistance < 0 && targetAngle.x != 0) {
+            if (startNormalDistance < 0 && targetAngle != Vector3.zero) {
                 cancel = true;
             }
             //check for the target line as well
             Vector3 targetNormal = new Vector3(0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad));
             float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(0, collisionY, collisionX) - targetPosition);
             //check if the collision point is past the startPosition
-            if (targetNormalDistance > 0 && targetAngle.x != 0) {
+            if (targetNormalDistance > 0 && targetAngle != Vector3.zero) {
                 cancel = true;
             }
         }
@@ -238,7 +238,7 @@ public class RollerCoaster : MonoBehaviour {
             }
 
             //check to see if the target is behind the start track
-            if ((targetPosition.z > startPosition.z && !incline) || (targetPosition.y < 0 && incline)) {
+            if ((targetPosition.z > startPosition.z && !incline) || (targetPosition.y < 0 && incline) || distanceFromStart < 0) {
                 distanceFromStart = 0;
             }
         }
@@ -630,6 +630,11 @@ public class RollerCoaster : MonoBehaviour {
 
                     //rotate the offset by the y angle incase it needs to be pointing in a different direction
                     offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
+                }
+
+                if (targetAngle == Vector3.zero) {
+                    //force total track angle to be zero
+                    totalTrackAngle = Vector3.zero;
                 }
 
                 GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, offset, percentageOfTrack, secondCurveStart);
