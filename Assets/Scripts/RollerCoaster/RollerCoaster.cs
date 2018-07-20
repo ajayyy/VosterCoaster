@@ -222,7 +222,7 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //if the angle is 0, then get the normal difference, do not try to form a curve
-        if ((targetAngle.x == 0 && !incline) || (targetAngle.y == 0 && incline)) {
+        if (targetAngle == Vector3.zero) {
             distanceFromStart = Vector3.Distance(startPosition, targetPosition);
         }
 
