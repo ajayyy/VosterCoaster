@@ -231,7 +231,11 @@ public class RollerCoaster : MonoBehaviour {
 
         //if the angle is 0, then get the normal difference, do not try to form a curve
         if (targetAngle == Vector3.zero) {
-            distanceFromStart = Vector3.Distance(startPosition, targetPosition);
+            distanceFromStart = startPosition.z - targetPosition.z;
+
+            if (incline) {
+                distanceFromStart = targetPosition.z;
+            }
 
             //check to see if the target is behind the start track
             if ((targetPosition.z > startPosition.z && !incline) || (targetPosition.y < 0 && incline)) {
