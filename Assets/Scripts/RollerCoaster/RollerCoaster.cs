@@ -239,7 +239,7 @@ public class RollerCoaster : MonoBehaviour {
 
         if (incline) {
             distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startPosition.z, 2)
-            + Mathf.Pow(collisionY - startPosition.y, 2));
+                + Mathf.Pow(collisionY - startPosition.y, 2));
 
             distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - targetPosition.z, 2)
                 + Mathf.Pow(collisionY - targetPosition.y, 2));
@@ -420,7 +420,7 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         //check if the generation was canceled or the track is too big or small
-        if (cancel || totalTracksNeeded() > 250 || (curveTracksNeeded < 3 && targetAngle != Vector3.zero)) {
+        if (cancel || totalTracksNeeded() > 250 || (curveTracksNeeded < 3 && targetAngle != Vector3.zero && !incline)) {
             totalTracksNeeded = () => 0;
         }
 
