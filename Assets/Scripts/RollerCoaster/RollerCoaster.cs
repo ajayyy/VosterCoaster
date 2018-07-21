@@ -45,13 +45,11 @@ public class RollerCoaster : MonoBehaviour {
 
         GameController gameController = GameController.instance;
 
-        //check if the straight button is being held down
-
         CreatePath(currentTrack, inclineMode);
 
         if (Input.GetButtonDown("RightTrackpadClick")) {
             inclineMode = !inclineMode;
-        } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
+        } else if (Input.GetAxis("RightTrigger") > 0.5) {
             currentTrack = trackPieces[trackPieces.Count - 1];
         }
 
@@ -64,6 +62,7 @@ public class RollerCoaster : MonoBehaviour {
         //if any tracks should be created
         bool cancel = false;
 
+        //check if the straight button is being held down
         bool straight = Input.GetButton("RightMenuClick");
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
@@ -81,6 +80,12 @@ public class RollerCoaster : MonoBehaviour {
             currentAngle = getCurrentAngle(startTrack, false);
             currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
             fullStartAngle = getCurrentAngle(startTrack, true);
+        }
+
+        //set angle to 0 if the straight button is being held
+        if (straight && incline) {
+            targetAngle = Vector3.zero;
+            fullTargetAngle = Vector3.zero;
         }
 
         if (incline) {
@@ -129,7 +134,7 @@ public class RollerCoaster : MonoBehaviour {
         currentAngle = fullStartAngle;
 
         //set angle to 0 if the straight button is being held
-        if (straight) {
+        if (straight && !incline) {
             targetAngle = Vector3.zero;
             fullTargetAngle = Vector3.zero;
         }
