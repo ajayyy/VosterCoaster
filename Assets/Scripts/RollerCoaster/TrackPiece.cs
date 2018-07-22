@@ -29,6 +29,9 @@ public class TrackPiece : MonoBehaviour {
     //amount of bones per track piece
     float boneAmount = 10f;
 
+    //true when trigger collider is colliding with something. Only the first track has a trigger collider
+    public bool colliding = false;
+
     public void Start() {
         if (!initialised) {
             GetParents();
@@ -39,6 +42,14 @@ public class TrackPiece : MonoBehaviour {
 
     void Update () {
         
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        colliding = true;
+    }
+
+    private void OnTriggerExit(Collider other) {
+        colliding = false;
     }
 
     //secondCurveStart: bone where the second curve starts

@@ -82,6 +82,17 @@ public class RollerCoaster : MonoBehaviour {
             fullStartAngle = getCurrentAngle(startTrack, true);
         }
 
+        if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
+            targetPosition = trackPieces[0].transform.position;
+
+            targetAngle = new Vector3(0, 1, 0) * trackPieces[0].transform.eulerAngles.y;
+            fullTargetAngle = trackPieces[0].transform.eulerAngles;
+
+            if (incline) {
+                targetAngle = new Vector3(1, 0, 0) * trackPieces[0].transform.eulerAngles.x;
+            }
+        }
+
         //set angle to 0 if the straight button is being held
         if (straight && incline) {
             targetAngle = Vector3.zero;
