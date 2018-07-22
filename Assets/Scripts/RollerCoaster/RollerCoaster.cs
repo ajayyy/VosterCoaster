@@ -25,6 +25,11 @@ public class RollerCoaster : MonoBehaviour {
     //the latest track to be permenently placed
     public GameObject currentTrack;
 
+    //is the incline being edited or the turns. true for incline, false for turns
+    public bool inclineMode = false;
+
+    public bool editing = true;
+
     void Start () {
         //just for now, since we must start with one
         transform.Find("TrackPiece0").gameObject.GetComponent<TrackPiece>().rollerCoaster = this;
@@ -39,26 +44,121 @@ public class RollerCoaster : MonoBehaviour {
     }
 	
 	void Update () {
-        CreatePath(Vector3.zero, currentTrack);
 
-        if (Input.anyKey) {
-            currentTrack = trackPieces[trackPieces.Count - 1];
+        GameController gameController = GameController.instance;
+
+        if (editing) {
+            CreatePath(currentTrack, inclineMode);
+
+            if (Input.GetButtonDown("RightTrackpadClick")) {
+                inclineMode = !inclineMode;
+            } else if (Input.GetAxis("RightTrigger") > 0.5) {
+                currentTrack = trackPieces[trackPieces.Count - 1];
+
+                if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
+                    editing = false;
+                }
+            }
         }
+
     }
 
-    //will create a path of tracks from a start position until the next position
+    //will create a path of tracks from a start position until the next position by creating turns between them
     //startTrack: track that this path is starting on
-    public void CreatePath(Vector3 position, GameObject startTrack) {
+    //incline: if this path is creating an incline, false if it is creating a turning path
+    public void CreatePath(GameObject startTrack, bool incline) {
         //if any tracks should be created
         bool cancel = false;
+
+        //check if the straight button is being held down
+        bool straight = Input.GetButton("RightMenuClick");
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
         Vector3 startPosition = startTrack.transform.position;
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
-        Vector3 startTrackAngleRelative = getCurrentAngle(startTrack);
-        Vector3 currentAngle = getCurrentAngle(startTrack);
+        Vector3 fullTargetAngle = rightController.transform.eulerAngles;
+        Vector3 startTrackAngleRelative = Vector3.zero;
+        Vector3 currentAngle = getCurrentAngle(startTrack, true);
+        //full angle without any edits
+        Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
+        if (incline) {
+            targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
+            currentAngle = getCurrentAngle(startTrack, false);
+            currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
+            fullStartAngle = getCurrentAngle(startTrack, true);
+        }
+
+        //check if the track should be auto completed
+        if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
+            targetPosition = trackPieces[0].transform.position;
+
+            targetAngle = new Vector3(0, 1, 0) * trackPieces[0].transform.eulerAngles.y;
+            fullTargetAngle = trackPieces[0].transform.eulerAngles;
+
+            if (incline) {
+                targetAngle = new Vector3(1, 0, 0) * trackPieces[0].transform.eulerAngles.x;
+            }
+        }
+
+        //set angle to 0 if the straight button is being held
+        if (straight && incline) {
+            targetAngle = Vector3.zero;
+            fullTargetAngle = Vector3.zero;
+        }
+
+        if (incline) {
+            //adjust angle to make it like it was normal
+            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+
+            targetAngle = new Vector3(angle, 0, 0);
+
+            //theoretical position as if it was at a normal position
+            float x = Mathf.Sin(currentAngle.y * Mathf.Deg2Rad) * targetPosition.x + Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * targetPosition.z;
+            float y = targetPosition.y;
+
+            //set that position so that future calculations use that position instead
+            targetPosition = new Vector3(0, y, x);
+
+            //calculate the same for startPosition
+            //theoretical position as if it was at a normal position
+            x = Mathf.Sin(currentAngle.y * Mathf.Deg2Rad) * startPosition.x + Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * startPosition.z;
+            y = startPosition.y;
+
+            //set that position so that future calculations use that position instead
+            startPosition = new Vector3(0, y, x);
+        }
+
+        //rotate positions around the start angle
+        Vector3 pivotAngle = -currentAngle;
+        if (incline) {
+            pivotAngle = -new Vector3(1, 0, 0) * fullStartAngle.x;
+            pivotAngle += new Vector3(90, 0, 0);
+        }
+
+        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+
+        if (!incline) {
+            targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
+        } else {
+            //make sure angle is positive
+            if(targetAngle.x < 0) {
+                targetAngle = targetAngle + new Vector3(360, 0, 0);
+            }
+
+            targetAngle -= new Vector3(1, 0, 0) * fullStartAngle.x;
+        }
+
+        //reset current angle to the proper angle
+        currentAngle = fullStartAngle;
+
+        //set angle to 0 if the straight button is being held
+        if (straight && !incline) {
+            targetAngle = Vector3.zero;
+            fullTargetAngle = Vector3.zero;
+        }
+
         Vector3 angleDifference = targetAngle - startTrackAngleRelative;
         //make sure the smallest difference between the angles is found
         Vector3 smallestAngleDifference = new Vector3(Mathf.Abs(angleDifference.x), Mathf.Abs(angleDifference.y), Mathf.Abs(angleDifference.z));
@@ -83,11 +183,6 @@ public class RollerCoaster : MonoBehaviour {
             smallestAngleDifference = new Vector3(x1, y1, z1);
         }
 
-        //rotate ppositions around the start angle
-        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, -currentAngle);
-        targetAngle -= currentAngle;
-        startTrackAngleRelative = Vector3.zero;
-
         //get amount of tracks needed by dividing by length of one track's bone then dividing by amount of bones per track piece
         //int for now just to make things easier
         //for now just set to a static number
@@ -98,33 +193,60 @@ public class RollerCoaster : MonoBehaviour {
 
         //calculate the slope for the target angle
         float targetSlopeAngle = 90 - targetAngle.y;
+        if (incline) {
+            targetSlopeAngle = 90 - targetAngle.x;
+        }
         float targetSlope = Mathf.Tan(targetSlopeAngle * Mathf.Deg2Rad);
         //calculate slope for the start
         float startSlopeAngle = 90 - startTrackAngleRelative.y;
+        if (incline) {
+            startSlopeAngle = 90 - startTrackAngleRelative.x;
+        }
         float startSlope = Mathf.Tan(startSlopeAngle * Mathf.Deg2Rad);
 
         //the b value for the target angle (b = y - mx)
         float targetB = targetPosition.z - targetSlope * targetPosition.x;
         //the b value for the start angle (b = y - mx)
         float startB = startPosition.z - startSlope * startPosition.x;
+        if (incline) {
+            targetB = targetPosition.y - targetSlope * targetPosition.z;
+            startB = startPosition.y - startSlope * startPosition.z;
+        }
 
         //calculate the collision point
         float collisionX = (startB - targetB) / (targetSlope - startSlope);
         float collisionY = targetSlope * collisionX + targetB;
 
-        //check if that point is infront or behind the starrt point (https://math.stackexchange.com/questions/1330210/how-to-check-if-a-point-is-in-the-direction-of-the-normal-of-a-plane)
-        Vector3 startNormal = new Vector3(Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad));
-        float startNormalDistance = Vector3.Dot(startNormal, new Vector3(collisionX, 0, collisionY) - startPosition);
-        //check if the collision point is past the startPosition
-        if(startNormalDistance > 0) {
-            cancel = true;
-        }
-        //check for the target line as well
-        Vector3 targetNormal = new Vector3(Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad));
-        float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(collisionX, 0, collisionY) - targetPosition);
-        //check if the collision point is past the startPosition
-        if (targetNormalDistance < 0) {
-            cancel = true;
+        if (!incline) {
+            //check if that point is infront or behind the start point (https://math.stackexchange.com/questions/1330210/how-to-check-if-a-point-is-in-the-direction-of-the-normal-of-a-plane)
+            Vector3 startNormal = new Vector3(Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad));
+            float startNormalDistance = Vector3.Dot(startNormal, new Vector3(collisionX, 0, collisionY) - startPosition);
+            //check if the collision point is past the startPosition
+            if (startNormalDistance > 0 && targetAngle != Vector3.zero) {
+                cancel = true;
+            }
+            //check for the target line as well
+            Vector3 targetNormal = new Vector3(Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad), 0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad));
+            float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(collisionX, 0, collisionY) - targetPosition);
+            //check if the collision point is past the startPosition
+            if (targetNormalDistance < 0 && targetAngle != Vector3.zero) {
+                cancel = true;
+            }
+        } else if (incline) {
+            //check if that point is infront or behind the start point (https://math.stackexchange.com/questions/1330210/how-to-check-if-a-point-is-in-the-direction-of-the-normal-of-a-plane)
+            Vector3 startNormal = new Vector3(0, Mathf.Sin(startSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(startSlopeAngle * Mathf.Deg2Rad));
+            float startNormalDistance = Vector3.Dot(startNormal, new Vector3(0, collisionY, collisionX) - startPosition);
+            //check if the collision point is past the startPosition
+            if (startNormalDistance < 0 && targetAngle != Vector3.zero) {
+                cancel = true;
+            }
+            //check for the target line as well
+            Vector3 targetNormal = new Vector3(0, Mathf.Sin(targetSlopeAngle * Mathf.Deg2Rad), Mathf.Cos(targetSlopeAngle * Mathf.Deg2Rad));
+            float targetNormalDistance = Vector3.Dot(targetNormal, new Vector3(0, collisionY, collisionX) - targetPosition);
+            //check if the collision point is past the startPosition
+            if (targetNormalDistance > 0 && targetAngle != Vector3.zero) {
+                cancel = true;
+            }
         }
 
         //get distance from the start
@@ -134,6 +256,29 @@ public class RollerCoaster : MonoBehaviour {
         //get distance from target
         float distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - targetPosition.x, 2)
             + Mathf.Pow(collisionY - targetPosition.z, 2));
+
+        if (incline) {
+            distanceFromStart = Mathf.Sqrt(Mathf.Pow(collisionX - startPosition.z, 2)
+                + Mathf.Pow(collisionY - startPosition.y, 2));
+
+            distanceFromTarget = Mathf.Sqrt(Mathf.Pow(collisionX - targetPosition.z, 2)
+                + Mathf.Pow(collisionY - targetPosition.y, 2));
+        }
+
+        //if the angle is 0, then get the normal difference, do not try to form a curve
+        if (targetAngle == Vector3.zero) {
+            distanceFromStart = startPosition.z - targetPosition.z;
+
+            if (incline) {
+                //uses y because when the angle is zero, y ends up being the horizontal variable
+                distanceFromStart = targetPosition.y - startPosition.y;
+            }
+
+            //check to see if the target is behind the start track
+            if ((targetPosition.z > startPosition.z && !incline) || (targetPosition.y < 0 && incline) || distanceFromStart < 0) {
+                distanceFromStart = 0;
+            }
+        }
 
         //float trackLengthRequired = 2 * Mathf.PI * radius * ((180 - angle.y) / 360);
 
@@ -145,8 +290,11 @@ public class RollerCoaster : MonoBehaviour {
         float targetTracksNeeded = Mathf.Abs(distanceFromTarget / (trackBoneSize * 10f));
         float curveTracksNeeded = 0;
 
-        //if the controller is on the right side
-        bool rightSide = targetPosition.x > startPosition.x;
+        //if the controller is on the other side
+        bool otherSide = targetPosition.x > startPosition.x;
+        if (incline) {
+            otherSide = targetPosition.z < startPosition.z;
+        }
 
         //amount to check for for the first if statement in the curve
         float checkAmount = startTracksNeeded;
@@ -156,6 +304,11 @@ public class RollerCoaster : MonoBehaviour {
             float startToEndCurveSlope = Mathf.Tan((((180 - targetAngle.y) / 2)) * Mathf.Deg2Rad);
             //the b value (b = y - mx)
             float startToEndCurveB = startPosition.z - startToEndCurveSlope * startPosition.x;
+
+            if (incline) {
+                startToEndCurveSlope = Mathf.Tan((((180 - targetAngle.x) / 2)) * Mathf.Deg2Rad);
+                startToEndCurveB = startPosition.y - startToEndCurveSlope * startPosition.z;
+            }
 
             //find intersection between this line and the target line (x = (b2 - b1) / (m1 - m2))
             //this position will be the second point on the circle of the curve (end point), the first is the start track
@@ -171,6 +324,13 @@ public class RollerCoaster : MonoBehaviour {
             float startNormalX = Mathf.Cos(startTrackAngleRelative.y * Mathf.Deg2Rad);
             float startNormalY = Mathf.Sin(startTrackAngleRelative.y * Mathf.Deg2Rad);
 
+            if (incline) {
+                targetNormalX = Mathf.Cos((-targetAngle.x + 360) * Mathf.Deg2Rad);
+                targetNormalY = Mathf.Sin((-targetAngle.x + 360) * Mathf.Deg2Rad);
+                startNormalX = Mathf.Cos(startTrackAngleRelative.x * Mathf.Deg2Rad);
+                startNormalY = Mathf.Sin(startTrackAngleRelative.x * Mathf.Deg2Rad);
+            }
+
             //the radius would be equal to 1 for a circle like this. Find how much the distances between the points account for the radius of the circle
             float percentageOfRadius = Mathf.Sqrt(Mathf.Pow(startNormalX - targetNormalX, 2) + Mathf.Pow(startNormalY - targetNormalY, 2));
 
@@ -179,6 +339,11 @@ public class RollerCoaster : MonoBehaviour {
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
             float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
+
+            if (incline) {
+                radius = Mathf.Sqrt(Mathf.Pow(circleTargetX - startPosition.z, 2) + Mathf.Pow(circleTargetY - startPosition.y, 2)) / percentageOfRadius;
+                curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.x / 360f);
+            }
 
             curveTracksNeeded = (curveLength / (trackBoneSize * 10f));
 
@@ -192,11 +357,25 @@ public class RollerCoaster : MonoBehaviour {
             //Find difference between circleTarget and the target position
             targetTracksNeeded = (Mathf.Sqrt(Mathf.Pow(circleTargetX - targetPosition.x, 2) + Mathf.Pow(circleTargetY - targetPosition.z, 2)) / (trackBoneSize * 10f));
 
-        } else if(!cancel) {
+            if (incline) {
+                targetTracksNeeded = (Mathf.Sqrt(Mathf.Pow(circleTargetX - targetPosition.z, 2) + Mathf.Pow(circleTargetY - targetPosition.y, 2)) / (trackBoneSize * 10f));
+            }
+
+            if ((targetAngle.y == 0 && !incline) || (targetAngle.x == 0 && incline)) {
+                targetTracksNeeded = distanceFromStart / (trackBoneSize * 10f);
+                curveTracksNeeded = 0;
+            }
+
+        } else if (!cancel) {
             //find intersection between line to the start of curve from the end of curve
             float endToStartCurveSlope = Mathf.Tan((((180 - targetAngle.y) / 2)) * Mathf.Deg2Rad);
             //the b value (b = y - mx)
             float endToStartCurveB = targetPosition.z - endToStartCurveSlope * targetPosition.x;
+
+            if (incline) {
+                endToStartCurveSlope = Mathf.Tan((((180 - targetAngle.x) / 2)) * Mathf.Deg2Rad);
+                endToStartCurveB = targetPosition.y - endToStartCurveSlope * targetPosition.z;
+            }
 
             //find intersection between this line and the start line (x = (b2 - b1) / (m1 - m2))
             //this position will be the second point on the circle of the curve (end point), the first is the target track
@@ -210,6 +389,13 @@ public class RollerCoaster : MonoBehaviour {
             float startNormalX = Mathf.Cos(startTrackAngleRelative.y * Mathf.Deg2Rad);
             float startNormalY = Mathf.Sin(startTrackAngleRelative.y * Mathf.Deg2Rad);
 
+            if (incline) {
+                targetNormalX = Mathf.Cos((-targetAngle.x + 360) * Mathf.Deg2Rad);
+                targetNormalY = Mathf.Sin((-targetAngle.x + 360) * Mathf.Deg2Rad);
+                startNormalX = Mathf.Cos(startTrackAngleRelative.x * Mathf.Deg2Rad);
+                startNormalY = Mathf.Sin(startTrackAngleRelative.x * Mathf.Deg2Rad);
+            }
+
             //the radius would be equal to 1 for a circle like this. Find how much the distances between the points account for the radius of the circle
             float percentageOfRadius = Mathf.Sqrt(Mathf.Pow(startNormalX - targetNormalX, 2) + Mathf.Pow(startNormalY - targetNormalY, 2));
 
@@ -218,6 +404,11 @@ public class RollerCoaster : MonoBehaviour {
 
             //calculate the cirumference of this circle multiplied by the amount this curve takes up of the whole circle
             float curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.y / 360f);
+
+            if (incline) {
+                radius = Mathf.Sqrt(Mathf.Pow(circleStartX - targetPosition.z, 2) + Mathf.Pow(circleStartY - targetPosition.y, 2)) / percentageOfRadius;
+                curveLength = 2 * Mathf.PI * radius * (smallestAngleDifference.x / 360f);
+            }
 
             curveTracksNeeded = (curveLength / (trackBoneSize * 10f));
 
@@ -229,17 +420,27 @@ public class RollerCoaster : MonoBehaviour {
             //Find difference between circleTarget and the target position
             startTracksNeeded = (Mathf.Sqrt(Mathf.Pow(circleStartX - startPosition.x, 2) + Mathf.Pow(circleStartY - startPosition.z, 2)) / (trackBoneSize * 10f));
 
+            if (incline) {
+                startTracksNeeded = (Mathf.Sqrt(Mathf.Pow(circleStartX - startPosition.z, 2) + Mathf.Pow(circleStartY - startPosition.y, 2)) / (trackBoneSize * 10f));
+            }
+
             targetTracksNeeded = 0;
         }
 
         Func<int> totalTracksNeeded = () => Mathf.CeilToInt(startTracksNeeded) + Mathf.CeilToInt(curveTracksNeeded) + Mathf.CeilToInt(targetTracksNeeded);
 
-        if (rightSide) {
-            smallestAngleDifference = new Vector3(smallestAngleDifference.x, -(smallestAngleDifference.y), smallestAngleDifference.z);
+        if (otherSide) {
+
+            if (!incline) {
+                smallestAngleDifference = new Vector3(smallestAngleDifference.x, -smallestAngleDifference.y, smallestAngleDifference.z);
+            } else if (incline) {
+                smallestAngleDifference = new Vector3(-smallestAngleDifference.x, smallestAngleDifference.y, smallestAngleDifference.z);
+
+            }
         }
 
         //check if the generation was canceled or the track is too big or small
-        if (cancel || totalTracksNeeded() > 250 || curveTracksNeeded < 3) {
+        if (cancel || totalTracksNeeded() > 250 || (curveTracksNeeded < 3 && targetAngle != Vector3.zero && !incline)) {
             totalTracksNeeded = () => 0;
         }
 
@@ -402,6 +603,7 @@ public class RollerCoaster : MonoBehaviour {
                     premadeTrackPiece = startTrack;
                 }
             }
+
             if (startTrackAmount + i < trackPieces.Count || usePremadeTrackPiece) {
                 GameObject trackPiece = null;
 
@@ -419,6 +621,11 @@ public class RollerCoaster : MonoBehaviour {
                 trackPiece.transform.position = Vector3.zero;
                 trackPiece.transform.localEulerAngles = Vector3.zero;
 
+                if (targetAngle == Vector3.zero) {
+                    //force total track angle to be zero
+                    totalTrackAngle = Vector3.zero;
+                }
+
                 //adjust the track
                 trackPiece.GetComponent<TrackPiece>().AdjustTrack(totalTrackAngle, startAngle, percentageOfTrack, secondCurveStart);
 
@@ -428,8 +635,17 @@ public class RollerCoaster : MonoBehaviour {
                     //this finds the last bone plus half of the track size (because position is based off the center of the object
                     Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
-                    //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-                    trackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5f));
+                    //need to offset it by trackBoneSize by the angle
+                    Vector3 offset = (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+                    if (incline || eulerAngles.x != 0 || eulerAngles.y != 0) {
+                        offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+
+                        //rotate the offset by the y angle incase it needs to be pointing in a different direction
+                        offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
+                    }
+
+                    //subtract offset
+                    trackPiece.transform.position = modifiedPosition - offset;
 
                     //set track rotation (after adjustment to make sure the adjustment process goes well)
                     trackPiece.transform.localEulerAngles = eulerAngles;
@@ -444,7 +660,21 @@ public class RollerCoaster : MonoBehaviour {
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
                 Vector3 modifiedPosition = trackPieces[i + startTrackAmount - 1].transform.Find("Bottom_Rail/Joint_3_3/Joint_1_3/Joint_2_4/Joint_3_4/Joint_4_3/Joint_5_3/Joint_6_3/Joint_7_3/Joint_8_3/Joint_9_3/Joint_10_3").position;
 
-                GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, percentageOfTrack, secondCurveStart);
+                //need to offset it by trackBoneSize by the angle
+                Vector3 offset = (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+                if (incline || eulerAngles.x != 0 || eulerAngles.y != 0) {
+                    offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+
+                    //rotate the offset by the y angle incase it needs to be pointing in a different direction
+                    offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
+                }
+
+                if (targetAngle == Vector3.zero) {
+                    //force total track angle to be zero
+                    totalTrackAngle = Vector3.zero;
+                }
+
+                GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, offset, percentageOfTrack, secondCurveStart);
             }
 
             //reset i if nessesary (this must be the last thing in the loop)
@@ -459,7 +689,7 @@ public class RollerCoaster : MonoBehaviour {
         }
         
         //reset last track back to normal if nessesary
-        if(totalTracksNeeded() == 0 && startTrack.GetComponent<TrackPiece>().modified) {
+        if (totalTracksNeeded() == 0 && startTrack.GetComponent<TrackPiece>().modified) {
             TrackPiece trackPiece = startTrack.GetComponent<TrackPiece>();
 
             Vector3 oldPosition = trackPiece.transform.position;
@@ -481,7 +711,7 @@ public class RollerCoaster : MonoBehaviour {
 
     }
 
-    public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles, Vector3 startAngle, float percentageOfTrack, int secondCurveStart) {
+    public GameObject AddTrackPiece (Vector3 totalAngle, Vector3 modifiedPosition, Vector3 eulerAngles, Vector3 startAngle, Vector3 offset, float percentageOfTrack, int secondCurveStart) {
         GameObject newTrackPiece;
 
         if(unusedTrackPieces.Count > 0) {
@@ -512,8 +742,8 @@ public class RollerCoaster : MonoBehaviour {
 
         //set track rotation (after adjustment to make sure the adjustment process goes well)
         newTrackPiece.transform.eulerAngles = eulerAngles;
-        //need to offset it by trackBoneSize by the angle (for now just with y part of angle
-        newTrackPiece.transform.position = modifiedPosition - (new Vector3(Mathf.Sin(eulerAngles.y * Mathf.Deg2Rad), 0, Mathf.Cos(eulerAngles.y * Mathf.Deg2Rad)) * (trackBoneSize * 5));
+        //subtract offset
+        newTrackPiece.transform.position = modifiedPosition - offset;
 
         return newTrackPiece;
     }
@@ -525,7 +755,8 @@ public class RollerCoaster : MonoBehaviour {
         trackPiece.SetActive(false);
     }
 
-    public Vector3 getCurrentAngle(GameObject startTrack) {
+    //normal: should it use the normal start track rotation or use a converted version using MathHelper.ConvertQuant2Euler()
+    public Vector3 getCurrentAngle(GameObject startTrack, bool normal) {
         Vector3 currentAngle = Vector3.zero;
 
         TrackPiece trackPiece = startTrack.GetComponent<TrackPiece>();
@@ -534,7 +765,13 @@ public class RollerCoaster : MonoBehaviour {
             currentAngle = trackPiece.totalAngle;
         }
         currentAngle += trackPiece.startAngle;
-        currentAngle += startTrack.transform.eulerAngles;
+
+        //that function does not puts the angle into the x, so it is not useful when doing turns
+        if (normal) {
+            currentAngle += startTrack.transform.localEulerAngles;
+        } else {
+            currentAngle += MathHelper.ConvertQuant2Euler(startTrack.gameObject.transform.localRotation);
+        }
 
         return currentAngle;
     }
