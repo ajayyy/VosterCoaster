@@ -28,6 +28,8 @@ public class RollerCoaster : MonoBehaviour {
     //is the incline being edited or the turns. true for incline, false for turns
     public bool inclineMode = false;
 
+    public bool editing = true;
+
     void Start () {
         //just for now, since we must start with one
         transform.Find("TrackPiece0").gameObject.GetComponent<TrackPiece>().rollerCoaster = this;
@@ -45,12 +47,18 @@ public class RollerCoaster : MonoBehaviour {
 
         GameController gameController = GameController.instance;
 
-        CreatePath(currentTrack, inclineMode);
+        if (editing) {
+            CreatePath(currentTrack, inclineMode);
 
-        if (Input.GetButtonDown("RightTrackpadClick")) {
-            inclineMode = !inclineMode;
-        } else if (Input.GetAxis("RightTrigger") > 0.5) {
-            currentTrack = trackPieces[trackPieces.Count - 1];
+            if (Input.GetButtonDown("RightTrackpadClick")) {
+                inclineMode = !inclineMode;
+            } else if (Input.GetAxis("RightTrigger") > 0.5) {
+                currentTrack = trackPieces[trackPieces.Count - 1];
+
+                if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
+                    editing = false;
+                }
+            }
         }
 
     }
@@ -82,6 +90,7 @@ public class RollerCoaster : MonoBehaviour {
             fullStartAngle = getCurrentAngle(startTrack, true);
         }
 
+        //check if the track should be auto completed
         if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
             targetPosition = trackPieces[0].transform.position;
 
