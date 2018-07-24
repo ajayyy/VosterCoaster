@@ -138,7 +138,7 @@ public class TrackPiece : MonoBehaviour {
 
                     if (i != middleRail) {
                         //get full offset compared to rails[middleRail]
-                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
+                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * GameController.instance.scale;
 
                         //if the angle is negative, the outside rail is the inside rail and the inside rail is the outside rail
                         if(currentAngle.y < 0) {

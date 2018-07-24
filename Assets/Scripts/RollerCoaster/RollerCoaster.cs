@@ -10,10 +10,8 @@ public class RollerCoaster : MonoBehaviour {
     //List containing disabled track pieces. This is used because creating and destroying gameobjects constantly causes massive amounts of lag.
     List<GameObject> unusedTrackPieces = new List<GameObject>();
 
-    //the scale the world is set at
-    public static float scale = 0.008f;
-
     //the length of one track's bone
+    float defaultTrackBoneSize = 0.402642f;
     public float trackBoneSize = 0.402642f;
 
     //the prefab for an empty piece of track
@@ -38,7 +36,7 @@ public class RollerCoaster : MonoBehaviour {
         //TODO: set tracksize dynamically based on calling the TrackPiece class
 
         //set track bone size based on scale
-        trackBoneSize *= scale;
+        trackBoneSize = defaultTrackBoneSize * GameController.instance.scale;
 
         currentTrack = trackPieces[0];
     }
@@ -48,6 +46,9 @@ public class RollerCoaster : MonoBehaviour {
         GameController gameController = GameController.instance;
 
         if (editing) {
+            //set track bone size based on scale incase the scale has changed
+            trackBoneSize = defaultTrackBoneSize * GameController.instance.scale;
+
             CreatePath(currentTrack, true);
 
             if (Input.GetButtonDown("RightTrackpadClick")) {

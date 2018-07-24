@@ -20,6 +20,18 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public GameObject world;
+
+    //the scale the world is set at
+    //the world's scale can change, but by default is 0.008
+    public float scale {
+        get {
+            return world.transform.localScale.x;
+        } set {
+            world.transform.localScale = new Vector3(value, value, value);
+        }
+    }
+
     void Start () {
 		if(instance == null) {
             instance = this;
