@@ -20,6 +20,10 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    //game objects
+    public GameObject leftControllerObject;
+    public GameObject rightControllerObject;
+
     public GameObject world;
 
     //the scale the world is set at

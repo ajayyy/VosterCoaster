@@ -45,11 +45,15 @@ public class TrackPiece : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
-        colliding = true;
+        if(other.gameObject == GameController.instance.rightControllerObject) {
+            colliding = true;
+        }
     }
 
     private void OnTriggerExit(Collider other) {
-        colliding = false;
+        if (other.gameObject == GameController.instance.rightControllerObject) {
+            colliding = false;
+        }
     }
 
     //secondCurveStart: bone where the second curve starts
