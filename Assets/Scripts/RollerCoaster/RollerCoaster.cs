@@ -48,11 +48,11 @@ public class RollerCoaster : MonoBehaviour {
         GameController gameController = GameController.instance;
 
         if (editing) {
-            CreatePath(currentTrack, inclineMode);
+            CreatePath(currentTrack, true);
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
-            } else if (Input.GetAxis("RightTrigger") > 0.5) {
+            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
                 if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
