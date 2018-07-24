@@ -32,6 +32,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    //the scale from the last frame. Used for adjusting physics based on the scale
+    public float lastScale = 1;
+
     void Start () {
 		if(instance == null) {
             instance = this;
@@ -40,7 +43,10 @@ public class GameController : MonoBehaviour {
         }
 	}
 	
-	void Update () {
-		
-	}
+	void FixedUpdate () {
+        if(scale != lastScale) {
+            Physics.gravity = new Vector3(0, (-9.81f) * scale, 0);
+            lastScale = scale;
+        }
+    }
 }
