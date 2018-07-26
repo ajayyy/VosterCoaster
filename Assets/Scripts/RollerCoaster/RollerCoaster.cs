@@ -53,6 +53,8 @@ public class RollerCoaster : MonoBehaviour {
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
+            } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKey(KeyCode.A)) {
+                //start preview
             } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
