@@ -44,7 +44,7 @@ public class CreateColliders : MonoBehaviour {
 
         //Create cubes and offset them based on each bone's position
         for (int b = 0; b < bones.Count; b++) {
-            cubes[b] = CreateCube(offset + bones[b].position / GameController.instance.scale, size, bones[b].rotation);
+            cubes[b] = CreatePlane(offset + bones[b].position / GameController.instance.scale, size, bones[b].rotation);
         }
 
         //now combine all of these cubes into one mesh
@@ -52,23 +52,30 @@ public class CreateColliders : MonoBehaviour {
         for (int i = 0; i < combine.Length; i++) {
             combine[i] = new CombineInstance();
             combine[i].mesh = cubes[i];
+            //print(cubes[i].subMeshCount);
+            //combine[i].subMeshIndex = 100;
         }
 
         Mesh finalMesh = new Mesh();
         //combine the meshes without merging the submeshes
         finalMesh.CombineMeshes(combine, true, false);
 
-        //invert mesh as the insides are the wrong way
-        ReverseNormals(finalMesh);
-
         MeshUtility.Optimize(finalMesh);
+
+        //simplify the mesh
+        //UnityMeshSimplifier.MeshSimplifier meshSimplifier = new UnityMeshSimplifier.MeshSimplifier();
+
+        //meshSimplifier.Initialize(finalMesh);
+        //meshSimplifier.SimplifyMesh(0.9f);
+
+        //finalMesh = meshSimplifier.ToMesh();
 
         return finalMesh;
     }
 
     //modified from http://ilkinulas.github.io/development/unity/2016/04/30/cube-mesh-in-unity3d.html
     //modification adds the ability to specify an offset and size
-    Mesh CreateCube(Vector3 offset, Vector3 size, Quaternion angle) {
+    Mesh CreatePlane(Vector3 offset, Vector3 size, Quaternion angle) {
         //print(angle);
 
         Vector3[] vertices = {
@@ -92,18 +99,8 @@ public class CreateColliders : MonoBehaviour {
         }
 
         int[] triangles = {
-            0, 2, 1, //face front
-			0, 3, 2,
             2, 3, 4, //face top
 			2, 4, 5,
-            1, 2, 5, //face right
-			1, 5, 6,
-            0, 7, 4, //face left
-			0, 4, 3,
-            5, 4, 7, //face back
-			5, 7, 6,
-            0, 6, 7, //face bottom
-			0, 1, 6
         };
 
         Mesh mesh = new Mesh();
