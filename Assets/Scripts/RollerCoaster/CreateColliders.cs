@@ -79,10 +79,10 @@ public class CreateColliders : MonoBehaviour {
         };
 
         for (int i = 0; i < vertices.Length; i++) {
+            vertices[i].Scale(size);
+
             //rotate around center
             vertices[i] = MathHelper.RotatePointAroundPivot(vertices[i], Vector3.zero, angle);
-
-            vertices[i].Scale(size);
 
             vertices[i] += offset;
         }
