@@ -54,7 +54,7 @@ public class RollerCoaster : MonoBehaviour {
 
         if (editing) {
             //set track bone size based on scale incase the scale has changed
-            trackBoneSize = defaultTrackBoneSize * gameController.scale;
+            //trackBoneSize = defaultTrackBoneSize * gameController.scale;
 
             CreatePath(currentTrack, true);
 
@@ -63,9 +63,17 @@ public class RollerCoaster : MonoBehaviour {
             } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.A)) {
                 print("S");
                 //create collider for the preview
-                Mesh mesh = createColliders.BuildColliders();
+                Mesh rightMesh = createColliders.BuildColliders(true);
+                Mesh leftMesh = createColliders.BuildColliders(false);
 
-                GetComponent<MeshCollider>().sharedMesh = mesh;
+                MeshCollider[] meshColliders = GetComponents<MeshCollider>();
+
+                meshColliders[0].sharedMesh = null;
+                meshColliders[0].sharedMesh = rightMesh;
+
+                meshColliders[1].sharedMesh = null;
+                meshColliders[1].sharedMesh = leftMesh;
+
                 print("S");
             } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
