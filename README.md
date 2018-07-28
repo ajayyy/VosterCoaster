@@ -8,9 +8,7 @@ I also plan to add the ability to go down to human scale, or even ride roller co
 
 # Current Status
 
-Currently, you can build a roller coaster by placing the pieces next to eachother, but in future updates these will be spline based.
-
-You will be able to click a bunch of points, and it will build a roller coaster between them.
+Currently, you can build a roller coaster by placing splines and pointing in the direction you want to go. Only roller coaster building is implemented so far.
 
 The latest code is pushed to [the experimental branch](https://github.com/ajayyy/VosterCoasterVR/tree/experimental), this most recent build in that branch might not be working at all, the latest stable version will be in the master branch. After each new stable release, the changes will be merged to the master branch.
 
