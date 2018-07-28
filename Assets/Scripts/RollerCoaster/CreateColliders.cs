@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -55,7 +56,10 @@ public class CreateColliders : MonoBehaviour {
 
         Mesh finalMesh = new Mesh();
         //combine the meshes without merging the submeshes
-        finalMesh.CombineMeshes(combine, false, false);
+        finalMesh.CombineMeshes(combine, true, false);
+
+        //invert mesh as the insides are the wrong way
+        ReverseNormals(finalMesh);
 
         MeshUtility.Optimize(finalMesh);
 
@@ -110,5 +114,28 @@ public class CreateColliders : MonoBehaviour {
         mesh.RecalculateNormals();
 
         return mesh;
+    }
+
+    //from http://wiki.unity3d.com/index.php/ReverseNormals
+    void ReverseNormals(Mesh mesh) {
+        Vector3[] normals = mesh.normals;
+
+        for (int i = 0; i < normals.Length; i++) {
+            normals[i] = -normals[i];
+        }
+
+        mesh.normals = normals;
+
+        for (int m = 0; m < mesh.subMeshCount; m++) {
+            int[] triangles = mesh.GetTriangles(m);
+
+            for (int i = 0; i < triangles.Length; i += 3) {
+                int temp = triangles[i + 0];
+                triangles[i + 0] = triangles[i + 1];
+                triangles[i + 1] = temp;
+            }
+
+            mesh.SetTriangles(triangles, m);
+        }
     }
 }
