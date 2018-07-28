@@ -160,7 +160,7 @@ public class RollerCoaster : MonoBehaviour {
             pivotAngle += new Vector3(90, 0, 0);
         }
 
-        targetPosition = RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+        targetPosition = MathHelper.RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
 
         if (!incline) {
             targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
@@ -664,7 +664,7 @@ public class RollerCoaster : MonoBehaviour {
                         offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
 
                         //rotate the offset by the y angle incase it needs to be pointing in a different direction
-                        offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
+                        offset = MathHelper.RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
                     }
 
                     //subtract offset
@@ -689,7 +689,7 @@ public class RollerCoaster : MonoBehaviour {
                     offset = (new Vector3(0, -Mathf.Sin(eulerAngles.x * Mathf.Deg2Rad), Mathf.Cos(eulerAngles.x * Mathf.Deg2Rad)) * (trackBoneSize * 5));
 
                     //rotate the offset by the y angle incase it needs to be pointing in a different direction
-                    offset = RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
+                    offset = MathHelper.RotatePointAroundPivot(offset, Vector3.zero, new Vector3(0, 1, 0) * eulerAngles.y);
                 }
 
                 if (targetAngle == Vector3.zero) {
@@ -798,16 +798,5 @@ public class RollerCoaster : MonoBehaviour {
 
         return currentAngle;
     }
-
-    //from https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html
-    public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angle) {
-        Vector3 dir = point - pivot; //get point direction relative to pivot
-
-        dir = Quaternion.Euler(angle) * dir; //rotate it
-        point = dir + pivot; //calculate rotated point
-
-        return point;
-    }
-
 
 }

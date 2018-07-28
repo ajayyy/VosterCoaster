@@ -24,4 +24,24 @@ public class MathHelper {
 
         return new Vector3(eulerAngles[0], eulerAngles[1], eulerAngles[2]);
     }
+
+    //from https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html
+    public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angle) {
+        Vector3 dir = point - pivot; //get point direction relative to pivot
+
+        dir = Quaternion.Euler(angle) * dir; //rotate it
+        point = dir + pivot; //calculate rotated point
+
+        return point;
+    }
+
+    //from https://answers.unity.com/questions/532297/rotate-a-vector-around-a-certain-point.html
+    public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion angle) {
+        Vector3 dir = point - pivot; //get point direction relative to pivot
+
+        dir = angle * dir; //rotate it
+        point = dir + pivot; //calculate rotated point
+
+        return point;
+    }
 }

@@ -37,15 +37,13 @@ public class CreateColliders : MonoBehaviour {
                 //don't include the last joint as that does not have colliders
                 if (child.gameObject.activeInHierarchy && child.gameObject.name != "Joint_10_2" && child.gameObject.name != "Joint_10") {
                     bones.Add(child);
-                    print(child.name);
                 }
             }
         }
 
         //Create cubes and offset them based on each bone's position
         for (int b = 0; b < bones.Count; b++) {
-            print(b + " " + bones.Count + " " + cubes.Length);
-            cubes[b] = CreateCube(offset + bones[b].position / GameController.instance.scale, size);
+            cubes[b] = CreateCube(offset + bones[b].position / GameController.instance.scale, size, bones[b].rotation);
         }
 
         //now combine all of these cubes into one mesh
@@ -66,7 +64,8 @@ public class CreateColliders : MonoBehaviour {
 
     //modified from http://ilkinulas.github.io/development/unity/2016/04/30/cube-mesh-in-unity3d.html
     //modification adds the ability to specify an offset and size
-    Mesh CreateCube(Vector3 offset, Vector3 size) {
+    Mesh CreateCube(Vector3 offset, Vector3 size, Quaternion angle) {
+        //print(angle);
 
         Vector3[] vertices = {
             new Vector3 (-0.5f, 0.5f, -0.5f),
@@ -79,8 +78,12 @@ public class CreateColliders : MonoBehaviour {
             new Vector3 (-0.5f, 0.5f, 0.5f),
         };
 
-        for(int i=0; i < vertices.Length; i++) {
+        for (int i = 0; i < vertices.Length; i++) {
+            //rotate around center
+            vertices[i] = MathHelper.RotatePointAroundPivot(vertices[i], Vector3.zero, angle);
+
             vertices[i].Scale(size);
+
             vertices[i] += offset;
         }
 
