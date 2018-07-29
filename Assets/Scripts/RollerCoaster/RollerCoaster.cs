@@ -14,6 +14,8 @@ public class RollerCoaster : MonoBehaviour {
     public float defaultTrackBoneSize = 0.402642f;
     public float trackBoneSize = 0.402642f;
 
+    public float trackWidth = 1.64703f;
+
     //the prefab for an empty piece of track
     public GameObject trackPrefab;
 

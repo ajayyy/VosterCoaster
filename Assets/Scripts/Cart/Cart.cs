@@ -24,6 +24,7 @@ public class Cart : MonoBehaviour {
 	void FixedUpdate () {
         if (!Input.GetKey(KeyCode.C)) {
             position = 7;
+            velocity = 0f;
             return;
         }
 
@@ -42,7 +43,15 @@ public class Cart : MonoBehaviour {
         velocity += gravityAcceleration;
         position += velocity;
 
-        transform.position = GetCurrentBone(true).position;
+        Transform finalBone = GetCurrentBone(true);
+
+        transform.position = finalBone.position;
+        transform.rotation = finalBone.rotation;
+
+        //center the cart
+        transform.localPosition += new Vector3(1, 0, 0) * rollerCoaster.trackWidth;
+        //place cart on top of track
+        transform.localPosition += new Vector3(0, 1, 0) * 2.57f;
     }
 
     Transform GetCurrentBone(bool right) {
