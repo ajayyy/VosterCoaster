@@ -33,19 +33,14 @@ public class Cart : MonoBehaviour {
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
 
         //calculate the force downward (divided by 60 fps)
-        float forceDown = mass * ((-9.81f) / 60f);
+        float forceDown = (-9.81f) / 60f;
 
-        //calculate the amount of that force used on an incline of the angle
-        float gravityForce = Mathf.Sin(inclineAngleOfTrack * Mathf.Deg2Rad) * forceDown;
-
-        //using that, the acceleration can be calculated
-        float gravityAcceleration = gravityForce / mass;
+        //calculate the amount of that force used on an incline of the angle (same as acceleration)
+        float gravityAcceleration = Mathf.Sin(inclineAngleOfTrack * Mathf.Deg2Rad) * forceDown;
 
         //calculate the new movements
         velocity += gravityAcceleration;
         position += velocity;
-
-        print(position + " " + velocity);
 
         transform.position = GetCurrentBone(true).position;
     }
