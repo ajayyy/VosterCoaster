@@ -24,6 +24,7 @@ public class Cart : MonoBehaviour {
 	void FixedUpdate () {
         if (!Input.GetKey(KeyCode.C)) {
             position = 7;
+            velocity = 0f;
             return;
         }
 
@@ -42,7 +43,13 @@ public class Cart : MonoBehaviour {
         velocity += gravityAcceleration;
         position += velocity;
 
-        transform.position = GetCurrentBone(true).position;
+        Transform finalBone = GetCurrentBone(true);
+
+        //find offset amount needed to center the cart and place cart on top of track
+        Vector3 offsetAmount = (new Vector3(1, 0, 0) * rollerCoaster.trackWidth + new Vector3(0, 1, 0) * 2.57f) * GameController.instance.scale;
+
+        transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount, Vector3.zero, finalBone.rotation);
+        transform.rotation = finalBone.rotation;
     }
 
     Transform GetCurrentBone(bool right) {
