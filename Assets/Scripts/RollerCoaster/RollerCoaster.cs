@@ -11,7 +11,7 @@ public class RollerCoaster : MonoBehaviour {
     List<GameObject> unusedTrackPieces = new List<GameObject>();
 
     //the length of one track's bone
-    float defaultTrackBoneSize = 0.402642f;
+    public float defaultTrackBoneSize = 0.402642f;
     public float trackBoneSize = 0.402642f;
 
     //the prefab for an empty piece of track
