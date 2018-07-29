@@ -9,7 +9,6 @@ public class CreateColliders : MonoBehaviour {
     RollerCoaster rollerCoaster;
 
     Vector3 offset = new Vector3(0, 1.51f, -0.21f);
-    Vector3 size = new Vector3(1f, 1f, 0.5f);
 
     void Start () {
         rollerCoaster = GetComponent<RollerCoaster>();
@@ -42,9 +41,23 @@ public class CreateColliders : MonoBehaviour {
             }
         }
 
+        float lastSize = 0.45f;
+
         //Create cubes and offset them based on each bone's position
         for (int b = 0; b < bones.Count; b++) {
-            cubes[b] = CreatePlane(offset + bones[b].position / GameController.instance.scale, size, bones[b].rotation);
+            float size;
+
+            if (b + 1 >= bones.Count || (b + 1) % rollerCoaster.boneAmount == 0) {
+                //if there is no next position, use the last position instead
+                size = lastSize;
+            } else {
+                Vector3 nextPosition = bones[b + 1].position;
+                size = Vector3.Distance(bones[b].position, nextPosition) / GameController.instance.scale;
+            }
+
+            cubes[b] = CreatePlane(offset + bones[b].position / GameController.instance.scale, new Vector3(1, 1, size), bones[b].rotation);
+
+            lastSize = size;
         }
 
         //now combine all of these cubes into one mesh
@@ -52,7 +65,6 @@ public class CreateColliders : MonoBehaviour {
         for (int i = 0; i < combine.Length; i++) {
             combine[i] = new CombineInstance();
             combine[i].mesh = cubes[i];
-            //print(cubes[i].subMeshCount);
             //combine[i].subMeshIndex = 100;
         }
 
@@ -76,8 +88,6 @@ public class CreateColliders : MonoBehaviour {
     //modified from http://ilkinulas.github.io/development/unity/2016/04/30/cube-mesh-in-unity3d.html
     //modification adds the ability to specify an offset and size
     Mesh CreatePlane(Vector3 offset, Vector3 size, Quaternion angle) {
-        //print(angle);
-
         Vector3[] vertices = {
             new Vector3 (-0.5f, 0.5f, -0.5f),
             new Vector3 (0.5f, 0.5f, -0.5f),
