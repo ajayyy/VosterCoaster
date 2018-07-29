@@ -46,6 +46,8 @@ public class Cart : MonoBehaviour {
         position += velocity;
 
         print(position + " " + velocity);
+
+        transform.position = GetCurrentBone(true).position;
     }
 
     Transform GetCurrentBone(bool right) {
