@@ -28,7 +28,6 @@ public class Cart : MonoBehaviour {
     void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
         TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
-        float boneNum = GetBoneNum();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
@@ -50,14 +49,17 @@ public class Cart : MonoBehaviour {
         position += velocity / 60f;
 
         Transform finalBone = GetCurrentBone(true);
+        float boneNum = GetBoneNum();
+
+        float distanceToNextBone = Vector3.Distance(GetNextBone(true, 1).position, currentBone.position);
 
         //find offset amount needed to center the cart and place cart on top of track
         Vector3 offsetAmount = (new Vector3(1, 0, 0) * rollerCoaster.trackWidth + new Vector3(0, 1, 0) * 2.57f) * GameController.instance.scale;
 
-        Vector3 extraAmount = new Vector3(0, 0, 1) * (rollerCoaster.trackBoneSize * (boneNum - (int)boneNum));
-        print(boneNum + " " + ((int)boneNum) + " " + extraAmount.z + " " + rollerCoaster.trackBoneSize);
+        Vector3 extraAmount = new Vector3(0, 0, 1) * (distanceToNextBone * (boneNum - (int)boneNum));
+        print(boneNum + " " + ((int)boneNum) + " " + extraAmount.z + " " + rollerCoaster.trackBoneSize + " " + distanceToNextBone);
 
-        transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount - extraAmount, Vector3.zero, finalBone.rotation);
+        transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount, Vector3.zero, finalBone.rotation) - MathHelper.RotatePointAroundPivot(extraAmount, Vector3.zero, finalBone.rotation);
         transform.rotation = finalBone.rotation;
     }
 
@@ -81,6 +83,28 @@ public class Cart : MonoBehaviour {
         }
 
         return bones[(int) boneNum - ((int)trackNum * 10)];
+    }
+
+    Transform GetNextBone(bool right, int amount) {
+        float boneNum = position / rollerCoaster.defaultTrackBoneSize + amount;
+        float trackNum = boneNum / rollerCoaster.boneAmount;
+
+        List<Transform> bones = new List<Transform>();
+
+        //find all the bones for this track piece
+        foreach (Transform child in rollerCoaster.trackPieces[(int)trackNum].GetComponentsInChildren<Transform>()) {
+            //if right, check under right rail, otherwise check under left rail
+            if (((right && child.parent.gameObject.name == "Right_Rail") || (!right && child.parent.gameObject.name == "Left_Rail")) || (bones.Count > 0 && child.parent == bones[bones.Count - 1])) {
+                //second if statement as the above one is way too long
+                //if the object is disabled, then it does not matter
+                //don't include the last joint as that does not matter
+                if (child.gameObject.activeInHierarchy && child.gameObject.name != "Joint_10_2" && child.gameObject.name != "Joint_10") {
+                    bones.Add(child);
+                }
+            }
+        }
+
+        return bones[(int)boneNum - ((int)trackNum * 10)];
     }
 
     GameObject GetCurrentTrack() {
