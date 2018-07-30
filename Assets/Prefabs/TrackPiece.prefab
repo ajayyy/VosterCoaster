@@ -478,6 +478,7 @@ GameObject:
   - component: {fileID: 4109271492245072}
   - component: {fileID: 95644031275524458}
   - component: {fileID: 114071871925593354}
+  - component: {fileID: 65855137762419376}
   m_Layer: 0
   m_Name: TrackPiece
   m_TagString: Untagged
@@ -5335,6 +5336,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1084196774546648}
   m_Mesh: {fileID: 4300042, guid: 40d079bf46273f64f9a9c618eb48bad5, type: 3}
+--- !u!65 &65855137762419376
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1274992015664382}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.797721, y: 2.5226455, z: 4.6137214}
+  m_Center: {x: -0.00000023283063, y: 1.0741957, z: 0.04371395}
 --- !u!95 &95644031275524458
 Animator:
   serializedVersion: 3
@@ -5365,7 +5378,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalAngle: {x: 0, y: 0, z: 0}
-  DEBUG_TEST: 0
+  startAngle: {x: 0, y: 0, z: 0}
+  percentageOfTrack: 1
+  secondCurveStart: -1
+  modified: 0
+  oldTotalAngle: {x: 0, y: 0, z: 0}
+  rollerCoaster: {fileID: 0}
+  colliding: 0
 --- !u!137 &137096014567647588
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

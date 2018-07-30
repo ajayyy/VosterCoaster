@@ -26,11 +26,13 @@ public class TrackPiece : MonoBehaviour {
     //the roller coaster this is a part of
     public RollerCoaster rollerCoaster;
 
-    //amount of bones per track piece
-    float boneAmount = 10f;
-
     //true when trigger collider is colliding with something. Only the first track has a trigger collider
     public bool colliding = false;
+
+    //does this track piece lift carts up
+    public bool chainLift;
+    //in meters
+    public float chainSpeed;
 
     public void Start() {
         if (!initialised) {
@@ -41,15 +43,19 @@ public class TrackPiece : MonoBehaviour {
     }
 
     void Update () {
-        
+
     }
 
     private void OnTriggerEnter(Collider other) {
-        colliding = true;
+        if(other.gameObject == GameController.instance.rightControllerObject) {
+            colliding = true;
+        }
     }
 
     private void OnTriggerExit(Collider other) {
-        colliding = false;
+        if (other.gameObject == GameController.instance.rightControllerObject) {
+            colliding = false;
+        }
     }
 
     //secondCurveStart: bone where the second curve starts
@@ -65,10 +71,10 @@ public class TrackPiece : MonoBehaviour {
         this.startAngle = startAngle;
         this.percentageOfTrack = percentageOfTrack;
         this.secondCurveStart = secondCurveStart;
-        Vector3 adjustmentAngle = totalAngle / boneAmount;
+        Vector3 adjustmentAngle = totalAngle / rollerCoaster.boneAmount;
         //if it were a negative number, it would not divide properly (-1 means N/A)
         if (secondCurveStart > 0) {
-            adjustmentAngle = totalAngle / (boneAmount - startAmount);
+            adjustmentAngle = totalAngle / (rollerCoaster.boneAmount - startAmount);
             startAngle = startAngle / (startAmount);
         }
 
@@ -138,7 +144,7 @@ public class TrackPiece : MonoBehaviour {
 
                     if (i != middleRail) {
                         //get full offset compared to rails[middleRail]
-                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * RollerCoaster.scale;
+                        float offset = railParents[middleRail].transform.localPosition.x - railParents[i].transform.localPosition.x * GameController.instance.scale;
 
                         //if the angle is negative, the outside rail is the inside rail and the inside rail is the outside rail
                         if(currentAngle.y < 0) {
@@ -146,7 +152,7 @@ public class TrackPiece : MonoBehaviour {
                         }
 
                         //calculate the full angle this track piece gets to
-                        float totalAngleOfCurve = 90 - Mathf.Abs(currentAngle.y) * boneAmount;
+                        float totalAngleOfCurve = 90 - Mathf.Abs(currentAngle.y) * rollerCoaster.boneAmount;
 
                         //radius of the middle circle (SOH CAH TOA, cosA = a/h, h = a/cosA)
                         float radius1 = Mathf.Abs(height) / Mathf.Cos(totalAngleOfCurve * Mathf.Deg2Rad);
@@ -169,19 +175,19 @@ public class TrackPiece : MonoBehaviour {
                     currentAngle = startAngle;
                 }
 
-                if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart != -1) {
+                if ((r - 1) / rollerCoaster.boneAmount > percentageOfTrack && secondCurveStart != -1) {
                     //if the curve start is not zero, treat the rest of the track as the upcomming angle instead of the start angle
                     rails[i][r].transform.localPosition = defaultBonePosition;
                     rails[i][r].transform.localEulerAngles = adjustmentAngle;
                     rails[i][r].SetActive(true);
-                } else if ((r - 1) / boneAmount > percentageOfTrack && secondCurveStart == -1) {
+                } else if ((r - 1) / rollerCoaster.boneAmount > percentageOfTrack && secondCurveStart == -1) {
                     //if the curve start is zero, then treat the rest of the track as if it does not exist
                     rails[i][r].transform.localPosition = Vector3.zero;
                     rails[i][r].transform.localEulerAngles = Vector3.zero;
                     rails[i][r].SetActive(false);
-                } else if ((r + 1 - 1) / boneAmount > percentageOfTrack && percentageOfTrack != 1) {
-                    rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * defaultBonePosition;
-                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / boneAmount)) * boneAmount) * currentAngle;
+                } else if ((r + 1 - 1) / rollerCoaster.boneAmount > percentageOfTrack && percentageOfTrack != 1) {
+                    rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / rollerCoaster.boneAmount)) * rollerCoaster.boneAmount) * defaultBonePosition;
+                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / rollerCoaster.boneAmount)) * rollerCoaster.boneAmount) * currentAngle;
                     rails[i][r].SetActive(true);
                 }
             }
