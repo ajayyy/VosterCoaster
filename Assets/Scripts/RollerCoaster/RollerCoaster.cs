@@ -35,6 +35,10 @@ public class RollerCoaster : MonoBehaviour {
     //amount of bones per track piece
     public float boneAmount = 10f;
 
+    //the cart that will be riding this roller coaster
+    //will be a list of multiple carts in the future
+    public Cart cart;
+
     void Start () {
         createColliders = GetComponent<CreateColliders>();
 
@@ -62,8 +66,7 @@ public class RollerCoaster : MonoBehaviour {
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
-            } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.A)) {
-                print("S");
+            } else if (Input.GetKeyDown(KeyCode.A)) {
                 //create collider for the preview
                 Mesh rightMesh = createColliders.BuildColliders(true);
                 Mesh leftMesh = createColliders.BuildColliders(false);
@@ -75,8 +78,13 @@ public class RollerCoaster : MonoBehaviour {
 
                 meshColliders[1].sharedMesh = null;
                 meshColliders[1].sharedMesh = leftMesh;
-
-                print("S");
+            } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.C)) {
+                if (cart.gameObject.activeInHierarchy) {
+                    cart.gameObject.SetActive(false);
+                    cart.Start();
+                } else {
+                    cart.gameObject.SetActive(true);
+                }
             } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 

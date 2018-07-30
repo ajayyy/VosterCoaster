@@ -17,17 +17,15 @@ public class Cart : MonoBehaviour {
     //in kg
     float mass = 600;
 
-	void Start () {
-		
-	}
-	
-	void FixedUpdate () {
-        if (!Input.GetKey(KeyCode.C)) {
-            position = 7;
-            velocity = 0f;
-            return;
-        }
+    bool running = false;
 
+	public void Start () {
+        //for now start the position here because there are no chain lifts implemented yet
+        position = 7;
+        velocity = 0;
+    }
+
+    void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
