@@ -65,22 +65,11 @@ public class CreateColliders : MonoBehaviour {
         for (int i = 0; i < combine.Length; i++) {
             combine[i] = new CombineInstance();
             combine[i].mesh = cubes[i];
-            //combine[i].subMeshIndex = 100;
         }
 
         Mesh finalMesh = new Mesh();
         //combine the meshes without merging the submeshes
         finalMesh.CombineMeshes(combine, true, false);
-
-        MeshUtility.Optimize(finalMesh);
-
-        //simplify the mesh
-        //UnityMeshSimplifier.MeshSimplifier meshSimplifier = new UnityMeshSimplifier.MeshSimplifier();
-
-        //meshSimplifier.Initialize(finalMesh);
-        //meshSimplifier.SimplifyMesh(0.9f);
-
-        //finalMesh = meshSimplifier.ToMesh();
 
         return finalMesh;
     }

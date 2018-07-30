@@ -89,7 +89,7 @@ public class RollerCoaster : MonoBehaviour {
                 } else {
                     cart.gameObject.SetActive(true);
                 }
-            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
+            } else if (Input.GetAxis("RightTrigger") > 0.5) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
                 if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
