@@ -28,6 +28,7 @@ public class Cart : MonoBehaviour {
     void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
         TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
+        float boneNum = GetBoneNum();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
@@ -53,7 +54,10 @@ public class Cart : MonoBehaviour {
         //find offset amount needed to center the cart and place cart on top of track
         Vector3 offsetAmount = (new Vector3(1, 0, 0) * rollerCoaster.trackWidth + new Vector3(0, 1, 0) * 2.57f) * GameController.instance.scale;
 
-        transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount, Vector3.zero, finalBone.rotation);
+        Vector3 extraAmount = new Vector3(0, 0, 1) * (rollerCoaster.trackBoneSize * (boneNum - (int)boneNum));
+        print(boneNum + " " + ((int)boneNum) + " " + extraAmount.z + " " + rollerCoaster.trackBoneSize);
+
+        transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount - extraAmount, Vector3.zero, finalBone.rotation);
         transform.rotation = finalBone.rotation;
     }
 
@@ -84,5 +88,12 @@ public class Cart : MonoBehaviour {
         float trackNum = boneNum / rollerCoaster.boneAmount;
 
         return rollerCoaster.trackPieces[(int)trackNum];
+    }
+
+    //finds closest track num
+    float GetBoneNum() {
+        float boneNum = position / rollerCoaster.defaultTrackBoneSize;
+
+        return boneNum;
     }
 }
