@@ -48,6 +48,10 @@ public class GameController : MonoBehaviour {
 	}
 	
 	void FixedUpdate () {
+        if (instance == null) {
+            instance = this;
+        }
+
         if(scale != lastScale) {
             Physics.gravity = new Vector3(0, (-9.81f) * scale, 0);
             lastScale = scale;

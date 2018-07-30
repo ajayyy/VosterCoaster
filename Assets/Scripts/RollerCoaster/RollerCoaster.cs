@@ -56,7 +56,7 @@ public class RollerCoaster : MonoBehaviour {
 
         if (editing) {
             //set track bone size based on scale incase the scale has changed
-            //trackBoneSize = defaultTrackBoneSize * gameController.scale;
+            trackBoneSize = defaultTrackBoneSize * gameController.scale;
 
             CreatePath(currentTrack, true);
 
