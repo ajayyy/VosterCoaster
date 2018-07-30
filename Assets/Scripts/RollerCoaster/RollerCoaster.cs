@@ -30,8 +30,6 @@ public class RollerCoaster : MonoBehaviour {
 
     public bool editing = true;
 
-    CreateColliders createColliders;
-
     //amount of bones per track piece
     public float boneAmount = 10f;
 
@@ -44,8 +42,6 @@ public class RollerCoaster : MonoBehaviour {
     float defaultLiftSpeed = 5f;
 
     void Start () {
-        createColliders = GetComponent<CreateColliders>();
-
         //just for now, since we must start with one
         transform.Find("TrackPiece0").gameObject.GetComponent<TrackPiece>().rollerCoaster = this;
         trackPieces.Add(transform.Find("TrackPiece0").gameObject);
@@ -70,18 +66,6 @@ public class RollerCoaster : MonoBehaviour {
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
-            } else if (Input.GetKeyDown(KeyCode.A)) {
-                //create collider for the preview
-                Mesh rightMesh = createColliders.BuildColliders(true);
-                Mesh leftMesh = createColliders.BuildColliders(false);
-
-                MeshCollider[] meshColliders = GetComponents<MeshCollider>();
-
-                meshColliders[0].sharedMesh = null;
-                meshColliders[0].sharedMesh = rightMesh;
-
-                meshColliders[1].sharedMesh = null;
-                meshColliders[1].sharedMesh = leftMesh;
             } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.C)) {
                 if (cart.gameObject.activeInHierarchy) {
                     cart.gameObject.SetActive(false);
