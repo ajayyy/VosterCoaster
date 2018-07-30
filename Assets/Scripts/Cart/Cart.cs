@@ -27,6 +27,7 @@ public class Cart : MonoBehaviour {
 
     void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
+        TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
@@ -39,7 +40,13 @@ public class Cart : MonoBehaviour {
 
         //calculate the new movements
         velocity += gravityAcceleration;
-        position += velocity;
+
+        //check if this track is has a chain lift
+        if (currentTrack.chainLift && velocity < currentTrack.chainSpeed) {
+            velocity = currentTrack.chainSpeed;
+        }
+
+        position += velocity / 60f;
 
         Transform finalBone = GetCurrentBone(true);
 
@@ -70,5 +77,12 @@ public class Cart : MonoBehaviour {
         }
 
         return bones[(int) boneNum - ((int)trackNum * 10)];
+    }
+
+    GameObject GetCurrentTrack() {
+        float boneNum = position / rollerCoaster.defaultTrackBoneSize;
+        float trackNum = boneNum / rollerCoaster.boneAmount;
+
+        return rollerCoaster.trackPieces[(int)trackNum];
     }
 }

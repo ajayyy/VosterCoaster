@@ -39,6 +39,10 @@ public class RollerCoaster : MonoBehaviour {
     //will be a list of multiple carts in the future
     public Cart cart;
 
+    //in meters per second
+    //each trackpiece has there own individual lift speed as well
+    float defaultLiftSpeed = 5f;
+
     void Start () {
         createColliders = GetComponent<CreateColliders>();
 
@@ -105,6 +109,9 @@ public class RollerCoaster : MonoBehaviour {
 
         //check if the straight button is being held down
         bool straight = Input.GetButton("RightMenuClick");
+
+        //check if the chail lift button is being held down
+        bool chainLift = Input.GetButton("LeftMenuClick");
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
         Vector3 startPosition = startTrack.transform.position;
@@ -688,6 +695,11 @@ public class RollerCoaster : MonoBehaviour {
                     trackPiece.transform.localEulerAngles = oldAngles;
                 }
 
+                //set chail lift variables
+                TrackPiece trackPieceScript = trackPiece.GetComponent<TrackPiece>();
+                trackPieceScript.chainLift = chainLift;
+                trackPieceScript.chainSpeed = defaultLiftSpeed;
+
             } else {
                 //calculate adjustments
                 //this finds the last bone plus half of the track size (because position is based off the center of the object
@@ -708,6 +720,11 @@ public class RollerCoaster : MonoBehaviour {
                 }
 
                 GameObject trackPiece = AddTrackPiece(totalTrackAngle, modifiedPosition, eulerAngles, startAngle, offset, percentageOfTrack, secondCurveStart);
+
+                //set chail lift variables
+                TrackPiece trackPieceScript = trackPiece.GetComponent<TrackPiece>();
+                trackPieceScript.chainLift = chainLift;
+                trackPieceScript.chainSpeed = defaultLiftSpeed;
             }
 
             //reset i if nessesary (this must be the last thing in the loop)

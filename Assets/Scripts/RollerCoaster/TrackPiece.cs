@@ -29,6 +29,11 @@ public class TrackPiece : MonoBehaviour {
     //true when trigger collider is colliding with something. Only the first track has a trigger collider
     public bool colliding = false;
 
+    //does this track piece lift carts up
+    public bool chainLift;
+    //in meters
+    public float chainSpeed;
+
     public void Start() {
         if (!initialised) {
             GetParents();
@@ -38,7 +43,7 @@ public class TrackPiece : MonoBehaviour {
     }
 
     void Update () {
-        
+
     }
 
     private void OnTriggerEnter(Collider other) {
