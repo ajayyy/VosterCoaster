@@ -19,9 +19,10 @@ public class Cart : MonoBehaviour {
 
     bool running = false;
 
+    static float friction = 0.03f;
+
 	public void Start () {
-        //for now start the position here because there are no chain lifts implemented yet
-        position = 7;
+        position = 0;
         velocity = 0;
     }
 
@@ -40,6 +41,18 @@ public class Cart : MonoBehaviour {
 
         //calculate the new movements
         velocity += gravityAcceleration;
+
+        if (velocity > 0) {
+            velocity -= friction;
+            if (velocity < 0) {
+                velocity = 0;
+            }
+        } else {
+            velocity += friction;
+            if (velocity > 0) {
+                velocity = 0;
+            }
+        }
 
         //check if this track is has a chain lift
         if (currentTrack.chainLift && velocity < currentTrack.chainSpeed) {
