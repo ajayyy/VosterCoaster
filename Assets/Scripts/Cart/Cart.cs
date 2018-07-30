@@ -49,18 +49,23 @@ public class Cart : MonoBehaviour {
         position += velocity / 60f;
 
         Transform finalBone = GetCurrentBone(true);
+        Transform nextBone = GetNextBone(true, 1);
         float boneNum = GetBoneNum();
 
-        float distanceToNextBone = Vector3.Distance(GetNextBone(true, 1).position, currentBone.position);
+        float distanceToNextBone = Vector3.Distance(nextBone.position, finalBone.position);
 
         //find offset amount needed to center the cart and place cart on top of track
         Vector3 offsetAmount = (new Vector3(1, 0, 0) * rollerCoaster.trackWidth + new Vector3(0, 1, 0) * 2.57f) * GameController.instance.scale;
 
         Vector3 extraAmount = new Vector3(0, 0, 1) * (distanceToNextBone * (boneNum - (int)boneNum));
-        print(boneNum + " " + ((int)boneNum) + " " + extraAmount.z + " " + rollerCoaster.trackBoneSize + " " + distanceToNextBone);
 
         transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount, Vector3.zero, finalBone.rotation) - MathHelper.RotatePointAroundPivot(extraAmount, Vector3.zero, finalBone.rotation);
-        transform.rotation = finalBone.rotation;
+
+        Vector3 angleDifference = nextBone.eulerAngles - finalBone.eulerAngles;
+
+        Vector3 extraRotation = angleDifference * (boneNum - (int)boneNum);
+
+        transform.eulerAngles = finalBone.eulerAngles + extraRotation;
     }
 
     Transform GetCurrentBone(bool right) {
