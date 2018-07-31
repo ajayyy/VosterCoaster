@@ -70,6 +70,7 @@ public class RollerCoaster : MonoBehaviour {
                 if (cart.gameObject.activeInHierarchy) {
                     cart.gameObject.SetActive(false);
                     cart.Start();
+                    cart.Update();
                 } else {
                     cart.gameObject.SetActive(true);
                 }
