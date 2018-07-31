@@ -62,7 +62,7 @@ public class RollerCoaster : MonoBehaviour {
             //set track bone size based on scale incase the scale has changed
             trackBoneSize = defaultTrackBoneSize * gameController.scale;
 
-            CreatePath(currentTrack, inclineMode);
+            CreatePath(currentTrack, true);
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
@@ -73,7 +73,7 @@ public class RollerCoaster : MonoBehaviour {
                 } else {
                     cart.gameObject.SetActive(true);
                 }
-            } else if (Input.GetAxis("RightTrigger") > 0.5) {
+            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
                 if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
@@ -95,7 +95,7 @@ public class RollerCoaster : MonoBehaviour {
         bool straight = Input.GetButton("RightMenuClick");
 
         //check if the chail lift button is being held down
-        bool chainLift = Input.GetButton("LeftMenuClick");
+        bool chainLift = Input.GetButton("LeftMenuClick") || true;
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
         Vector3 startPosition = startTrack.transform.position;

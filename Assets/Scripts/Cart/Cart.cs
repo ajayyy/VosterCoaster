@@ -22,7 +22,7 @@ public class Cart : MonoBehaviour {
     static float friction = 0.03f;
 
 	public void Start () {
-        position = 0;
+        position = 7;
         velocity = 0;
     }
 
@@ -76,7 +76,31 @@ public class Cart : MonoBehaviour {
 
         Vector3 angleDifference = nextBone.eulerAngles - finalBone.eulerAngles;
 
+        //find smallest angle difference
+        //do 360 - angle if over 180 for each (see https://stackoverflow.com/questions/6722272/smallest-difference-between-two-angles)
+        {
+            float x1 = angleDifference.x;
+            float y1 = angleDifference.y;
+            float z1 = angleDifference.z;
+
+            if (x1 > 180) {
+                x1 = 360 - x1;
+            }
+
+            if (y1 > 180) {
+                y1 = 360 - y1;
+            }
+
+            if (z1 > 180) {
+                z1 = 360 - z1;
+            }
+
+            angleDifference = new Vector3(x1, y1, z1);
+        }
+
         Vector3 extraRotation = angleDifference * (boneNum - (int)boneNum);
+
+        print(angleDifference + " " + extraRotation + " " + nextBone.eulerAngles + " " + finalBone.eulerAngles);
 
         transform.eulerAngles = finalBone.eulerAngles + extraRotation;
     }
