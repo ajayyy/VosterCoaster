@@ -97,6 +97,11 @@ public class RollerCoaster : MonoBehaviour {
         //check if the chail lift button is being held down
         bool chainLift = Input.GetButton("LeftMenuClick") || true;
 
+        if (chainLift) {
+            startTrack.GetComponent<TrackPiece>().chainLift = true;
+            startTrack.GetComponent<TrackPiece>().chainSpeed = defaultLiftSpeed;
+        }
+
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
         Vector3 startPosition = startTrack.transform.position;
         Vector3 targetPosition = rightController.transform.position;

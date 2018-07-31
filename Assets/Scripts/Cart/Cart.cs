@@ -22,7 +22,8 @@ public class Cart : MonoBehaviour {
     static float friction = 0.03f;
 
 	public void Start () {
-        position = 7;
+        //starts half way on the first track
+        position = 2;
         velocity = 0;
     }
 
