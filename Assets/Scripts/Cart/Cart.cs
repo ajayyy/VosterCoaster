@@ -32,9 +32,12 @@ public class Cart : MonoBehaviour {
         TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
+        print(eulerAnglesOfTrack);
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
         //nessesary to get accurate inclines from inclines after turns
-        inclineAngleOfTrack -= eulerAnglesOfTrack.y;
+        if(inclineAngleOfTrack != 0) {
+            inclineAngleOfTrack -= eulerAnglesOfTrack.y;
+        }
 
         //calculate the force downward (divided by 60 fps)
         float forceDown = (-9.81f) / 60f;
@@ -61,6 +64,8 @@ public class Cart : MonoBehaviour {
         if (currentTrack.chainLift && velocity < currentTrack.chainSpeed) {
             velocity = currentTrack.chainSpeed;
         }
+
+        print(velocity + " " + inclineAngleOfTrack);
 
         position += velocity / 60f;
 
@@ -102,8 +107,6 @@ public class Cart : MonoBehaviour {
         }
 
         Vector3 extraRotation = angleDifference * (boneNum - (int)boneNum);
-
-        print(angleDifference + " " + extraRotation + " " + nextBone.eulerAngles + " " + finalBone.eulerAngles);
 
         transform.eulerAngles = finalBone.eulerAngles + extraRotation;
     }

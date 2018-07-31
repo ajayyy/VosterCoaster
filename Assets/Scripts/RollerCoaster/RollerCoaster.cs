@@ -62,7 +62,7 @@ public class RollerCoaster : MonoBehaviour {
             //set track bone size based on scale incase the scale has changed
             trackBoneSize = defaultTrackBoneSize * gameController.scale;
 
-            CreatePath(currentTrack, true);
+            CreatePath(currentTrack, inclineMode);
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
