@@ -140,6 +140,7 @@ public class RollerCoaster : MonoBehaviour {
         if (incline) {
             //adjust angle to make it like it was normal
             float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+            angle -= currentAngle.y;
 
             targetAngle = new Vector3(angle, 0, 0);
 

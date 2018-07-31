@@ -33,6 +33,8 @@ public class Cart : MonoBehaviour {
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
+        //nessesary to get accurate inclines from inclines after turns
+        inclineAngleOfTrack -= eulerAnglesOfTrack.y;
 
         //calculate the force downward (divided by 60 fps)
         float forceDown = (-9.81f) / 60f;
