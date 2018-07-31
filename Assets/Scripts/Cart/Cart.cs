@@ -27,7 +27,7 @@ public class Cart : MonoBehaviour {
         velocity = 0;
     }
 
-    void FixedUpdate () {
+    public void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
         TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
