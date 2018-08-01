@@ -107,14 +107,18 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 startPosition = startTrack.transform.position;
         Vector3 targetPosition = rightController.transform.position;
 
-        Vector3 targetAngle = new Vector3(0, 1, 0) * MathHelper.ConvertQuant2Euler(rightController.transform.rotation).x;
-        Vector3 fullTargetAngle = MathHelper.ConvertQuant2Euler(rightController.transform.rotation);
+        Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
+        //used to get x axis angle in incline tracks
+        Vector3 xTargetAngle = rightController.transform.eulerAngles;
+        Vector3 fullTargetAngle = rightController.transform.eulerAngles;
         Vector3 startTrackAngleRelative = Vector3.zero;
         Vector3 currentAngle = getCurrentAngle(startTrack, true);
         //full angle without any edits
         Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
+            xTargetAngle = MathHelper.ConvertQuant2Euler(rightController.transform.rotation);
+            fullTargetAngle = rightController.transform.eulerAngles;
             currentAngle = getCurrentAngle(startTrack, false);
             currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
             fullStartAngle = getCurrentAngle(startTrack, true);
@@ -140,7 +144,7 @@ public class RollerCoaster : MonoBehaviour {
 
         if (incline) {
             //adjust angle to make it like it was normal
-            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * xTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
             angle -= currentAngle.y;
 
             targetAngle = new Vector3(angle, 0, 0);
