@@ -62,7 +62,7 @@ public class RollerCoaster : MonoBehaviour {
             //set track bone size based on scale incase the scale has changed
             trackBoneSize = defaultTrackBoneSize * gameController.scale;
 
-            CreatePath(currentTrack, inclineMode);
+            CreatePath(currentTrack, true);
 
             if (Input.GetButtonDown("RightTrackpadClick")) {
                 inclineMode = !inclineMode;
@@ -107,8 +107,8 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 startPosition = startTrack.transform.position;
         Vector3 targetPosition = rightController.transform.position;
 
-        Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
-        Vector3 fullTargetAngle = rightController.transform.eulerAngles;
+        Vector3 targetAngle = new Vector3(0, 1, 0) * MathHelper.ConvertQuant2Euler(rightController.transform.rotation).x;
+        Vector3 fullTargetAngle = MathHelper.ConvertQuant2Euler(rightController.transform.rotation);
         Vector3 startTrackAngleRelative = Vector3.zero;
         Vector3 currentAngle = getCurrentAngle(startTrack, true);
         //full angle without any edits
