@@ -147,6 +147,10 @@ public class RollerCoaster : MonoBehaviour {
             float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * xTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
             angle -= Mathf.Sin((currentAngle.y - 90) * Mathf.Deg2Rad) * 90 + 90;
 
+            if (angle > 90) {
+                cancel = true;
+            }
+
             targetAngle = new Vector3(angle, 0, 0);
 
             //theoretical position as if it was at a normal position
