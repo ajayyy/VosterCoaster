@@ -21,30 +21,48 @@ public class RadialOptionsMenu : MonoBehaviour {
 	void Update () {
         GameController gameController = GameController.instance;
 
-        float vertical = gameController.rightController.GetAxis().y;
-        float horizontal = gameController.rightController.GetAxis().x;
+        if (gameController.rightController.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+            float vertical = gameController.rightController.GetAxis().y;
+            float horizontal = gameController.rightController.GetAxis().x;
 
-        //find position on a circle perimeter(angle)
-        float position = Mathf.Rad2Deg * Mathf.Atan2(vertical, horizontal) + 180;
+            //find position on a circle perimeter(angle)
+            float position = Mathf.Rad2Deg * Mathf.Atan2(vertical, horizontal) + 180;
 
-        //position += 1f;
-        //if (position > 360) {
-        //    position = 0;
-        //}
+            //position += 1f;
+            //if (position > 360) {
+            //    position = 0;
+            //}
 
-        SetButtonSizes(position);
+            SetButtonSizes(position);
 
-        if (Input.GetButtonDown("RightTrackpadClick") || Input.anyKeyDown) {
+            if (Input.GetButtonDown("RightTrackpadClick") || Input.anyKeyDown) {
 
-            if (selector) {
-                //set everything to false first if only one option can be selected at a time
-                foreach (RadialToggle button in buttons) {
-                    button.Toggle(false);
+                if (selector) {
+                    //set everything to false first if only one option can be selected at a time
+                    foreach (RadialToggle button in buttons) {
+                        button.Toggle(false);
+                    }
+                }
+
+                GetSelectedToggle().Toggle();
+            }
+
+            foreach (RadialToggle button in buttons) {
+                if (!button.gameObject.activeSelf) {
+                    button.gameObject.SetActive(true);
                 }
             }
 
-            GetSelectedToggle().Toggle();
+        } else {
+            //the menu can disappear now that the touchpad is not being touched
+            //TODO: maybe make a disapearing animation
+            foreach (RadialToggle button in buttons) {
+                if (button.gameObject.activeSelf) {
+                    button.gameObject.SetActive(false);
+                }
+            }
         }
+
     }
 
     //the largest toggle would be the one selected
