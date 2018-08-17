@@ -12,6 +12,9 @@ public class RadialOptionsMenu : MonoBehaviour {
     //whether this menu can have multple options enabled at once
     public bool selector = false;
 
+    //true if on the right controller, false if on the left
+    public bool onRightController = true;
+
     //float position;
 
     void Start () {
@@ -21,9 +24,9 @@ public class RadialOptionsMenu : MonoBehaviour {
 	void Update () {
         GameController gameController = GameController.instance;
 
-        if (gameController.rightController.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
-            float vertical = gameController.rightController.GetAxis().y;
-            float horizontal = gameController.rightController.GetAxis().x;
+        if (GetController().GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+            float vertical = GetController().GetAxis().y;
+            float horizontal = GetController().GetAxis().x;
 
             //find position on a circle perimeter(angle)
             float position = Mathf.Rad2Deg * Mathf.Atan2(vertical, horizontal) + 180;
@@ -35,7 +38,7 @@ public class RadialOptionsMenu : MonoBehaviour {
 
             SetButtonSizes(position);
 
-            if (Input.GetButtonDown("RightTrackpadClick") || Input.anyKeyDown) {
+            if (GetController().GetPressDown(SteamVR_Controller.ButtonMask.Touchpad) || Input.anyKeyDown) {
 
                 if (selector) {
                     //set everything to false first if only one option can be selected at a time
@@ -63,6 +66,14 @@ public class RadialOptionsMenu : MonoBehaviour {
             }
         }
 
+    }
+
+    public SteamVR_Controller.Device GetController() {
+        if (onRightController) {
+            return GameController.instance.rightController;
+        } else {
+            return GameController.instance.leftController;
+        }
     }
 
     //the largest toggle would be the one selected
