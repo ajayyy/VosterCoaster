@@ -20,8 +20,8 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    public ModeSelector rightMenu;
-    public ModeSelector leftMenu;
+    public RadialOptionsMenu rightMenu;
+    public RadialOptionsMenu leftMenu;
 
     //game objects
     public GameObject leftControllerObject;

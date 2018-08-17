@@ -26,7 +26,11 @@ public class RadialToggle : MonoBehaviour {
     }
 
     public void Toggle() {
-        optionEnabled = !optionEnabled;
+        Toggle(!optionEnabled);
+    }
+
+    public void Toggle(bool optionEnabled) {
+        this.optionEnabled = optionEnabled;
 
         UpdateImage();
     }

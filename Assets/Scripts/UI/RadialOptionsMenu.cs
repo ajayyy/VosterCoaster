@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModeSelector : MonoBehaviour {
+public class RadialOptionsMenu : MonoBehaviour {
 
     public RadialToggle[] buttons;
 
     float defaultSize = 0.02f;
     float maxSize = 0.03f;
+
+    //whether this menu can have multple options enabled at once
+    public bool selector = false;
 
     //float position;
 
@@ -32,6 +35,14 @@ public class ModeSelector : MonoBehaviour {
         SetButtonSizes(position);
 
         if (Input.GetButtonDown("RightTrackpadClick") || Input.anyKeyDown) {
+
+            if (selector) {
+                //set everything to false first if only one option can be selected at a time
+                foreach (RadialToggle button in buttons) {
+                    button.Toggle(false);
+                }
+            }
+
             GetSelectedToggle().Toggle();
         }
     }
