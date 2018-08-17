@@ -9,6 +9,8 @@ public class ModeSelector : MonoBehaviour {
     float defaultSize = 0.02f;
     float maxSize = 0.03f;
 
+    //float position;
+
 	void Start () {
 		
 	}
@@ -28,6 +30,23 @@ public class ModeSelector : MonoBehaviour {
         //}
 
         SetButtonSizes(position);
+
+        if (Input.GetButtonDown("RightTrackpadClick") || Input.anyKeyDown) {
+            GetSelectedToggle().Toggle();
+        }
+    }
+
+    //the largest toggle would be the one selected
+    public RadialToggle GetSelectedToggle() {
+        RadialToggle largestToggle = null;
+
+        foreach (RadialToggle radialToggle in buttons) {
+            if (largestToggle == null || radialToggle.rectTransform.sizeDelta.x > largestToggle.rectTransform.sizeDelta.x) {
+                largestToggle = radialToggle;
+            }
+        }
+
+        return largestToggle;
     }
 
     public void SetButtonSizes(float position) {

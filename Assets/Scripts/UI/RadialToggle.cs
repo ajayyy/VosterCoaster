@@ -11,6 +11,9 @@ public class RadialToggle : MonoBehaviour {
     public Image image;
     public RectTransform rectTransform;
 
+    public Sprite selected;
+    public Sprite deselected;
+
     void Start() {
         image = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
@@ -18,5 +21,15 @@ public class RadialToggle : MonoBehaviour {
 
     void Update() {
 
+    }
+
+    public void Toggle() {
+        optionEnabled = !optionEnabled;
+
+        if (optionEnabled) {
+            image.sprite = selected;
+        } else {
+            image.sprite = deselected;
+        }
     }
 }
