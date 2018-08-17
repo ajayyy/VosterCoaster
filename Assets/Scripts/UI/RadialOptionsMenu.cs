@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class RadialOptionsMenu : MonoBehaviour {
@@ -15,10 +16,32 @@ public class RadialOptionsMenu : MonoBehaviour {
     //true if on the right controller, false if on the left
     public bool onRightController = true;
 
+    public GameObject buttonPrefab;
+
+    public Sprite[] selectedImages;
+    public Sprite[] deselectedImages;
+
+    //radius of the circle that the buttons are on
+    public float buttonDistanceAway = 0.04f;
+
     //float position;
 
     void Start () {
-		
+        //generate buttons
+        buttons = new RadialToggle[selectedImages.Length];
+
+        for (int i = 0; i < buttons.Length; i++) {
+            buttons[i] = Instantiate(buttonPrefab, transform).GetComponent<RadialToggle>();
+
+            float angle = 360 / buttons.Length * i;
+
+            Vector3 position = new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad) * buttonDistanceAway, 0, Mathf.Cos(angle * Mathf.Deg2Rad) * buttonDistanceAway);
+
+            buttons[i].transform.localPosition = position;
+
+            buttons[i].selected = selectedImages[i];
+            buttons[i].deselected = deselectedImages[i];
+        }
 	}
 	
 	void Update () {
