@@ -11,7 +11,7 @@ public class ModeSelector : MonoBehaviour {
 
     //float position;
 
-	void Start () {
+    void Start () {
 		
 	}
 	
