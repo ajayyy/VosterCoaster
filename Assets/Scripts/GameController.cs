@@ -20,6 +20,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public ModeSelector rightMenu;
+    public ModeSelector leftMenu;
+
     //game objects
     public GameObject leftControllerObject;
     public GameObject rightControllerObject;
