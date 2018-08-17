@@ -14,7 +14,8 @@ public class RollerCoaster : MonoBehaviour {
     public float defaultTrackBoneSize = 0.402642f;
     public float trackBoneSize = 0.402642f;
 
-    public float trackWidth = 1.64703f;
+    public float defaultTrackWidth = 1.64703f * 2;
+    public float trackWidth = 1.64703f * 2;
 
     //the prefab for an empty piece of track
     public GameObject trackPrefab;
@@ -50,6 +51,7 @@ public class RollerCoaster : MonoBehaviour {
 
         //set track bone size based on scale
         trackBoneSize = defaultTrackBoneSize * GameController.instance.scale;
+        trackWidth = defaultTrackWidth * GameController.instance.scale;
 
         currentTrack = trackPieces[0];
     }
@@ -61,6 +63,7 @@ public class RollerCoaster : MonoBehaviour {
         if (editing) {
             //set track bone size based on scale incase the scale has changed
             trackBoneSize = defaultTrackBoneSize * gameController.scale;
+            trackWidth = defaultTrackWidth * GameController.instance.scale;
 
             CreatePath(currentTrack, inclineMode);
             
@@ -182,6 +185,14 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         targetPosition = MathHelper.RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+
+        if (!incline) {
+            //the target position generated from this method becomes slightly off depending on the target angle
+            //adjust for these issues
+            Vector3 targetPositonOffset = new Vector3(0, 0, trackWidth / 2);
+            
+            targetPosition += targetPositonOffset;
+        }
 
         if (!incline) {
             targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
