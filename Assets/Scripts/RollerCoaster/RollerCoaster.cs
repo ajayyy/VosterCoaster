@@ -189,9 +189,9 @@ public class RollerCoaster : MonoBehaviour {
         if (!incline) {
             //the target position generated from this method becomes slightly off depending on the target angle
             //adjust for these issues
-            Vector3 targetPositonOffset = new Vector3(0, 0, trackWidth / 2);
+            Vector3 targetPositionOffset = new Vector3(0, 0, trackWidth / 2);
             
-            targetPosition += targetPositonOffset;
+            targetPosition += targetPositionOffset;
         }
 
         if (!incline) {
