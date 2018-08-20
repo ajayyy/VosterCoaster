@@ -23,11 +23,23 @@ public class WindowButton : MonoBehaviour {
         rectTransform = GetComponent<RectTransform>();
 	}
 	
-	void Update () {
-		
-	}
+	void FixedUpdate () {
+        GameController gameController = GameController.instance;
 
-    public void Clicked() {
+        if (gameController.rightControllerWindowPointingAt == gameObject) {
+            //set to hover image
+            if (image.sprite != images[optionSelected * 2 + 1]) {
+                image.sprite = images[optionSelected * 2 + 1];
+            }
+        } else {
+            //set to non hover image
+            if (image.sprite != images[optionSelected * 2]) {
+                image.sprite = images[optionSelected * 2];
+            }
+        }
+    }
+
+        public void Clicked() {
         if (type == 0) {
             optionSelected++;
 
@@ -35,7 +47,7 @@ public class WindowButton : MonoBehaviour {
                 optionSelected = 0;
             }
 
-            image.sprite = images[optionSelected];
+            image.sprite = images[optionSelected * 2 + 1];
         }
     }
 }

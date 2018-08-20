@@ -44,7 +44,7 @@
      inkscape:cx="482.38574"
      inkscape:cy="1023.3985"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g858"
      showgrid="false"
      inkscape:window-width="1366"
      inkscape:window-height="705"
@@ -220,6 +220,29 @@
          x="-83.903221"
          y="-110.79916"
          transform="rotate(135)" />
+    </g>
+    <g
+       inkscape:export-ydpi="27.7927"
+       inkscape:export-xdpi="27.7927"
+       inkscape:export-filename="C:\Users\Ajay\Documents\UnityProjects\VR Test\Assets\Icons\X.png"
+       id="g858"
+       transform="translate(-18.100843)">
+      <rect
+         style="opacity:1;fill:#565656;fill-opacity:1;stroke:none;stroke-width:1.44591177;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect854"
+         width="17.585779"
+         height="2.7224846"
+         x="100.64503"
+         y="-76.471573"
+         transform="rotate(45)" />
+      <rect
+         transform="rotate(135)"
+         y="-110.79916"
+         x="-83.903221"
+         height="2.7224846"
+         width="17.585779"
+         id="rect856"
+         style="opacity:1;fill:#565656;fill-opacity:1;stroke:none;stroke-width:1.44591177;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
