@@ -40,9 +40,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.81174451"
-     inkscape:cx="466.6888"
-     inkscape:cy="621.58527"
+     inkscape:zoom="3.595827"
+     inkscape:cx="482.38574"
+     inkscape:cy="1023.3985"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -59,7 +59,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -181,6 +181,45 @@
          id="path4544"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="csc" />
+    </g>
+    <rect
+       style="opacity:0.781;fill:#000000;fill-opacity:0.65745856;stroke:none;stroke-width:5.26499987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect838"
+       width="19.719618"
+       height="19.719618"
+       x="37.633774"
+       y="15.07234" />
+    <rect
+       style="opacity:1;fill:#8d1d1d;fill-opacity:0.65745854;stroke:none;stroke-width:5.26499987;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect836"
+       width="23.969637"
+       height="23.969637"
+       x="64.994598"
+       y="10.286261"
+       inkscape:export-filename="C:\Users\Ajay\Documents\UnityProjects\VR Test\Assets\Backgrounds\window.png"
+       inkscape:export-xdpi="27.7927"
+       inkscape:export-ydpi="27.7927" />
+    <g
+       id="g852"
+       inkscape:export-filename="C:\Users\Ajay\Documents\UnityProjects\VR Test\Assets\Icons\X.png"
+       inkscape:export-xdpi="27.7927"
+       inkscape:export-ydpi="27.7927">
+      <rect
+         transform="rotate(45)"
+         y="-76.471573"
+         x="100.64503"
+         height="2.7224846"
+         width="17.585779"
+         id="rect846"
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.44591177;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.44591177;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect848"
+         width="17.585779"
+         height="2.7224846"
+         x="-83.903221"
+         y="-110.79916"
+         transform="rotate(135)" />
     </g>
   </g>
 </svg>

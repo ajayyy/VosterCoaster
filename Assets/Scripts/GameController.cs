@@ -29,6 +29,10 @@ public class GameController : MonoBehaviour {
 
     public GameObject world;
 
+    //The objects the controllers are pointing at. Calculated using a raycast. Null if nothingma
+    public GameObject rightControllerPointingAt;
+    public GameObject leftControllerPointingAt;
+
     //the scale the world is set at
     //the world's scale can change, but by default is 0.008
     public float scale {
@@ -41,6 +45,8 @@ public class GameController : MonoBehaviour {
 
     //the scale from the last frame. Used for adjusting physics based on the scale
     public float lastScale = 1;
+
+    public LayerMask windowMask = 8;
 
     void Start () {
 		if(instance == null) {
@@ -58,6 +64,22 @@ public class GameController : MonoBehaviour {
         if(scale != lastScale) {
             Physics.gravity = new Vector3(0, (-9.81f) * scale, 0);
             lastScale = scale;
+        }
+
+        //calculate what is in front of each controller with a raycast
+        //right controller
+        RaycastHit raycast;
+        if (Physics.Raycast(rightControllerObject.transform.position, rightControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
+            rightControllerPointingAt = raycast.collider.gameObject;
+        } else {
+            rightControllerPointingAt = null;
+        }
+
+        //left controller
+        if (Physics.Raycast(leftControllerObject.transform.position, leftControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
+            leftControllerPointingAt = raycast.collider.gameObject;
+        } else {
+            leftControllerPointingAt = null;
         }
     }
 }
