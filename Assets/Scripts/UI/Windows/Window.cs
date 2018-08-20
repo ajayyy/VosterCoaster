@@ -21,6 +21,7 @@ public class Window : MonoBehaviour {
         if (moving && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
             transform.position = movingStartPosition + (gameController.rightControllerObject.transform.position - movingContollerStartPosition);
 
+            //rotate it towards the controller
             transform.LookAt(gameController.rightControllerObject.transform);
         } else if (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
             moving = false;
