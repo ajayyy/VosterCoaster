@@ -29,9 +29,9 @@ public class GameController : MonoBehaviour {
 
     public GameObject world;
 
-    //The objects the controllers are pointing at. Calculated using a raycast. Null if nothingma
-    public GameObject rightControllerPointingAt;
-    public GameObject leftControllerPointingAt;
+    //The window the controllers are pointing at. Calculated using a raycast. Null if nothingma
+    public GameObject rightControllerWindowPointingAt;
+    public GameObject leftControllerWindowPointingAt;
 
     //the scale the world is set at
     //the world's scale can change, but by default is 0.008
@@ -70,16 +70,16 @@ public class GameController : MonoBehaviour {
         //right controller
         RaycastHit raycast;
         if (Physics.Raycast(rightControllerObject.transform.position, rightControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
-            rightControllerPointingAt = raycast.collider.gameObject;
+            rightControllerWindowPointingAt = raycast.collider.gameObject;
         } else {
-            rightControllerPointingAt = null;
+            rightControllerWindowPointingAt = null;
         }
 
         //left controller
         if (Physics.Raycast(leftControllerObject.transform.position, leftControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
-            leftControllerPointingAt = raycast.collider.gameObject;
+            leftControllerWindowPointingAt = raycast.collider.gameObject;
         } else {
-            leftControllerPointingAt = null;
+            leftControllerWindowPointingAt = null;
         }
     }
 }
