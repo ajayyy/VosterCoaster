@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WindowButton : MonoBehaviour {
 
-    //type 0: options toggle
+    //type 0: options toggle, type 1: exit button
     public int type = 0;
     //to toggle more than three options
     public int maxOptions = 2;

@@ -35,7 +35,13 @@ public class Window : MonoBehaviour {
         if (gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.rightControllerWindowPointingAt != null) {
             for (int i = 0; i < buttons.Length; i++) {
                 if (gameController.rightControllerWindowPointingAt == buttons[i].gameObject) {
-                    buttons[i].Clicked();
+                    if (buttons[i].type == 1) {
+                        //self destruct
+                        Destroy(gameObject);
+                    } else {
+                        //let the WindowButton class handle the click internally
+                        buttons[i].Clicked();
+                    }
                     break;
                 }
             }
