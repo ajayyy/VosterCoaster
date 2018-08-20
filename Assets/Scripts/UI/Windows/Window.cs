@@ -11,6 +11,9 @@ public class Window : MonoBehaviour {
     public Vector3 movingStartPosition;
     public Vector3 movingContollerStartPosition;
 
+    //All of the buttons. To call click on them
+    WindowButton[] buttons;
+
 	void Start () {
         rectTransform = GetComponent<RectTransform>();
 	}
@@ -30,10 +33,14 @@ public class Window : MonoBehaviour {
         //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
         //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
         if (gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.rightControllerWindowPointingAt != null) {
-            bool pressedButton = false;
-            //TODO check for all buttons
+            for (int i = 0; i < buttons.Length; i++) {
+                if (gameController.rightControllerWindowPointingAt == buttons[i].gameObject) {
+                    buttons[i].Clicked();
+                    break;
+                }
+            }
 
-            if (!pressedButton) {
+            if (gameController.rightControllerWindowPointingAt == gameObject) {
                 //start moving window
                 moving = true;
                 movingStartPosition = transform.position;
