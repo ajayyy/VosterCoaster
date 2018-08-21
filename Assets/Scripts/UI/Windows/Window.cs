@@ -22,7 +22,8 @@ public class Window : MonoBehaviour {
         GameController gameController = GameController.instance;
 
         if (moving && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
-            transform.position = movingStartPosition + (gameController.rightControllerObject.transform.position - movingContollerStartPosition);
+            //transform.position = movingStartPosition + (gameController.rightControllerObject.transform.position - movingContollerStartPosition);
+            transform.position = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * gameController.rightWindowDistanceAway;
 
             //rotate it towards the controller
             transform.LookAt(gameController.rightControllerObject.transform);

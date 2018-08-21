@@ -22,12 +22,13 @@ public class VRUIInput : MonoBehaviour {
 
     private void HandlePointerIn(object sender, PointerEventArgs e) {
         GameController gameController = GameController.instance;
-        print("hover " + (gameController.rightControllerObject == gameObject));
 
         if (gameController.rightControllerObject == gameObject) {
             gameController.rightControllerWindowPointingAt = e.target.gameObject;
+            gameController.rightWindowDistanceAway = e.distance;
         } else if (gameController.leftControllerObject == gameObject) {
             gameController.leftControllerWindowPointingAt = e.target.gameObject;
+            gameController.leftWindowDistanceAway = e.distance;
         }
     }
 
@@ -36,6 +37,7 @@ public class VRUIInput : MonoBehaviour {
 
         if (gameController.rightControllerObject == gameObject) {
             gameController.rightControllerWindowPointingAt = null;
+            gameController.rightWindowDistanceAway = 0;
         } else if (gameController.leftControllerObject == gameObject) {
             gameController.leftControllerWindowPointingAt = null;
         }
