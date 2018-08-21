@@ -20,15 +20,25 @@ public class VRUIInput : MonoBehaviour {
         }
     }
 
+    private void FixedUpdate() {
+        GameController gameController = GameController.instance;
+
+        if (gameController.rightControllerObject == gameObject) {
+            gameController.rightWindowDistanceAway = laserPointer.dist;
+            gameController.rightWindowHit = laserPointer.hit;
+        } else if (gameController.leftControllerObject == gameObject) {
+            gameController.leftWindowDistanceAway = laserPointer.dist;
+            gameController.leftWindowHit = laserPointer.hit;
+        }
+    }
+
     private void HandlePointerIn(object sender, PointerEventArgs e) {
         GameController gameController = GameController.instance;
 
         if (gameController.rightControllerObject == gameObject) {
             gameController.rightControllerWindowPointingAt = e.target.gameObject;
-            gameController.rightWindowDistanceAway = e.distance;
         } else if (gameController.leftControllerObject == gameObject) {
             gameController.leftControllerWindowPointingAt = e.target.gameObject;
-            gameController.leftWindowDistanceAway = e.distance;
         }
     }
 
@@ -37,7 +47,6 @@ public class VRUIInput : MonoBehaviour {
 
         if (gameController.rightControllerObject == gameObject) {
             gameController.rightControllerWindowPointingAt = null;
-            gameController.rightWindowDistanceAway = 0;
         } else if (gameController.leftControllerObject == gameObject) {
             gameController.leftControllerWindowPointingAt = null;
         }

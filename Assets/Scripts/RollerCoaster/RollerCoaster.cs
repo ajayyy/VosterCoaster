@@ -29,7 +29,7 @@ public class RollerCoaster : MonoBehaviour {
     //is the incline being edited or the turns. true for incline, false for turns
     public bool inclineMode = false;
 
-    public bool editing = true;
+    public bool editing = false;
 
     //amount of bones per track piece
     public float boneAmount = 10f;
