@@ -28,8 +28,11 @@ public class SteamVR_LaserPointer : MonoBehaviour
 
     Transform previousContact = null;
 
-	// Use this for initialization
-	void Start ()
+    public float dist;
+    public RaycastHit hit;
+
+    // Use this for initialization
+    void Start ()
     {
         holder = new GameObject();
         holder.transform.parent = this.transform;
@@ -85,12 +88,11 @@ public class SteamVR_LaserPointer : MonoBehaviour
             this.transform.GetChild(0).gameObject.SetActive(true);
         }
 
-        float dist = 100f;
+        dist = 100f;
 
         SteamVR_TrackedController controller = GetComponent<SteamVR_TrackedController>();
 
         Ray raycast = new Ray(transform.position, transform.forward);
-        RaycastHit hit;
         bool bHit = Physics.Raycast(raycast, out hit);
 
         if(previousContact && previousContact != hit.transform)

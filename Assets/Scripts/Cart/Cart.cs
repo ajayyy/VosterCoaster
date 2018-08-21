@@ -22,16 +22,22 @@ public class Cart : MonoBehaviour {
     static float friction = 0.03f;
 
 	public void Start () {
-        position = 0;
+        //starts half way on the first track
+        position = 2;
         velocity = 0;
     }
 
-    void FixedUpdate () {
+    public void FixedUpdate () {
         Transform currentBone = GetCurrentBone(true);
         TrackPiece currentTrack = GetCurrentTrack().GetComponent<TrackPiece>();
         Vector3 eulerAnglesOfTrack = currentBone.eulerAngles;
         //find what the incline angle is
+        print(eulerAnglesOfTrack);
         float inclineAngleOfTrack = Mathf.Cos(eulerAnglesOfTrack.y * Mathf.Deg2Rad) * eulerAnglesOfTrack.x + Mathf.Sin(eulerAnglesOfTrack.y * Mathf.Deg2Rad + Mathf.PI) * eulerAnglesOfTrack.z;
+        //nessesary to get accurate inclines from inclines after turns
+        if(inclineAngleOfTrack != 0) {
+            inclineAngleOfTrack -= eulerAnglesOfTrack.y;
+        }
 
         //calculate the force downward (divided by 60 fps)
         float forceDown = (-9.81f) / 60f;
@@ -59,6 +65,8 @@ public class Cart : MonoBehaviour {
             velocity = currentTrack.chainSpeed;
         }
 
+        print(velocity + " " + inclineAngleOfTrack);
+
         position += velocity / 60f;
 
         Transform finalBone = GetCurrentBone(true);
@@ -75,6 +83,28 @@ public class Cart : MonoBehaviour {
         transform.position = finalBone.position + MathHelper.RotatePointAroundPivot(offsetAmount, Vector3.zero, finalBone.rotation) - MathHelper.RotatePointAroundPivot(extraAmount, Vector3.zero, finalBone.rotation);
 
         Vector3 angleDifference = nextBone.eulerAngles - finalBone.eulerAngles;
+
+        //find smallest angle difference
+        //do 360 - angle if over 180 for each (see https://stackoverflow.com/questions/6722272/smallest-difference-between-two-angles)
+        {
+            float x1 = angleDifference.x;
+            float y1 = angleDifference.y;
+            float z1 = angleDifference.z;
+
+            if (x1 > 180) {
+                x1 = 360 - x1;
+            }
+
+            if (y1 > 180) {
+                y1 = 360 - y1;
+            }
+
+            if (z1 > 180) {
+                z1 = 360 - z1;
+            }
+
+            angleDifference = new Vector3(x1, y1, z1);
+        }
 
         Vector3 extraRotation = angleDifference * (boneNum - (int)boneNum);
 

@@ -179,7 +179,7 @@ InputManager:
     snap: 1
     invert: 0
     type: 2
-    axis: 18
+    axis: 3
     joyNum: 0
   - serializedVersion: 3
     m_Name: RightTrackpadVertical
@@ -195,7 +195,7 @@ InputManager:
     snap: 1
     invert: 0
     type: 2
-    axis: 19
+    axis: 4
     joyNum: 0
   - serializedVersion: 3
     m_Name: Vertical

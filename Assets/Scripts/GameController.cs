@@ -20,11 +20,22 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    public RadialOptionsMenu rightMenu;
+    public RadialOptionsMenu leftMenu;
+
     //game objects
     public GameObject leftControllerObject;
     public GameObject rightControllerObject;
 
     public GameObject world;
+
+    //The window the controllers are pointing at. Calculated from the steamvr laser pointer. Null if nothing
+    public GameObject rightControllerWindowPointingAt;
+    public float rightWindowDistanceAway;
+    public RaycastHit rightWindowHit;
+    public GameObject leftControllerWindowPointingAt;
+    public float leftWindowDistanceAway;
+    public RaycastHit leftWindowHit;
 
     //the scale the world is set at
     //the world's scale can change, but by default is 0.008
@@ -38,6 +49,8 @@ public class GameController : MonoBehaviour {
 
     //the scale from the last frame. Used for adjusting physics based on the scale
     public float lastScale = 1;
+
+    public LayerMask windowMask = 8;
 
     void Start () {
 		if(instance == null) {
@@ -56,5 +69,6 @@ public class GameController : MonoBehaviour {
             Physics.gravity = new Vector3(0, (-9.81f) * scale, 0);
             lastScale = scale;
         }
+
     }
 }

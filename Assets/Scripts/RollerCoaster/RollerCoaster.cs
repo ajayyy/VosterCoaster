@@ -14,7 +14,8 @@ public class RollerCoaster : MonoBehaviour {
     public float defaultTrackBoneSize = 0.402642f;
     public float trackBoneSize = 0.402642f;
 
-    public float trackWidth = 1.64703f;
+    public float defaultTrackWidth = 1.64703f * 2;
+    public float trackWidth = 1.64703f * 2;
 
     //the prefab for an empty piece of track
     public GameObject trackPrefab;
@@ -28,7 +29,7 @@ public class RollerCoaster : MonoBehaviour {
     //is the incline being edited or the turns. true for incline, false for turns
     public bool inclineMode = false;
 
-    public bool editing = true;
+    public bool editing = false;
 
     //amount of bones per track piece
     public float boneAmount = 10f;
@@ -50,6 +51,7 @@ public class RollerCoaster : MonoBehaviour {
 
         //set track bone size based on scale
         trackBoneSize = defaultTrackBoneSize * GameController.instance.scale;
+        trackWidth = defaultTrackWidth * GameController.instance.scale;
 
         currentTrack = trackPieces[0];
     }
@@ -61,19 +63,26 @@ public class RollerCoaster : MonoBehaviour {
         if (editing) {
             //set track bone size based on scale incase the scale has changed
             trackBoneSize = defaultTrackBoneSize * gameController.scale;
+            trackWidth = defaultTrackWidth * GameController.instance.scale;
 
             CreatePath(currentTrack, inclineMode);
+            
+            //check for incline mode
+            if (gameController.rightMenu.buttons[0].optionEnabled) {
+                inclineMode = true;
+            } else {
+                inclineMode = false;
+            }
 
-            if (Input.GetButtonDown("RightTrackpadClick")) {
-                inclineMode = !inclineMode;
-            } else if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.C)) {
+            if (Input.GetAxis("LeftTrigger") > 0.5 || Input.GetKeyDown(KeyCode.C)) {
                 if (cart.gameObject.activeInHierarchy) {
                     cart.gameObject.SetActive(false);
                     cart.Start();
+                    cart.FixedUpdate();
                 } else {
                     cart.gameObject.SetActive(true);
                 }
-            } else if (Input.GetAxis("RightTrigger") > 0.5) {
+            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
                 if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
@@ -95,13 +104,20 @@ public class RollerCoaster : MonoBehaviour {
         bool straight = Input.GetButton("RightMenuClick");
 
         //check if the chail lift button is being held down
-        bool chainLift = Input.GetButton("LeftMenuClick");
+        bool chainLift = Input.GetButton("LeftMenuClick") || true;
+
+        if (chainLift) {
+            startTrack.GetComponent<TrackPiece>().chainLift = true;
+            startTrack.GetComponent<TrackPiece>().chainSpeed = defaultLiftSpeed;
+        }
 
         //the position of the first track piece that will be a part of this new edition (previous track pieces are not edited)
         Vector3 startPosition = startTrack.transform.position;
         Vector3 targetPosition = rightController.transform.position;
 
         Vector3 targetAngle = new Vector3(0, 1, 0) * rightController.transform.eulerAngles.y;
+        //used to get x axis angle in incline tracks
+        Vector3 xTargetAngle = rightController.transform.eulerAngles;
         Vector3 fullTargetAngle = rightController.transform.eulerAngles;
         Vector3 startTrackAngleRelative = Vector3.zero;
         Vector3 currentAngle = getCurrentAngle(startTrack, true);
@@ -109,6 +125,8 @@ public class RollerCoaster : MonoBehaviour {
         Vector3 fullStartAngle = getCurrentAngle(startTrack, true);
         if (incline) {
             targetAngle = new Vector3(1, 0, 0) * rightController.transform.eulerAngles.x;
+            xTargetAngle = MathHelper.ConvertQuant2Euler(rightController.transform.rotation);
+            fullTargetAngle = rightController.transform.eulerAngles;
             currentAngle = getCurrentAngle(startTrack, false);
             currentAngle = new Vector3(currentAngle.x, currentAngle.z, currentAngle.y);
             fullStartAngle = getCurrentAngle(startTrack, true);
@@ -134,7 +152,12 @@ public class RollerCoaster : MonoBehaviour {
 
         if (incline) {
             //adjust angle to make it like it was normal
-            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * fullTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+            float angle = Mathf.Cos(currentAngle.y * Mathf.Deg2Rad) * xTargetAngle.x + Mathf.Sin(currentAngle.y * Mathf.Deg2Rad + Mathf.PI) * fullTargetAngle.z;
+            angle -= Mathf.Sin((currentAngle.y - 90) * Mathf.Deg2Rad) * 90 + 90;
+
+            if (angle > 90) {
+                cancel = true;
+            }
 
             targetAngle = new Vector3(angle, 0, 0);
 
@@ -162,6 +185,14 @@ public class RollerCoaster : MonoBehaviour {
         }
 
         targetPosition = MathHelper.RotatePointAroundPivot(targetPosition, startPosition, pivotAngle);
+
+        if (!incline) {
+            //the target position generated from this method becomes slightly off depending on the target angle
+            //adjust for these issues
+            Vector3 targetPositionOffset = new Vector3(0, 0, trackWidth / 2);
+            
+            targetPosition += targetPositionOffset;
+        }
 
         if (!incline) {
             targetAngle -= new Vector3(0, 1, 0) * currentAngle.y;
