@@ -66,20 +66,5 @@ public class GameController : MonoBehaviour {
             lastScale = scale;
         }
 
-        //calculate what is in front of each controller with a raycast
-        //right controller
-        RaycastHit raycast;
-        if (Physics.Raycast(rightControllerObject.transform.position, rightControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
-            rightControllerWindowPointingAt = raycast.collider.gameObject;
-        } else {
-            rightControllerWindowPointingAt = null;
-        }
-
-        //left controller
-        if (Physics.Raycast(leftControllerObject.transform.position, leftControllerObject.transform.forward, out raycast, 25, windowMask.value)) {
-            leftControllerWindowPointingAt = raycast.collider.gameObject;
-        } else {
-            leftControllerWindowPointingAt = null;
-        }
     }
 }

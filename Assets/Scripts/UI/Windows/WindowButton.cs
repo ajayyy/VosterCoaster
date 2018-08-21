@@ -39,7 +39,7 @@ public class WindowButton : MonoBehaviour {
         }
     }
 
-        public void Clicked() {
+    public void Clicked() {
         if (type == 0) {
             optionSelected++;
 
