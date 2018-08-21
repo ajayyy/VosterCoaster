@@ -12,6 +12,8 @@ public class Window : MonoBehaviour {
     public Vector3 movingContollerStartPosition;
     //distance away from controller
     float distance = 0;
+    //the point where it touched
+    RaycastHit hit;
 
     //All of the buttons. To call click on them
     public WindowButton[] buttons;
@@ -24,8 +26,8 @@ public class Window : MonoBehaviour {
         GameController gameController = GameController.instance;
 
         if (moving && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
-            Vector3 hitOffset = movingStartPosition - gameController.rightWindowHit.point;
-            transform.position = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance;
+            Vector3 hitOffset = movingStartPosition - hit.point;
+            transform.position = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance + hitOffset;
 
             //rotate it towards the controller
             transform.LookAt(gameController.rightControllerObject.transform);
@@ -55,6 +57,7 @@ public class Window : MonoBehaviour {
                 movingStartPosition = transform.position;
                 movingContollerStartPosition = gameController.rightControllerObject.transform.position;
                 distance = gameController.rightWindowDistanceAway;
+                hit = gameController.rightWindowHit;
             }
         }
 	}
