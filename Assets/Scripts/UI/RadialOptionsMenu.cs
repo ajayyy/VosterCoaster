@@ -35,6 +35,7 @@ public class RadialOptionsMenu : MonoBehaviour {
 
             float angle = 360 / buttons.Length * i;
 
+            //Sin and Cos flipped so that the first button is at the top
             Vector3 position = new Vector3(Mathf.Sin(angle * Mathf.Deg2Rad) * buttonDistanceAway, 0, Mathf.Cos(angle * Mathf.Deg2Rad) * buttonDistanceAway);
 
             buttons[i].transform.localPosition = position;
@@ -47,17 +48,13 @@ public class RadialOptionsMenu : MonoBehaviour {
 	void Update () {
         GameController gameController = GameController.instance;
 
-        if (GetController().GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+        if (GetController().GetTouch(SteamVR_Controller.ButtonMask.Touchpad)) {
             float vertical = GetController().GetAxis().y;
             float horizontal = GetController().GetAxis().x;
 
             //find position on a circle perimeter(angle)
-            float position = Mathf.Rad2Deg * Mathf.Atan2(vertical, horizontal) + 180;
-
-            //position += 1f;
-            //if (position > 360) {
-            //    position = 0;
-            //}
+            //vertical and horizontal flipped so that the first button is at the top
+            float position = Mathf.Rad2Deg * Mathf.Atan2(horizontal, vertical);
 
             SetButtonSizes(position);
 
@@ -125,7 +122,7 @@ public class RadialOptionsMenu : MonoBehaviour {
 
             //make sure it is the actual difference (difference between 359 and 0 is 1 not 359)
             if (difference > 180) {
-                difference = 360 - difference;
+                difference = Mathf.Abs(360 - difference);
             }
             if (difference < 90) {
                 float size = defaultSize + (maxSize - defaultSize) * (1 - difference / 90);
