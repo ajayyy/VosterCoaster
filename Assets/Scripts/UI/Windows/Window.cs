@@ -18,6 +18,13 @@ public class Window : MonoBehaviour {
     //All of the buttons. To call click on them
     public WindowButton[] buttons;
 
+    //is this window currently animating a movement to a new position
+    //if so, the target position will be at animatingTargetPosition and the drawn position will be at transform.position
+    bool animatingMovement;
+    Vector3 animatingTargetPosition;
+    Vector3 animatingStartPosition;
+    float animatingStartTime;
+
 	void Start () {
         rectTransform = GetComponent<RectTransform>();
 	}
@@ -25,9 +32,27 @@ public class Window : MonoBehaviour {
 	void FixedUpdate () {
         GameController gameController = GameController.instance;
 
+        //change position based on current animation
+        if (animatingMovement) {
+            Vector3 positionAddition = new Vector3(0, 0, 0);
+
+            transform.position = Vector3.Lerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
+
+            if (transform.position == animatingTargetPosition) {
+                animatingMovement = false;
+            }
+        }
+
+        //check if window is being moved
         if (moving && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
             Vector3 hitOffset = movingStartPosition - hit.point;
-            transform.position = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance + hitOffset;
+
+            Vector3 newPosition = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance + hitOffset;
+
+            animatingMovement = true;
+            animatingStartTime = Time.time;
+            animatingStartPosition = transform.position;
+            animatingTargetPosition = newPosition;
 
             //rotate it towards the controller
             transform.LookAt(gameController.rightControllerObject.transform);
