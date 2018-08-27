@@ -30,14 +30,41 @@ public class GameController : MonoBehaviour {
     public GameObject world;
 
     //The window the controllers are pointing at. Calculated from the steamvr laser pointer. Null if nothing
-    public GameObject rightControllerWindowPointingAt;
-    public float rightWindowDistanceAway;
-    public RaycastHit rightWindowHit;
-    public bool rightWindowBHit;
     public GameObject leftControllerWindowPointingAt;
     public float leftWindowDistanceAway;
     public RaycastHit leftWindowHit;
     public bool leftWindowBHit;
+    public GameObject rightControllerWindowPointingAt;
+    public float rightWindowDistanceAway;
+    public RaycastHit rightWindowHit;
+    public bool rightWindowBHit;
+
+    //array versions of the controllers
+    public SteamVR_Controller.Device[] controllers {
+        get {
+            return new SteamVR_Controller.Device[] { leftController, rightController };
+        }
+    }
+    public GameObject[] controllersWindowPointingAt {
+        get {
+            return new GameObject[] { leftControllerWindowPointingAt, rightControllerWindowPointingAt };
+        }
+    }
+    public float[] controllersWindowDistanceAway {
+        get {
+            return new float[] { leftWindowDistanceAway, rightWindowDistanceAway };
+        }
+    }
+    public RaycastHit[] controllersWindowHit {
+        get {
+            return new RaycastHit[] { leftWindowHit, rightWindowHit };
+        }
+    }
+    public bool[] controllersWindowBHit {
+        get {
+            return new bool[] { leftWindowBHit, rightWindowBHit };
+        }
+    }
 
     //the scale the world is set at
     //the world's scale can change, but by default is 0.008

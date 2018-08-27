@@ -133,7 +133,7 @@ public class Window : MonoBehaviour {
             if (!gameController.leftWindowBHit) {
                 leftPosition = gameController.leftControllerObject.transform.position + gameController.leftControllerObject.transform.forward * leftDistance;
             } else {
-            leftDistance = gameController.leftWindowDistanceAway;
+                leftDistance = gameController.leftWindowDistanceAway;
             }
 
             if (!gameController.rightWindowBHit) {
