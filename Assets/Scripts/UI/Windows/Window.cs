@@ -60,7 +60,7 @@ public class Window : MonoBehaviour {
 
             transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
-            if (transform.position == animatingTargetPosition) {
+            if ((Time.time - animatingStartTime) * 20f >= 1) {
                 animatingMovement = false;
             }
         }
@@ -119,7 +119,7 @@ public class Window : MonoBehaviour {
 
             transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
-            if (transform.rotation == animatingTargetRotation) {
+            if ((Time.time - animatingStartTime) * 20f >= 1) {
                 animatingResize = false;
             }
         }
@@ -144,7 +144,7 @@ public class Window : MonoBehaviour {
                 rightDistance = gameController.rightWindowDistanceAway;
             }
 
-            Vector2 newSize = (Vector3.Distance(leftPosition, rightPosition) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
+            Vector3 newSize = (Vector3.Distance(leftPosition, rightPosition) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
 
             animatingStartSize = transform.localScale;
             animatingTargetSize = newSize;
@@ -175,7 +175,7 @@ public class Window : MonoBehaviour {
             leftDistance = gameController.leftWindowDistanceAway;
             rightDistance = gameController.rightWindowDistanceAway;
 
-            resizingStartSize = rectTransform.localScale;
+            resizingStartSize = transform.localScale;
         }
     }
 }
