@@ -26,6 +26,9 @@ public class Window : MonoBehaviour {
     public RaycastHit resizingCurrentHitRight;
     public Vector3 resizingStartSize;
 
+    //is this window currently animating a resize
+    bool animatingResize;
+
     //All of the buttons. To call click on them
     public WindowButton[] buttons;
 
@@ -104,6 +107,15 @@ public class Window : MonoBehaviour {
             }
         }
 
+        //change size based on current animation
+        if (animatingResize) {
+            transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
+
+            if (transform.rotation == animatingTargetRotation) {
+                animatingResize = false;
+            }
+        }
+
         //check if window is being resized
         if (resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
             resizingCurrentHitLeft = gameController.leftWindowHit;
@@ -124,8 +136,11 @@ public class Window : MonoBehaviour {
 
             transform.position = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
 
-            //rotate it towards the controller
-            transform.LookAt(gameController.rightControllerObject.transform);
+            animatingResize = true;
+            animatingStartTime = Time.time;
+            animatingStartRotation = transform.rotation;
+            Vector3 relativePos = gameController.rightControllerObject.transform.position - transform.position;
+            animatingTargetRotation = Quaternion.LookRotation(relativePos);
         } else if (resizing && (!gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger))) {
             resizing = false;
         }
