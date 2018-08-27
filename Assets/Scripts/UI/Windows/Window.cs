@@ -28,6 +28,8 @@ public class Window : MonoBehaviour {
 
     //is this window currently animating a resize
     bool animatingResize;
+    Vector3 animatingStartSize;
+    Vector3 animatingTargetSize;
 
     //All of the buttons. To call click on them
     public WindowButton[] buttons;
@@ -109,6 +111,8 @@ public class Window : MonoBehaviour {
 
         //change size based on current animation
         if (animatingResize) {
+            transform.localScale = Vector3.Lerp(animatingStartSize, animatingTargetSize, (Time.time - animatingStartTime) * 20f);
+
             transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
             if (transform.rotation == animatingTargetRotation) {
@@ -132,7 +136,8 @@ public class Window : MonoBehaviour {
 
             Vector2 newSize = (Vector3.Distance(leftPosition, rightPosition) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
 
-            transform.localScale = newSize;
+            animatingStartSize = transform.localScale;
+            animatingTargetSize = newSize;
 
             transform.position = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
 
