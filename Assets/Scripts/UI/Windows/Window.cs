@@ -104,6 +104,10 @@ public class Window : MonoBehaviour {
 
             transform.localScale = newSize;
 
+            transform.position = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
+
+            //rotate it towards the controller
+            transform.LookAt(gameController.rightControllerObject.transform);
         } else if (resizing && (!gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger))) {
             resizing = false;
         }
