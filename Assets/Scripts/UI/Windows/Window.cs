@@ -87,8 +87,9 @@ public class Window : MonoBehaviour {
             //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
             //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
             if (!moving && gameController.controllers[i].GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && gameController.controllersWindowPointingAt[i] != null) {
+                //check if button on the window has been pressed
                 for (int s = 0; s < buttons.Length; s++) {
-                    if (gameController.controllersWindowPointingAt[s] == buttons[s].gameObject) {
+                    if (gameController.controllersWindowPointingAt[i] == buttons[s].gameObject) {
                         if (buttons[s].type == 1) {
                             //self destruct
                             Destroy(gameObject);
