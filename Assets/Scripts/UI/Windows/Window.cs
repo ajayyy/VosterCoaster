@@ -36,6 +36,10 @@ public class Window : MonoBehaviour {
     Vector3 animatingStartPosition;
     float animatingStartTime;
 
+    //for animating the rotation
+    Quaternion animatingStartRotation;
+    Quaternion animatingTargetRotation;
+
 	void Start () {
         rectTransform = GetComponent<RectTransform>();
 	}
@@ -48,6 +52,8 @@ public class Window : MonoBehaviour {
             Vector3 positionAddition = new Vector3(0, 0, 0);
 
             transform.position = Vector3.Lerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
+
+            transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
             if (transform.position == animatingTargetPosition) {
                 animatingMovement = false;
@@ -65,8 +71,9 @@ public class Window : MonoBehaviour {
             animatingStartPosition = transform.position;
             animatingTargetPosition = newPosition;
 
-            //rotate it towards the controller
-            transform.LookAt(gameController.rightControllerObject.transform);
+            animatingStartRotation = transform.rotation;
+            Vector3 relativePos = gameController.rightControllerObject.transform.position - transform.position;
+            animatingTargetRotation = Quaternion.LookRotation(relativePos);
         } else if (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
             moving = false;
         }
