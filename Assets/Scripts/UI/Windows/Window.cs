@@ -65,47 +65,49 @@ public class Window : MonoBehaviour {
             }
         }
 
-        //check if window is being moved
-        if (moving && !resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
-            Vector3 hitOffset = movingStartPosition - movingHit.point;
+        for (int i = 0; i < gameController.controllers.Length; i++) {
+            //check if window is being moved
+            if (moving && !resizing && gameController.controllers[i].GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
+                Vector3 hitOffset = movingStartPosition - movingHit.point;
 
-            Vector3 newPosition = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance + hitOffset;
+                Vector3 newPosition = gameController.controllerObjects[i].transform.position + gameController.controllerObjects[i].transform.forward * distance + hitOffset;
 
-            animatingMovement = true;
-            animatingStartTime = Time.time;
-            animatingStartPosition = transform.position;
-            animatingTargetPosition = newPosition;
+                animatingMovement = true;
+                animatingStartTime = Time.time;
+                animatingStartPosition = transform.position;
+                animatingTargetPosition = newPosition;
 
-            animatingStartRotation = transform.rotation;
-            Vector3 relativePos = gameController.rightControllerObject.transform.position - transform.position;
-            animatingTargetRotation = Quaternion.LookRotation(relativePos);
-        } else if (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
-            moving = false;
-        }
-
-        //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
-        //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
-        if (!moving && gameController.rightController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && gameController.rightControllerWindowPointingAt != null) {
-            for (int i = 0; i < buttons.Length; i++) {
-                if (gameController.rightControllerWindowPointingAt == buttons[i].gameObject) {
-                    if (buttons[i].type == 1) {
-                        //self destruct
-                        Destroy(gameObject);
-                    } else {
-                        //let the WindowButton class handle the click internally
-                        buttons[i].Clicked();
-                    }
-                    break;
-                }
+                animatingStartRotation = transform.rotation;
+                Vector3 relativePos = gameController.controllerObjects[i].transform.position - transform.position;
+                animatingTargetRotation = Quaternion.LookRotation(relativePos);
+            } else if (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
+                moving = false;
             }
 
-            if (gameController.rightControllerWindowPointingAt == gameObject) {
-                //start moving window
-                moving = true;
-                movingStartPosition = transform.position;
-                movingContollerStartPosition = gameController.rightControllerObject.transform.position;
-                distance = gameController.rightWindowDistanceAway;
-                movingHit = gameController.rightWindowHit;
+            //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
+            //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
+            if (!moving && gameController.controllers[i].GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && gameController.controllersWindowPointingAt[i] != null) {
+                for (int s = 0; s < buttons.Length; s++) {
+                    if (gameController.controllersWindowPointingAt[s] == buttons[s].gameObject) {
+                        if (buttons[s].type == 1) {
+                            //self destruct
+                            Destroy(gameObject);
+                        } else {
+                            //let the WindowButton class handle the click internally
+                            buttons[s].Clicked();
+                        }
+                        break;
+                    }
+                }
+
+                if (gameController.controllersWindowPointingAt[i] == gameObject) {
+                    //start moving window
+                    moving = true;
+                    movingStartPosition = transform.position;
+                    movingContollerStartPosition = gameController.controllerObjects[i].transform.position;
+                    distance = gameController.controllersWindowDistanceAway[i];
+                    movingHit = gameController.controllersWindowHit[i];
+                }
             }
         }
 

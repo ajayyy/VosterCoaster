@@ -45,6 +45,11 @@ public class GameController : MonoBehaviour {
             return new SteamVR_Controller.Device[] { leftController, rightController };
         }
     }
+    public GameObject[] controllerObjects {
+        get {
+            return new GameObject[] { leftControllerObject, rightControllerObject };
+        }
+    }
     public GameObject[] controllersWindowPointingAt {
         get {
             return new GameObject[] { leftControllerWindowPointingAt, rightControllerWindowPointingAt };

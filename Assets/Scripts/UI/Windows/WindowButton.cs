@@ -26,7 +26,7 @@ public class WindowButton : MonoBehaviour {
 	void FixedUpdate () {
         GameController gameController = GameController.instance;
 
-        if (gameController.rightControllerWindowPointingAt == gameObject) {
+        if (gameController.rightControllerWindowPointingAt == gameObject || gameController.leftControllerWindowPointingAt == gameObject) {
             //set to hover image
             if (image.sprite != images[optionSelected * 2 + 1]) {
                 image.sprite = images[optionSelected * 2 + 1];
