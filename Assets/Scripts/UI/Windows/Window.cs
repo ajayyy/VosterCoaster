@@ -111,6 +111,8 @@ public class Window : MonoBehaviour {
 
         //change size based on current animation
         if (animatingResize) {
+            transform.position = Vector3.Lerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
+
             transform.localScale = Vector3.Lerp(animatingStartSize, animatingTargetSize, (Time.time - animatingStartTime) * 20f);
 
             transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
@@ -139,7 +141,8 @@ public class Window : MonoBehaviour {
             animatingStartSize = transform.localScale;
             animatingTargetSize = newSize;
 
-            transform.position = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
+            animatingStartPosition = transform.position;
+            animatingTargetPosition = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
 
             animatingResize = true;
             animatingStartTime = Time.time;
