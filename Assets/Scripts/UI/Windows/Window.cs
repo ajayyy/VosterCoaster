@@ -132,8 +132,14 @@ public class Window : MonoBehaviour {
 
             if (!gameController.leftWindowBHit) {
                 leftPosition = gameController.leftControllerObject.transform.position + gameController.leftControllerObject.transform.forward * leftDistance;
-            } else if (!gameController.rightWindowBHit) {
+            } else {
+            leftDistance = gameController.leftWindowDistanceAway;
+            }
+
+            if (!gameController.rightWindowBHit) {
                 rightPosition = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * rightDistance;
+            } else {
+                rightDistance = gameController.rightWindowDistanceAway;
             }
 
             Vector2 newSize = (Vector3.Distance(leftPosition, rightPosition) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
@@ -142,7 +148,7 @@ public class Window : MonoBehaviour {
             animatingTargetSize = newSize;
 
             animatingStartPosition = transform.position;
-            animatingTargetPosition = Vector3.Lerp(resizingCurrentHitLeft.point, resizingCurrentHitRight.point, 0.5f);
+            animatingTargetPosition = Vector3.Lerp(leftPosition, rightPosition, 0.5f);
 
             animatingResize = true;
             animatingStartTime = Time.time;
