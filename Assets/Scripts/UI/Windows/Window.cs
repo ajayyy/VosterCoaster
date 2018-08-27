@@ -5,6 +5,7 @@ using UnityEngine;
 public class Window : MonoBehaviour {
 
     public RectTransform rectTransform;
+    public RectTransform background;
 
     public bool moving;
     //these values will be compared against while the window is moving around
@@ -13,7 +14,15 @@ public class Window : MonoBehaviour {
     //distance away from controller
     float distance = 0;
     //the point where it touched
-    RaycastHit hit;
+    RaycastHit movingHit;
+
+    public bool resizing;
+    //these values will be compared against while the window is resizing
+    public RaycastHit resizingStartHitLeft;
+    public RaycastHit resizingStartHitRight;
+    public RaycastHit resizingCurrentHitLeft;
+    public RaycastHit resizingCurrentHitRight;
+    public Vector3 resizingStartSize;
 
     //All of the buttons. To call click on them
     public WindowButton[] buttons;
@@ -44,8 +53,8 @@ public class Window : MonoBehaviour {
         }
 
         //check if window is being moved
-        if (moving && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
-            Vector3 hitOffset = movingStartPosition - hit.point;
+        if (moving && !resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
+            Vector3 hitOffset = movingStartPosition - movingHit.point;
 
             Vector3 newPosition = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * distance + hitOffset;
 
@@ -82,8 +91,35 @@ public class Window : MonoBehaviour {
                 movingStartPosition = transform.position;
                 movingContollerStartPosition = gameController.rightControllerObject.transform.position;
                 distance = gameController.rightWindowDistanceAway;
-                hit = gameController.rightWindowHit;
+                movingHit = gameController.rightWindowHit;
             }
         }
-	}
+
+        //check if window is being resized
+        if (resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
+            resizingCurrentHitLeft = gameController.leftWindowHit;
+            resizingCurrentHitRight = gameController.rightWindowHit;
+
+            Vector2 newSize = (Vector3.Distance(resizingCurrentHitLeft.point, resizingCurrentHitRight.point) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
+
+            transform.localScale = newSize;
+
+        } else if (resizing && (!gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger))) {
+            resizing = false;
+        }
+
+        //check if the window needs to be resized
+        if (!resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.rightControllerWindowPointingAt == gameObject
+            && gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.leftControllerWindowPointingAt == gameObject) {
+            //start resizing window
+            resizing = true;
+
+            resizingStartHitLeft = gameController.leftWindowHit;
+            resizingStartHitRight = gameController.rightWindowHit;
+            resizingCurrentHitLeft = gameController.leftWindowHit;
+            resizingCurrentHitRight = gameController.rightWindowHit;
+
+            resizingStartSize = rectTransform.localScale;
+        }
+    }
 }
