@@ -33,9 +33,11 @@ public class GameController : MonoBehaviour {
     public GameObject rightControllerWindowPointingAt;
     public float rightWindowDistanceAway;
     public RaycastHit rightWindowHit;
+    public bool rightWindowBHit;
     public GameObject leftControllerWindowPointingAt;
     public float leftWindowDistanceAway;
     public RaycastHit leftWindowHit;
+    public bool leftWindowBHit;
 
     //the scale the world is set at
     //the world's scale can change, but by default is 0.008

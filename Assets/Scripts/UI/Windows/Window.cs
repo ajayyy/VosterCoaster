@@ -20,6 +20,8 @@ public class Window : MonoBehaviour {
     //these values will be compared against while the window is resizing
     public RaycastHit resizingStartHitLeft;
     public RaycastHit resizingStartHitRight;
+    public float leftDistance;
+    public float rightDistance;
     public RaycastHit resizingCurrentHitLeft;
     public RaycastHit resizingCurrentHitRight;
     public Vector3 resizingStartSize;
@@ -100,7 +102,16 @@ public class Window : MonoBehaviour {
             resizingCurrentHitLeft = gameController.leftWindowHit;
             resizingCurrentHitRight = gameController.rightWindowHit;
 
-            Vector2 newSize = (Vector3.Distance(resizingCurrentHitLeft.point, resizingCurrentHitRight.point) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
+            Vector3 leftPosition = resizingCurrentHitLeft.point;
+            Vector3 rightPosition = resizingCurrentHitRight.point;
+
+            //if (!gameController.leftWindowBHit) {
+            //    leftPosition = gameController.leftControllerObject.transform.position + gameController.leftControllerObject.transform.forward * leftDistance;
+            //} else if (!gameController.rightWindowBHit) {
+            //    rightPosition = gameController.rightControllerObject.transform.position + gameController.rightControllerObject.transform.forward * rightDistance;
+            //}
+
+            Vector2 newSize = (Vector3.Distance(leftPosition, rightPosition) / Vector3.Distance(resizingStartHitLeft.point, resizingStartHitRight.point)) * resizingStartSize;
 
             transform.localScale = newSize;
 
@@ -122,6 +133,9 @@ public class Window : MonoBehaviour {
             resizingStartHitRight = gameController.rightWindowHit;
             resizingCurrentHitLeft = gameController.leftWindowHit;
             resizingCurrentHitRight = gameController.rightWindowHit;
+
+            leftDistance = gameController.leftWindowDistanceAway;
+            rightDistance = gameController.rightWindowDistanceAway;
 
             resizingStartSize = rectTransform.localScale;
         }
