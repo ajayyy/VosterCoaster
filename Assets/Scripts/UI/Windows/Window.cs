@@ -17,6 +17,8 @@ public class Window : MonoBehaviour {
     RaycastHit movingHit;
 
     public bool resizing;
+    //was resizing just finished last frame
+    bool justResized;
     //these values will be compared against while the window is resizing
     public RaycastHit resizingStartHitLeft;
     public RaycastHit resizingStartHitRight;
@@ -80,13 +82,17 @@ public class Window : MonoBehaviour {
                 animatingStartRotation = transform.rotation;
                 Vector3 relativePos = gameController.controllerObjects[i].transform.position - transform.position;
                 animatingTargetRotation = Quaternion.LookRotation(relativePos);
-            } else if (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
+            } else if (resizing || (moving && !gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger))) {
                 moving = false;
             }
 
             //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
             //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
-            if (!moving && gameController.controllers[i].GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && gameController.controllersWindowPointingAt[i] != null) {
+            if (!moving && !resizing && (gameController.controllers[i].GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ||
+                (justResized && gameController.controllers[i].GetPress(SteamVR_Controller.ButtonMask.Trigger))) && gameController.controllersWindowPointingAt[i] != null) {
+
+                justResized = false;
+                
                 //check if button on the window has been pressed
                 for (int s = 0; s < buttons.Length; s++) {
                     if (gameController.controllersWindowPointingAt[i] == buttons[s].gameObject) {
@@ -160,6 +166,8 @@ public class Window : MonoBehaviour {
             animatingTargetRotation = Quaternion.LookRotation(relativePos);
         } else if (resizing && (!gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger))) {
             resizing = false;
+
+            justResized = true;
         }
 
         //check if the window needs to be resized
