@@ -88,9 +88,11 @@ public class Window : MonoBehaviour {
 
             //check if this window is being pointed at to see if a button is being pressed or the window needs to be moved
             //only checking right controller for now. TODO: make it so that you can toggle your dominant hand
+            //if resizing just finished, but the controller still has the trigger pressed, we can act like this was just pressed down and start the moving animation from scratch
             if (!moving && !resizing && (gameController.controllers[i].GetPressDown(SteamVR_Controller.ButtonMask.Trigger) ||
                 (justResized && gameController.controllers[i].GetPress(SteamVR_Controller.ButtonMask.Trigger))) && gameController.controllersWindowPointingAt[i] != null) {
 
+                //reset that back to false because this opportunity has been used up
                 justResized = false;
                 
                 //check if button on the window has been pressed
@@ -130,6 +132,9 @@ public class Window : MonoBehaviour {
                 animatingResize = false;
             }
         }
+
+        //reset this back to false in the small chance that both the controllers let go of the trigger at the exact same time
+        justResized = false;
 
         //check if window is being resized
         if (resizing && gameController.rightController.GetPress(SteamVR_Controller.ButtonMask.Trigger) && gameController.leftController.GetPress(SteamVR_Controller.ButtonMask.Trigger)) {
