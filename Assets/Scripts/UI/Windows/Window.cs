@@ -58,9 +58,9 @@ public class Window : MonoBehaviour {
         if (animatingMovement) {
             Vector3 positionAddition = new Vector3(0, 0, 0);
 
-            transform.position = Vector3.Lerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
+            transform.position = Vector3.Slerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
 
-            transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
+            transform.rotation = Quaternion.Slerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
             if ((Time.time - animatingStartTime) * 20f >= 1) {
                 animatingMovement = false;
@@ -122,11 +122,11 @@ public class Window : MonoBehaviour {
 
         //change size based on current animation
         if (animatingResize) {
-            transform.position = Vector3.Lerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
+            transform.position = Vector3.Slerp(animatingStartPosition, animatingTargetPosition, (Time.time - animatingStartTime) * 20f);
 
-            transform.localScale = Vector3.Lerp(animatingStartSize, animatingTargetSize, (Time.time - animatingStartTime) * 20f);
+            transform.localScale = Vector3.Slerp(animatingStartSize, animatingTargetSize, (Time.time - animatingStartTime) * 20f);
 
-            transform.rotation = Quaternion.Lerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
+            transform.rotation = Quaternion.Slerp(animatingStartRotation, animatingTargetRotation, (Time.time - animatingStartTime) * 20f);
 
             if ((Time.time - animatingStartTime) * 20f >= 1) {
                 animatingResize = false;
