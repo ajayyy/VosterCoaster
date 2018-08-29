@@ -186,8 +186,8 @@ public class TrackPiece : MonoBehaviour {
                     rails[i][r].transform.localEulerAngles = Vector3.zero;
                     rails[i][r].SetActive(false);
                 } else if ((r + 1 - 1) / rollerCoaster.boneAmount > percentageOfTrack && percentageOfTrack != 1) {
-                    rails[i][r].transform.localPosition = ((percentageOfTrack - ((r - 1) / rollerCoaster.boneAmount)) * rollerCoaster.boneAmount) * defaultBonePosition;
-                    rails[i][r].transform.localEulerAngles = ((percentageOfTrack - ((r - 1) / rollerCoaster.boneAmount)) * rollerCoaster.boneAmount) * currentAngle;
+                    rails[i][r].transform.localPosition = Vector3.zero;
+                    rails[i][r].transform.localEulerAngles = Vector3.zero;
                     rails[i][r].SetActive(true);
                 }
             }
