@@ -635,6 +635,15 @@ public class RollerCoaster : MonoBehaviour {
                         startTrackScript.oldTotalAngle = startTrackScript.totalAngle;
                     }
 
+                    totalTrackAngle = (smallestAngleDifference / (curveTracksNeeded * boneAmount)) * curveStartNum;
+
+                    //subtrack by the amount not done
+                    startTrackAngle = totalTrackAngle;
+                    smallestAngleDifference -= startTrackAngle;
+
+                    //remove this amount as it was already dealt with here
+                    targetTracksNeeded -= curveStartNum / boneAmount;
+
                     secondCurveStart = (int)((percentageOfTrack) * boneAmount);
 
                     reset = true;
