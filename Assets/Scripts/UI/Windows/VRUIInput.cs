@@ -26,9 +26,11 @@ public class VRUIInput : MonoBehaviour {
         if (gameController.rightControllerObject == gameObject) {
             gameController.rightWindowDistanceAway = laserPointer.dist;
             gameController.rightWindowHit = laserPointer.hit;
+            gameController.rightWindowBHit = laserPointer.bHit;
         } else if (gameController.leftControllerObject == gameObject) {
             gameController.leftWindowDistanceAway = laserPointer.dist;
             gameController.leftWindowHit = laserPointer.hit;
+            gameController.leftWindowBHit = laserPointer.bHit;
         }
     }
 

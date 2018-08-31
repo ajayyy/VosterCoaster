@@ -82,7 +82,7 @@ public class RollerCoaster : MonoBehaviour {
                 } else {
                     cart.gameObject.SetActive(true);
                 }
-            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.anyKeyDown) {
+            } else if (Input.GetAxis("RightTrigger") > 0.5 || Input.GetKeyDown(KeyCode.U)) {
                 currentTrack = trackPieces[trackPieces.Count - 1];
 
                 if (trackPieces[0].GetComponent<TrackPiece>().colliding) {
@@ -613,11 +613,6 @@ public class RollerCoaster : MonoBehaviour {
                         startTrackScript.oldTotalAngle = startTrackScript.totalAngle;
                     }
 
-                    totalTrackAngle = Vector3.zero;
-
-                    //remove this amount as it was already dealt with here
-                    startTracksNeeded -= curveStartNum / boneAmount;
-
                     secondCurveStart = (int)((percentageOfTrack) * boneAmount);
 
                     reset = true;
@@ -642,14 +637,14 @@ public class RollerCoaster : MonoBehaviour {
 
                     totalTrackAngle = (smallestAngleDifference / (curveTracksNeeded * boneAmount)) * curveStartNum;
 
-                    secondCurveStart = (int)((percentageOfTrack) * boneAmount);
-
                     //subtrack by the amount not done
                     startTrackAngle = totalTrackAngle;
                     smallestAngleDifference -= startTrackAngle;
 
                     //remove this amount as it was already dealt with here
-                    curveTracksNeeded -= curveStartNum / boneAmount;
+                    targetTracksNeeded -= curveStartNum / boneAmount;
+
+                    secondCurveStart = (int)((percentageOfTrack) * boneAmount);
 
                     reset = true;
                     firstPieceEdited = true;
